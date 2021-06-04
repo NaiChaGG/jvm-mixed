@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package io.github.jojoti.moo.akka.core;
+
+option java_package = "io.github.jojoti.testing.akka.kt.biz.coreV1.proto";
+option java_outer_classname = "RoleRouterDiscoverProtocol";
+option java_multiple_files = true;
+
+
+

@@ -1,0 +1,43 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.jojoti</groupId>
+        <artifactId>starter-parent-kotlin-dagger</artifactId>
+        <version>${revision}</version>
+        <relativePath>../starter-parent-kotlin-dagger</relativePath>
+    </parent>
+
+    <groupId>io.github.jojoti.examples</groupId>
+    <artifactId>examples-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <main.basedir>${basedir}/..</main.basedir>
+        <rx.java3.version>3.0.7</rx.java3.version>
+    </properties>
+
+    <modules>
+        <module>dagger-project-server-with-server</module>
+        <module>kotlin-coroutines</module>
+<!--        <module>spring-webflux-mongo-reactive-with-kotlin</module>-->
+        <module>rxjava3</module>
+        <module>tests</module>
+        <module>akka</module>
+        <module>spring-file-controller</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxjava -->
+            <dependency>
+                <groupId>io.reactivex.rxjava3</groupId>
+                <artifactId>rxjava</artifactId>
+                <version>${rx.java3.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

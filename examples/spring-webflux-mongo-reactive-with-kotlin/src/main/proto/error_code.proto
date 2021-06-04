@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package def.error_code;
+
+option java_package = "io.github.jojoti.examples.reactivemongo.proto";
+option java_outer_classname = "ErrorCodeDef";
+option java_multiple_files = true;
+
+// 0 成功 -1 io错误
+
+// 错误码定义
+enum ERROR_CODE {
+  // 成功
+  SUCESS = 0;
+  // 登录验证短信发送是
+  LOGIN_TELEPHONE_SMS_SEND_FAILED = 1;
+  // 登录验证码验证失败
+  LOGIN_TELEPHONE_SMS_CODE_VALIED_FAILED = 8;
+  // 手机号已经注册为密码帐户
+  LOGIN_TELEPHONE_EXISTS = 9;
+  // 账号密码错误
+  LOGIN_ACCOUNT_PWD_ERROR = 10;
+
+  // 账号已经存在
+  ACCOUNT_EXISTS = 5;
+
+  // 账号不存在
+  ACCOUNT_NOT_FOUND = 2;
+  // 用户不存在
+  ACCOUNT_MEMBER_NOT_FOUND = 3;
+  // 密码错误
+  PASSWORD_VALID_ERROR = 4;
+  // 输入电话号码格式不正确
+  INPUT_TELEPHONE_FORMAT_ERROR = 6;
+  // 短信验证码错误
+  INPUT_SMS_CODE_ERROR = 7;
+}

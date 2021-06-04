@@ -1,0 +1,30 @@
+# https://github.com/alibaba/druid/tree/master/druid-spring-boot-starter
+spring:
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+
+  # 驱动配置信息
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:9001}/${MYSQL_DATABASE:boundary-uc}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: ${MYSQL_USER_NAME:app_user}
+    password: ${MYSQL_PASSWORD:P@ssw0rd}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    druid:
+      #连接池的配置信息
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-wetween-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-rrepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      #filters: stat,wall,log4j
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000

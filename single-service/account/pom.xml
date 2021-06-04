@@ -1,0 +1,43 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.jojoti.singleservice</groupId>
+        <artifactId>singleservice-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../</relativePath>
+    </parent>
+
+    <groupId>io.github.jojoti.sservice-account</groupId>
+    <artifactId>sservice-account-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>sservice-account-client</module>
+        <module>sservice-account-common</module>
+        <module>sservice-account-server</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.jojoti.sservice-account</groupId>
+                <artifactId>sservice-account-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti.sservice-account</groupId>
+                <artifactId>sservice-account-server</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti.sservice-account</groupId>
+                <artifactId>sservice-account-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

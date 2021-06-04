@@ -1,0 +1,72 @@
+# 服务发现配置
+discovery: &discovery
+  provider: etcd/consul/zookeeper
+  etcd:
+    endpoints:
+      - 127.0.0.1:6000
+      - 127.0.0.1:6001
+      - 127.0.0.1:6002
+  consul:
+    address: 127.0.0.1:7001
+  zookeeper:
+    addresses:
+      - 127.0.0.1:7100
+      - 127.0.0.1:7101
+      - 127.0.0.1:7102
+
+# grpc server 配置
+grpcs:
+  # server 配置
+  server: &grpcServer
+    maxInboundSize: 1024
+  # 默认支持的两个服务，该模式可以自动使用注解
+  default:
+    # 主要的地址 可以用于对外暴露
+    - primary: 127.0.0.1:8001
+      serverConfig:
+        <<: *grpcServer
+      # fixme 这里也可也使用 注册发现，因为前端还可能存在 网关，那么也需要整合注册发现的
+    # 次要的地址 用于对内部其它服务暴露
+    - private: 127.0.0.1:8002
+      serverConfig:
+        <<: *grpcServer
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesPrivateService
+        <<: *discovery
+  mixed:
+    # 自定义地址1
+    - scopeName: mixed1
+      url: 127.0.0.1:9001
+      serverConfig:
+        <<: *grpcServer
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesMixed1Service
+        <<: *discovery
+
+grpc:
+  # grpc client 配置
+  client: &grpcClient
+    maxInboundSize: 1024
+  remote:
+    # 以下配置写法会从远程 service 读取到 远程注册到 注册发现 组件的 service address
+    # 该 scopeName 则是使用本地的 scopeName 对应的 拦截器等等
+    - scopeName: private
+      clientConfig:
+        <<: *grpcClient
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesPrivateService
+        <<: *discovery
+
+    # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
+    - scopeName: mixed1
+      clientConfig:
+        <<: *grpcClient
+      discovery:
+        # local 等于 空 或者 等于 mixed1 都行，表示引用本机 进程之间的服务
+        local: (空/mixed1)/127.0.0.1:9001

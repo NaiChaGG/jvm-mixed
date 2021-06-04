@@ -1,0 +1,10 @@
+# https://www.yunpian.com/
+sms:
+  yunpianApiKey: xxxxxxxxxxxxx
+
+spring:
+  data:
+    # 目前这里是spring session 用到了
+    redis:
+      host: 127.0.0.1
+      password:

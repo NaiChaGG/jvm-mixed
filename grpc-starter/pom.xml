@@ -1,0 +1,39 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.jojoti</groupId>
+        <artifactId>starter-parent-lombok</artifactId>
+        <version>${revision}</version>
+        <relativePath>../starter-parent-lombok</relativePath>
+    </parent>
+
+    <groupId>io.github.jojoti.grpc-starter</groupId>
+    <artifactId>grpc-starter-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <main.basedir>${basedir}/..</main.basedir>
+    </properties>
+
+    <modules>
+        <module>grpc-starter-nospring-dagger-akka</module>
+        <module>grpc-starter-nospring-dagger-kt-coroutinues</module>
+        <module>grpc-starter-nospring-dagger-rxjava3</module>
+        <module>grpc-starter-spring-boot2</module>
+        <module>grpc-starter-spring-boot2-examples</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

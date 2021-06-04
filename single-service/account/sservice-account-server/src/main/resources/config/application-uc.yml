@@ -1,0 +1,22 @@
+logging:
+  path: ${LOGGER_PATH:/var/log/shopkeeper-server/}
+  level:
+    io.github.jojoti.*: ${LOGGING_LEVEL:DEBUG}
+
+# empty is default
+uc.oauth2.gateway.url:
+# uc 接口签名key
+app-api.sign.secret: f18a3b18ba27e32a3aeaf41256bbc3ea8697408f042c95509001edeaa0b6fd9a
+
+#
+#spring.cache.type: redis
+
+# include other yml config.
+spring.profiles:
+  # Comma-separated list of active profiles. Can be overridden by a command line switch.
+  active:
+  # Unconditionally activate the specified comma-separated list of profiles (or list of profiles if using YAML).
+  include:
+    - data
+    - redis
+    - keys

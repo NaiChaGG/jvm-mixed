@@ -1,0 +1,150 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.jojoti</groupId>
+    <artifactId>build</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+
+    <properties>
+        <revision>0.0.1-SNAPSHOT</revision>
+        <main.basedir>${basedir}</main.basedir>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>JoJo Wang</name>
+            <email>id233233@outlook.com</email>
+            <url>https://github.com/jojoti</url>
+        </developer>
+    </developers>
+
+    <profiles>
+        <profile>
+            <id>starter</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>starter-dependencies</module>
+                <module>starter-parent</module>
+                <module>starter-parent-lombok</module>
+                <module>starter-parent-lombok-dagger</module>
+                <!--       kotlin 模式下不支持 lombok         -->
+                <module>starter-parent-kotlin</module>
+                <module>starter-parent-kotlin-dagger</module>
+
+                <module>grpc-starter</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>utils</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>starter-dependencies</module>
+                <module>starter-parent</module>
+                <module>starter-parent-lombok</module>
+                <module>starter-parent-lombok-dagger</module>
+                <!--       kotlin 模式下不支持 lombok         -->
+                <module>starter-parent-kotlin</module>
+                <module>starter-parent-kotlin-dagger</module>
+
+                <module>util</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>single-service</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>starter-dependencies</module>
+                <module>starter-parent</module>
+                <module>starter-parent-lombok</module>
+                <module>starter-parent-lombok-dagger</module>
+                <!--       kotlin 模式下不支持 lombok         -->
+                <module>starter-parent-kotlin</module>
+                <module>starter-parent-kotlin-dagger</module>
+
+                <module>single-service</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>examples</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>starter-dependencies</module>
+                <module>starter-parent</module>
+                <module>starter-parent-lombok</module>
+                <module>starter-parent-lombok-dagger</module>
+                <!--       kotlin 模式下不支持 lombok         -->
+                <module>starter-parent-kotlin</module>
+                <module>starter-parent-kotlin-dagger</module>
+
+                <module>examples</module>
+            </modules>
+        </profile>
+
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>nexus-aliyun</id>
+            <name>Nexus aliyun</name>
+            <layout>default</layout>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>nexus-aliyun</id>
+            <name>Nexus aliyun</name>
+            <layout>default</layout>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

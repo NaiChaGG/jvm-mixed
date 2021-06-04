@@ -1,0 +1,38 @@
+server:
+  address: 127.0.0.1
+  port: 80
+
+# https://docs.spring.io/spring-boot/docs/2.0.0.M6/reference/htmlsingle/#boot-features-mongodb
+# https://segmentfault.com/a/1190000004316584
+# 数据库层配置
+spring:
+  data:
+    mongodb:
+      embedded:
+        # 指定要开启的特性，逗号分隔.
+        features:
+        # 指定要使用的版本，默认: 2.6.10
+        version: 3.2.18
+
+      # 指定鉴权的数据库名
+      authentication-database:
+      # 指定mongodb数据库名
+      database: ps_passport
+      # 指定要使用的FieldNamingStrategy.
+      field-naming-strategy:
+      # 指定GridFS database的名称.
+      grid-fs-database:
+      # 指定Mongo server host.
+      # mongodb 3.x 废弃的配置
+      #      host: 127.0.0.1
+      # 指定Mongo server的密码.
+      password:
+      # 指定Mongo server port.
+      # mongodb 3.x 废弃的配置
+      #      port: 2777
+      # 是否开启mongodb存储，默认为true
+      repositories.enabled: true
+      # 指定Mongo database URI.默认:mongodb://localhost/test
+      uri: mongodb://127.0.0.1:2777/passport
+      # 指定登陆mongodb的用户名.
+      username:
