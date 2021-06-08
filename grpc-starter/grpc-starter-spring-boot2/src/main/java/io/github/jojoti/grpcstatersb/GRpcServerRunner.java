@@ -1,16 +1,19 @@
 package io.github.jojoti.grpcstatersb;
 
+import com.google.common.collect.ImmutableList;
+import io.github.jojoti.grpcstatersb.autoconfigure.GRpcServerProperties;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.services.HealthStatusManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
@@ -21,7 +24,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,67 +33,67 @@ import java.util.stream.Stream;
  * @link github.com/jojoti
  */
 @Slf4j
-public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
+public class GRpcServerRunner implements CommandLineRunner, DisposableBean, ApplicationContextAware {
 
-    private final Consumer<ServerBuilder<?>> configurator;
-    private final ServerBuilder<?> serverBuilder;
     private final CountDownLatch latch;
 
-    @Autowired
-    private HealthStatusManager healthStatusManager;
+    private final HealthStatusManager healthStatusManager;
 
-    @Autowired
-    private AbstractApplicationContext applicationContext;
+    private final GRpcServerProperties gRpcServerProperties;
 
-    @Autowired
-    private GRpcServerProperties gRpcServerProperties;
+    private ImmutableList<Server> server;
 
-    private Server server;
-
-    public GRpcServerRunner(Consumer<ServerBuilder<?>> configurator, ServerBuilder<?> serverBuilder) {
-        this.configurator = configurator;
-        this.serverBuilder = serverBuilder;
-        this.latch = new CountDownLatch(1);
+    public GRpcServerRunner(GRpcServerProperties gRpcServerProperties, HealthStatusManager healthStatusManager) {
+        this.gRpcServerProperties = gRpcServerProperties;
+        this.healthStatusManager = healthStatusManager;
+        // 多个 latch
+        this.latch = new CountDownLatch(gRpcServerProperties.getServers().size());
     }
 
     @Override
     public void run(String... args) throws Exception {
         log.info("Starting gRPC Server ...");
 
+        final var grpcDef = applicationContext.getBeansWithAnnotation(GRpcScope.class);
 
-        Collection<ServerInterceptor> globalInterceptors = getBeanNamesByTypeWithAnnotation(GRpcGlobalInterceptor.class, ServerInterceptor.class)
-                .map(name -> applicationContext.getBeanFactory().getBean(name, ServerInterceptor.class))
-                .collect(Collectors.toList());
 
-        // Adding health service
-        serverBuilder.addService(healthStatusManager.getHealthService());
 
-        // find and register all GRpcService-enabled beans
-        getBeanNamesByTypeWithAnnotation(GRpcService.class, BindableService.class)
-                .forEach(name -> {
-                    BindableService srv = applicationContext.getBeanFactory().getBean(name, BindableService.class);
-                    ServerServiceDefinition serviceDefinition = srv.bindService();
-                    GRpcService gRpcServiceAnn = applicationContext.findAnnotationOnBean(name, GRpcService.class);
-                    serviceDefinition = bindInterceptors(serviceDefinition, gRpcServiceAnn, globalInterceptors);
-                    serverBuilder.addService(serviceDefinition);
-                    String serviceName = serviceDefinition.getServiceDescriptor().getName();
-                    healthStatusManager.setStatus(serviceName, HealthCheckResponse.ServingStatus.SERVING);
 
-                    log.info("'{}' service has been registered.", srv.getClass().getName());
 
-                });
 
-        if (gRpcServerProperties.isEnableReflection()) {
-            serverBuilder.addService(ProtoReflectionService.newInstance());
-            log.info("'{}' service has been registered.", ProtoReflectionService.class.getName());
-        }
-
-        configurator.accept(serverBuilder);
-        server = serverBuilder.build().start();
-//        applicationContext.publishEvent(new GRpcServerInitializedEvent(applicationContext,server));
-
-        log.info("gRPC Server started, listening on port {}.", server.getPort());
-        startDaemonAwaitThread();
+//        Collection<ServerInterceptor> globalInterceptors = getBeanNamesByTypeWithAnnotation(GRpcGlobalInterceptor.class, ServerInterceptor.class)
+//                .map(name -> applicationContext.getBeanFactory().getBean(name, ServerInterceptor.class))
+//                .collect(Collectors.toList());
+//
+//        // Adding health service
+//        serverBuilder.addService(healthStatusManager.getHealthService());
+//
+//        // find and register all GRpcService-enabled beans
+//        getBeanNamesByTypeWithAnnotation(GRpcService.class, BindableService.class)
+//                .forEach(name -> {
+//                    BindableService srv = applicationContext.getBeanFactory().getBean(name, BindableService.class);
+//                    ServerServiceDefinition serviceDefinition = srv.bindService();
+//                    GRpcService gRpcServiceAnn = applicationContext.findAnnotationOnBean(name, GRpcService.class);
+//                    serviceDefinition = bindInterceptors(serviceDefinition, gRpcServiceAnn, globalInterceptors);
+//                    serverBuilder.addService(serviceDefinition);
+//                    String serviceName = serviceDefinition.getServiceDescriptor().getName();
+//                    healthStatusManager.setStatus(serviceName, HealthCheckResponse.ServingStatus.SERVING);
+//
+//                    log.info("'{}' service has been registered.", srv.getClass().getName());
+//
+//                });
+//
+//        if (gRpcServerProperties.isEnableReflection()) {
+//            serverBuilder.addService(ProtoReflectionService.newInstance());
+//            log.info("'{}' service has been registered.", ProtoReflectionService.class.getName());
+//        }
+//
+//        configurator.accept(serverBuilder);
+//        server = serverBuilder.build().start();
+////        applicationContext.publishEvent(new GRpcServerInitializedEvent(applicationContext,server));
+//
+//        log.info("gRPC Server started, listening on port {}.", server.getPort());
+//        startDaemonAwaitThread();
 
     }
 
@@ -146,45 +148,51 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
     @Override
     public void destroy() throws Exception {
 
-        Optional.ofNullable(server).ifPresent(s -> {
-            log.info("Shutting down gRPC server ...");
-            s.getServices().forEach(def -> healthStatusManager.clearStatus(def.getServiceDescriptor().getName()));
-            s.shutdown();
-            int shutdownGrace = gRpcServerProperties.getShutdownGrace();
-            try {
-                // If shutdownGrace is 0, then don't call awaitTermination
-                if (shutdownGrace < 0) {
-                    s.awaitTermination();
-                } else if (shutdownGrace > 0) {
-                    s.awaitTermination(shutdownGrace, TimeUnit.SECONDS);
-                }
-            } catch (InterruptedException e) {
-                log.error("gRPC server interrupted during destroy.", e);
-            } finally {
-                latch.countDown();
-            }
-            log.info("gRPC server stopped.");
-        });
+//        Optional.ofNullable(server).ifPresent(s -> {
+//            log.info("Shutting down gRPC server ...");
+//            s.getServices().forEach(def -> healthStatusManager.clearStatus(def.getServiceDescriptor().getName()));
+//            s.shutdown();
+//            int shutdownGrace = gRpcServerProperties.getShutdownGrace();
+//            try {
+//                // If shutdownGrace is 0, then don't call awaitTermination
+//                if (shutdownGrace < 0) {
+//                    s.awaitTermination();
+//                } else if (shutdownGrace > 0) {
+//                    s.awaitTermination(shutdownGrace, TimeUnit.SECONDS);
+//                }
+//            } catch (InterruptedException e) {
+//                log.error("gRPC server interrupted during destroy.", e);
+//            } finally {
+//                latch.countDown();
+//            }
+//            log.info("gRPC server stopped.");
+//        });
 
     }
 
-    private <T> Stream<String> getBeanNamesByTypeWithAnnotation(Class<? extends Annotation> annotationType, Class<T> beanType) throws Exception {
+//    private <T> Stream<String> getBeanNamesByTypeWithAnnotation(Class<? extends Annotation> annotationType, Class<T> beanType) throws Exception {
+//        return Stream.of(applicationContext.getBeanNamesForType(beanType))
+//                .filter(name -> {
+//
+//                    final BeanDefinition beanDefinition = applicationContext.getBeanFactory().getBeanDefinition(name);
+//                    final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(annotationType);
+//
+//                    if (beansWithAnnotation.containsKey(name)) {
+//                        return true;
+//                    } else if (beanDefinition.getSource() instanceof AnnotatedTypeMetadata) {
+//                        return ((AnnotatedTypeMetadata) beanDefinition.getSource()).isAnnotated(annotationType.getName());
+//
+//                    }
+//
+//                    return false;
+//                });
+//    }
 
-        return Stream.of(applicationContext.getBeanNamesForType(beanType))
-                .filter(name -> {
-                    final BeanDefinition beanDefinition = applicationContext.getBeanFactory().getBeanDefinition(name);
-                    final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(annotationType);
+    private ApplicationContext applicationContext;
 
-                    if (beansWithAnnotation.containsKey(name)) {
-                        return true;
-                    } else if (beanDefinition.getSource() instanceof AnnotatedTypeMetadata) {
-                        return ((AnnotatedTypeMetadata) beanDefinition.getSource()).isAnnotated(annotationType.getName());
-
-                    }
-
-                    return false;
-                });
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
-
 
 }

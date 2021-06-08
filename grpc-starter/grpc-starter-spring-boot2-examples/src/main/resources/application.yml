@@ -17,35 +17,38 @@ discovery: &discovery
 # grpc server 配置
 grpcs:
   # server 配置
-  server: &grpcServer
+  serverConfig: &shadedNettyServer
     maxInboundSize: 1024
   # 默认支持的两个服务，该模式可以自动使用注解
-  default:
-    # 主要的地址 可以用于对外暴露
-    - primary: 127.0.0.1:8001
-      serverConfig:
-        <<: *grpcServer
-      # fixme 这里也可也使用 注册发现，因为前端还可能存在 网关，那么也需要整合注册发现的
-    # 次要的地址 用于对内部其它服务暴露
-    - private: 127.0.0.1:8002
-      serverConfig:
-        <<: *grpcServer
-      # 注册发现配置
-      discovery:
-        # 该值如果不设置 则 使用 默认配置
-        serviceName: examplesPrivateService
-        <<: *discovery
-  mixed:
-    # 自定义地址1
-    - scopeName: mixed1
-      url: 127.0.0.1:9001
-      serverConfig:
-        <<: *grpcServer
-      # 注册发现配置
-      discovery:
-        # 该值如果不设置 则 使用 默认配置
-        serviceName: examplesMixed1Service
-        <<: *discovery
+
+  servers:
+    # 内置 primary
+    - scopedName: primary
+      address: 127.0.0.1:8001
+      shadedNettyServerConfig:
+        <<: *shadedNettyServer
+
+#    # 内置 private
+#    - scopedName: private
+#      address: 127.0.0.1:8002
+#      shadedNettyServerConfig:
+#        <<: *shadedNettyServer
+#      # 注册发现配置
+#      discovery:
+#        # 该值如果不设置 则 使用 默认配置
+#        serviceName: examplesPrivateService
+#        <<: *discovery
+#
+#    # 自定义地址1
+#    - scopeName: mixed1
+#      url: 127.0.0.1:9001
+#      shadedNettyServerConfig:
+#        <<: *shadedNettyServer
+#      # 注册发现配置
+#      discovery:
+#        # 该值如果不设置 则 使用 默认配置
+#        serviceName: examplesMixed1Service
+#        <<: *discovery
 
 grpc:
   # grpc client 配置
