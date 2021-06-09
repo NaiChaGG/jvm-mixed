@@ -33,10 +33,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-grpc-netty-server</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

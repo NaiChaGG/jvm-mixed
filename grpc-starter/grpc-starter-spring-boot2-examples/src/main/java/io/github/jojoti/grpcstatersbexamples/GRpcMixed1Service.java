@@ -1,7 +1,7 @@
 package io.github.jojoti.grpcstatersbexamples;
 
-import io.grpc.ServerInterceptor;
-import org.springframework.stereotype.Component;
+import io.github.jojoti.grpcstatersb.GRpcScope;
+import io.github.jojoti.grpcstatersb.GRpcScopeService;
 
 import java.lang.annotation.*;
 
@@ -15,12 +15,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-@GRpcMixed1Scope
+@GRpcScopeService(scope = @GRpcScope(value = GRpcMixed1Service.scopeName))
 public @interface GRpcMixed1Service {
-
-    Class<? extends ServerInterceptor>[] interceptors() default {};
-
-    boolean applyGlobalInterceptors() default true;
+    String scopeName = "mixed1";
 
 }

@@ -1,8 +1,5 @@
 package io.github.jojoti.grpcstatersb;
 
-import io.grpc.ServerInterceptor;
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.*;
 
 /**
@@ -15,12 +12,9 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-@GRpcPrivateScope
+@GRpcScopeService(scope = @GRpcScope(value = GRpcPrivateService.scopeName))
 public @interface GRpcPrivateService {
 
-    Class<? extends ServerInterceptor>[] interceptors() default {};
-
-    boolean applyGlobalInterceptors() default true;
+    String scopeName = "private";
 
 }

@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-lombok</artifactId>
+        <artifactId>starter-parent-kotlin</artifactId>
         <version>${revision}</version>
-        <relativePath>../starter-parent-lombok</relativePath>
+        <relativePath>../starter-parent-kotlin</relativePath>
     </parent>
 
     <groupId>io.github.jojoti.grpc-starter</groupId>
@@ -21,10 +21,16 @@
     <modules>
         <module>grpc-starter-nospring-dagger-akka</module>
         <module>grpc-starter-nospring-dagger-kt-coroutinues</module>
-        <module>grpc-starter-nospring-dagger-rxjava3</module>
         <module>grpc-starter-spring-boot2</module>
         <module>grpc-starter-spring-boot2-examples</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>

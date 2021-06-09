@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * 全局 grpc  所有的 scope 都会添加上
+ * 带作用域的 grpc interceptor 如果被引用的地方不一致则会直接报错
  *
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -14,8 +14,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface GRpcGlobalInterceptor {
-
+public @interface GRpcScopeServiceInterceptor {
     GRpcScope scope() default @GRpcScope;
-
 }

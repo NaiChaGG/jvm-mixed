@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package io.github.jojoti.grpcstartersb;
+
+service Foo3 {
+
+  rpc bar (BarRequest3) returns (BarResponse3);
+
+}
+
+message BarRequest3 {
+  string val = 1;
+}
+
+message BarResponse3 {
+  string val = 1;
+}

@@ -5,16 +5,16 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * 全局 grpc  所有的 scope 都会添加上
+ * 带作用域的 grpc starter
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface GRpcGlobalInterceptor {
+public @interface GRpcScopeService {
 
     GRpcScope scope() default @GRpcScope;
 

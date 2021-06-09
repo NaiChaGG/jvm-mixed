@@ -5,19 +5,25 @@
 
     <parent>
         <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent</artifactId>
+        <artifactId>starter-parent-kotlin</artifactId>
         <version>${revision}</version>
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>starter-grpc-netty-server</artifactId>
+    <artifactId>starter-grpc-kotlin-netty-server</artifactId>
     <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
+    <!--  https://github.com/GoogleCloudPlatform/kotlin-samples/blob/master/run/grpc-hello-world-mvn/pom.xml  -->
     <dependencies>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-kotlin-stub</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.grpc</groupId>
@@ -25,14 +31,14 @@
         </dependency>
 
         <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-            <scope>runtime</scope>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-kotlin</artifactId>
         </dependency>
 
         <dependency>
             <groupId>io.grpc</groupId>
-            <artifactId>grpc-services</artifactId>
+            <artifactId>grpc-netty</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>

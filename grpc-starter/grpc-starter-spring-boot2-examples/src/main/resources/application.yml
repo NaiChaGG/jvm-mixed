@@ -1,3 +1,17 @@
+# 驱动配置信息
+debug: false # Enable debug logs.
+trace: false
+
+## include other yml config.
+spring.profiles:
+  # Comma-separated list of active profiles. Can be overridden by a command line switch.
+  active:
+    - dev
+#  # Unconditionally activate the specified comma-separated list of profiles (or list of profiles if using YAML).
+#  include:
+#    - dev
+#    - release
+
 # 服务发现配置
 discovery: &discovery
   provider: etcd/consul/zookeeper
@@ -28,27 +42,27 @@ grpcs:
       shadedNettyServerConfig:
         <<: *shadedNettyServer
 
-#    # 内置 private
-#    - scopedName: private
-#      address: 127.0.0.1:8002
-#      shadedNettyServerConfig:
-#        <<: *shadedNettyServer
-#      # 注册发现配置
-#      discovery:
-#        # 该值如果不设置 则 使用 默认配置
-#        serviceName: examplesPrivateService
-#        <<: *discovery
-#
-#    # 自定义地址1
-#    - scopeName: mixed1
-#      url: 127.0.0.1:9001
-#      shadedNettyServerConfig:
-#        <<: *shadedNettyServer
-#      # 注册发现配置
-#      discovery:
-#        # 该值如果不设置 则 使用 默认配置
-#        serviceName: examplesMixed1Service
-#        <<: *discovery
+    # 内置 private
+    - scopedName: private
+      address: 127.0.0.1:8002
+      shadedNettyServerConfig:
+        <<: *shadedNettyServer
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesPrivateService
+        <<: *discovery
+
+    # 自定义地址1
+    - scopeName: mixed1
+      url: 127.0.0.1:9001
+      shadedNettyServerConfig:
+        <<: *shadedNettyServer
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesMixed1Service
+        <<: *discovery
 
 grpc:
   # grpc client 配置
