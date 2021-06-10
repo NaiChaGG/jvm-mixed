@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-kotlin-dagger</artifactId>
+        <artifactId>build</artifactId>
         <version>${revision}</version>
-        <relativePath>../starter-parent-kotlin-dagger</relativePath>
+        <relativePath>../</relativePath>
     </parent>
 
     <groupId>io.github.jojoti.util</groupId>
@@ -19,18 +19,8 @@
     </properties>
 
     <modules>
-        <module>share-id</module>
-        <module>share-id-v2</module>
-        <module>sql-builder</module>
-        <module>version-code</module>
+        <module>named-starter-parent</module>
+        <module>named-starter-parent-kotlin</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
 </project>

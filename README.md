@@ -30,12 +30,7 @@
 + version-code 1.0.1 -> 10001 版本转化为数据，在数据库可以使用 > 查询出来, 而非 `1.1.1` 字符串需要依赖db的函数进行赛选查询
 + [更多模块](./util)
 
-## 4. single-service 一些通用业务的基本抽象
-
-+ account 简易的账户系统
-+ [更多单应用](./single-service)
-
-## 5. examples 一些学习笔记
+## 4. examples 一些学习笔记
 
 + [`dagger` 学习笔记](./examples/dagger-project-server-with-server/src/main/java/io/github/jojoti/examples/dagger)
 + [更多笔记](./examples)

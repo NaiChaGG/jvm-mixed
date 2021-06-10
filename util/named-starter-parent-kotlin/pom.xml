@@ -1,0 +1,34 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--  项目根目录禁止继承 starter  -->
+    <parent>
+        <groupId>io.github.jojoti</groupId>
+        <artifactId>starter-parent-kotlin</artifactId>
+        <version>${revision}</version>
+        <relativePath>../../starter-parent-kotlin</relativePath>
+    </parent>
+
+    <groupId>io.github.jojoti.util</groupId>
+    <artifactId>util-named-starter-parent-kotlin</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <main.basedir>${basedir}/../..</main.basedir>
+    </properties>
+
+    <modules>
+        <module>../share-id-v2</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.jojoti</groupId>
+            <artifactId>starter-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

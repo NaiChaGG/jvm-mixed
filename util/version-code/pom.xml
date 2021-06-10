@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>io.github.jojoti.util</groupId>
-        <artifactId>util-parent</artifactId>
+        <artifactId>util-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
     <artifactId>util-version-code</artifactId>
