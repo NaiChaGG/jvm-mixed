@@ -16,10 +16,15 @@
 
 package io.github.jojoti.grpcstatersb;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
 import io.github.jojoti.grpcstatersb.autoconfigure.GRpcServerProperties;
-import io.grpc.Server;
-import io.grpc.services.HealthStatusManager;
+import io.grpc.*;
+import io.grpc.netty.NettyServerBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -28,7 +33,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author JoJo Wang
@@ -38,18 +50,15 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean, Appl
 
     private static final Logger log = LoggerFactory.getLogger(GRpcServerRunner.class);
 
-    private final CountDownLatch latch;
-
-    private final HealthStatusManager healthStatusManager;
-
     private final GRpcServerProperties gRpcServerProperties;
 
-    private ImmutableList<Server> server;
+    // 守护线程直到任务结束...
+    private final CountDownLatch latch;
+    private ImmutableList<MultiServer> servers;
     private ApplicationContext applicationContext;
 
-    public GRpcServerRunner(GRpcServerProperties gRpcServerProperties, HealthStatusManager healthStatusManager) {
+    public GRpcServerRunner(GRpcServerProperties gRpcServerProperties) {
         this.gRpcServerProperties = gRpcServerProperties;
-        this.healthStatusManager = healthStatusManager;
         // 多个 latch
         this.latch = new CountDownLatch(gRpcServerProperties.getServers().size());
     }
@@ -58,138 +67,168 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean, Appl
     public void run(String... args) throws Exception {
         log.info("Starting gRPC Server ...");
 
-        final var grpcDef = applicationContext.getBeansWithAnnotation(GRpcScopeService.class);
+        // 添加到所有 grpc server 的拦截器
+        // 拦截器先添加后执行的请 自行使用 spring @Order 注解排序
+        final var allGlobalInterceptors = applicationContext.getBeansWithAnnotation(GRpcGlobalInterceptor.class)
+                .values()
+                .stream()
+                .map(c -> (ServerInterceptor) c)
+                .collect(Collectors.toUnmodifiableList());
 
-//        Collection<ServerInterceptor> globalInterceptors = getBeanNamesByTypeWithAnnotation(GRpcScopeGlobalInterceptor.class, ServerInterceptor.class)
-//                .map(name -> applicationContext.getBeanFactory().getBean(name, ServerInterceptor.class))
-//                .collect(Collectors.toList());
-//
-//        // Adding health service
-//        serverBuilder.addService(healthStatusManager.getHealthService());
-//
-//        // find and register all GRpcScopeService-enabled beans
-//        getBeanNamesByTypeWithAnnotation(GRpcScopeService.class, BindableService.class)
-//                .forEach(name -> {
-//                    BindableService srv = applicationContext.getBeanFactory().getBean(name, BindableService.class);
-//                    ServerServiceDefinition serviceDefinition = srv.bindService();
-//                    GRpcScopeService gRpcServiceAnn = applicationContext.findAnnotationOnBean(name, GRpcScopeService.class);
-//                    serviceDefinition = bindInterceptors(serviceDefinition, gRpcServiceAnn, globalInterceptors);
-//                    serverBuilder.addService(serviceDefinition);
-//                    String serviceName = serviceDefinition.getServiceDescriptor().getName();
-//                    healthStatusManager.setStatus(serviceName, HealthCheckResponse.ServingStatus.SERVING);
-//
-//                    log.info("'{}' service has been registered.", srv.getClass().getName());
-//
-//                });
-//
-//        if (gRpcServerProperties.isEnableReflection()) {
-//            serverBuilder.addService(ProtoReflectionService.newInstance());
-//            log.info("'{}' service has been registered.", ProtoReflectionService.class.getName());
-//        }
-//
-//        configurator.accept(serverBuilder);
-//        server = serverBuilder.build().start();
-////        applicationContext.publishEvent(new GRpcServerInitializedEvent(applicationContext,server));
-//
-//        log.info("gRPC Server started, listening on port {}.", server.getPort());
-//        startDaemonAwaitThread();
+        // 所有 handler
+        final var allScopeHandlers = applicationContext.getBeansWithAnnotation(GRpcScopeService.class);
 
-    }
+        // 所有分组拦截器
+        final var scopeHandlers = Multimaps.<GRpcScope, BindableService>newMultimap(Maps.newHashMap(), Lists::newArrayList);
 
-//    private ServerServiceDefinition bindInterceptors(ServerServiceDefinition serviceDefinition, GRpcScopeService gRpcService, Collection<ServerInterceptor> globalInterceptors) {
-//
-//        Stream<? extends ServerInterceptor> privateInterceptors = Stream.of(gRpcService.interceptors())
-//                .map(interceptorClass -> {
-//                    try {
-//                        return 0 < applicationContext.getBeanNamesForType(interceptorClass).length ?
-//                                applicationContext.getBean(interceptorClass) :
-//                                interceptorClass.newInstance();
-//                    } catch (Exception e) {
-//                        throw new BeanCreationException("Failed to create interceptor instance.", e);
-//                    }
-//                });
-//
-//        List<ServerInterceptor> interceptors = Stream.concat(
-//                gRpcService.applyGlobalInterceptors() ? globalInterceptors.stream() : Stream.empty(),
-//                privateInterceptors)
-//                .distinct()
-//                .sorted(serverInterceptorOrderComparator())
-//                .collect(Collectors.toList());
-//        return ServerInterceptors.intercept(serviceDefinition, interceptors);
-//    }
-//
-//    private Comparator<Object> serverInterceptorOrderComparator() {
-//        Function<Object, Boolean> isOrderAnnotated = obj -> {
-//            Order ann = obj instanceof Method ? AnnotationUtils.findAnnotation((Method) obj, Order.class) :
-//                    AnnotationUtils.findAnnotation(obj.getClass(), Order.class);
-//            return ann != null;
-//        };
-//        return AnnotationAwareOrderComparator.INSTANCE.thenComparing((o1, o2) -> {
-//            boolean p1 = isOrderAnnotated.apply(o1);
-//            boolean p2 = isOrderAnnotated.apply(o2);
-//            return p1 && !p2 ? -1 : p2 && !p1 ? 1 : 0;
-//        }).reversed();
-//    }
-//
-//    private void startDaemonAwaitThread() {
-//        Thread awaitThread = new Thread(() -> {
-//            try {
-//                latch.await();
-//            } catch (InterruptedException e) {
-//                log.error("gRPC server awaiter interrupted.", e);
-//            }
-//        });
-//        awaitThread.setName("grpc-server-awaiter");
-//        awaitThread.setDaemon(false);
-//        awaitThread.start();
-//    }
+        for (Object value : allScopeHandlers.values()) {
+            // check impl BindableService
+            Preconditions.checkArgument(value instanceof BindableService, "Annotation @GRpcScopeService class must be instance of io.grpc.BindableService.");
+            // 肯定能找到
+            final var foundScope = value.getClass().getAnnotation(GRpcScopeService.class).scope();
 
-//    private <T> Stream<String> getBeanNamesByTypeWithAnnotation(Class<? extends Annotation> annotationType, Class<T> beanType) throws Exception {
-//        return Stream.of(applicationContext.getBeanNamesForType(beanType))
-//                .filter(name -> {
-//
-//                    final BeanDefinition beanDefinition = applicationContext.getBeanFactory().getBeanDefinition(name);
-//                    final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(annotationType);
-//
-//                    if (beansWithAnnotation.containsKey(name)) {
-//                        return true;
-//                    } else if (beanDefinition.getSource() instanceof AnnotatedTypeMetadata) {
-//                        return ((AnnotatedTypeMetadata) beanDefinition.getSource()).isAnnotated(annotationType.getName());
-//
-//                    }
-//
-//                    return false;
-//                });
-//    }
+            GRpcServerProperties.checkScopeName(foundScope.value());
 
-    @Override
-    public void destroy() throws Exception {
+            scopeHandlers.put(foundScope, (BindableService) value);
+        }
 
-//        Optional.ofNullable(server).ifPresent(s -> {
-//            log.info("Shutting down gRPC server ...");
-//            s.getServices().forEach(def -> healthStatusManager.clearStatus(def.getServiceDescriptor().getName()));
-//            s.shutdown();
-//            int shutdownGrace = gRpcServerProperties.getShutdownGrace();
-//            try {
-//                // If shutdownGrace is 0, then don't call awaitTermination
-//                if (shutdownGrace < 0) {
-//                    s.awaitTermination();
-//                } else if (shutdownGrace > 0) {
-//                    s.awaitTermination(shutdownGrace, TimeUnit.SECONDS);
-//                }
-//            } catch (InterruptedException e) {
-//                log.error("gRPC server interrupted during destroy.", e);
-//            } finally {
-//                latch.countDown();
-//            }
-//            log.info("gRPC server stopped.");
-//        });
+        // 所有分组拦截器
+        final var scopeInterceptors = Multimaps.<GRpcScope, ServerInterceptor>newMultimap(Maps.newHashMap(), Lists::newArrayList);
 
+        final var allScopeInterceptors = applicationContext.getBeansWithAnnotation(GRpcScopeGlobalInterceptor.class);
+        for (Object value : allScopeInterceptors.values()) {
+            Preconditions.checkArgument(value instanceof ServerInterceptor, "Annotation @GRpcScopeService class must be instance of io.grpc.ServerInterceptor.");
+            // 肯定能找到
+            final var foundScope = value.getClass().getAnnotation(GRpcScopeGlobalInterceptor.class).scope();
+
+            GRpcServerProperties.checkScopeName(foundScope.value());
+
+            scopeInterceptors.put(foundScope, (ServerInterceptor) value);
+        }
+
+        final var serversBuilder = ImmutableList.<MultiServer>builder();
+
+        for (Map.Entry<GRpcScope, Collection<BindableService>> entry : scopeHandlers.asMap().entrySet()) {
+            // 根据 scopeName 读取配置
+            final var config = getServerConfigByScopeName(entry.getKey().value());
+            final var newServerBuilder = getServerBuilder(config);
+
+            // 遍历添加每个 service
+            for (BindableService bindableService : entry.getValue()) {
+                final var foundGRpcServiceInterceptors = bindableService.getClass().getAnnotation(GRpcServiceInterceptors.class);
+
+                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyGlobalInterceptors()) {
+                    for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
+                        // 先添加全局拦截器
+                        // grpc 拦截器是先添加的后执行
+                        newServerBuilder.intercept(allGlobalInterceptor);
+                    }
+                }
+
+                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyScopeGlobalInterceptors()) {
+                    // 添加局部拦截器
+                    final var foundScopeInterceptors = scopeInterceptors.get(entry.getKey());
+                    if (foundScopeInterceptors != null && foundScopeInterceptors.size() > 0) {
+                        for (ServerInterceptor foundScopeInterceptor : foundScopeInterceptors) {
+                            // grpc 拦截器是先添加的后执行
+                            newServerBuilder.intercept(foundScopeInterceptor);
+                        }
+                    }
+                }
+
+                // 添加每个 service 特有的拦截器
+                if (foundGRpcServiceInterceptors != null && foundGRpcServiceInterceptors.interceptors().length > 0) {
+                    final var foundInterceptors = Lists.<ServerInterceptor>newArrayList();
+                    for (var interceptor : foundGRpcServiceInterceptors.interceptors()) {
+                        final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
+                        // 拦截器定义的 bean 没有找到
+                        Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found.");
+                        foundInterceptors.add(findDefinedInterceptorBean);
+                    }
+                    ServerInterceptors.intercept(bindableService, foundInterceptors);
+                } else {
+                    newServerBuilder.addService(bindableService);
+                }
+
+                final var server = newServerBuilder.build().start();
+                // 如需要注册的 consul 等 在这里发布 event
+                log.info("gRPC Server {} started, listening on port {}.", entry.getKey().value(), server.getPort());
+                serversBuilder.add(new MultiServer(server, config));
+            }
+        }
+
+        this.servers = serversBuilder.build();
+
+        if (this.servers.size() != allScopeHandlers.size() || this.servers.size() != this.gRpcServerProperties.getServers().size()) {
+            this.destroy();
+            // 启动的server与配置的 或者 bean注解的个数不匹配
+            throw new IllegalArgumentException("Config error, please check.");
+        }
+
+        // 添加守护线程
+        Thread awaitThread = new Thread(() -> {
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                log.error("gRPC server awaiter interrupted.", e);
+            }
+        });
+        awaitThread.setName("multi grpc server awaiter");
+        awaitThread.setDaemon(false);
+        awaitThread.start();
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void destroy() {
+        if (this.servers != null) {
+            for (var server : this.servers) {
+                try {
+                    server.server.awaitTermination(server.config.getShutdownGracefullyMills(), TimeUnit.MILLISECONDS);
+                    log.info("gRPC server {} stopped.", server.config.getScopeName());
+                } catch (InterruptedException e) {
+                    log.error("gRPC server {} interrupted during destroy.", server.config.getScopeName(), e);
+                } finally {
+                    this.latch.countDown();
+                }
+            }
+            this.servers = null;
+            log.info("gRPC server stopped.");
+        }
+    }
+
+    private GRpcServerProperties.ServerItem getServerConfigByScopeName(String scopeName) {
+        for (GRpcServerProperties.ServerItem gRpcServerPropertiesServer : this.gRpcServerProperties.getServers()) {
+            if (gRpcServerPropertiesServer.getScopeName().equals(scopeName)) {
+                return gRpcServerPropertiesServer;
+            }
+        }
+        throw new IllegalArgumentException("ScopeName " + scopeName + " not found, please you check config or annotation.");
+    }
+
+    @Override
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    private ServerBuilder<?> getServerBuilder(GRpcServerProperties.ServerItem serverItem) {
+        URL url;
+        try {
+            url = new URL(serverItem.getAddress());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        final var socket = InetSocketAddress.createUnresolved(url.getHost(), url.getPort());
+        return NettyServerBuilder.forAddress(socket);
+    }
+
+    private static final class MultiServer {
+        final Server server;
+        final GRpcServerProperties.ServerItem config;
+
+        MultiServer(Server server, GRpcServerProperties.ServerItem config) {
+            this.server = server;
+            this.config = config;
+        }
     }
 
 }

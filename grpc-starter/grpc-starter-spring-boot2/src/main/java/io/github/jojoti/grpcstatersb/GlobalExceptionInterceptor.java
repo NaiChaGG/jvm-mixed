@@ -19,6 +19,7 @@ package io.github.jojoti.grpcstatersb;
 import io.grpc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
 /**
  * 全局异常处理
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @link github.com/jojoti
  */
 @GRpcGlobalInterceptor
+@Order
 public class GlobalExceptionInterceptor implements ServerInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionInterceptor.class);

@@ -7,7 +7,7 @@ package io.github.jojoti.grpcstarterdkc;
  */
 public class TestLombok {
 
-    public void log(){
+    public void log() {
 //        log.info("java info");
     }
 

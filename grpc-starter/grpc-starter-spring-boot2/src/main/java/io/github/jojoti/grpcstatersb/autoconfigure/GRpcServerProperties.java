@@ -16,9 +16,12 @@
 
 package io.github.jojoti.grpcstatersb.autoconfigure;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author JoJo Wang
@@ -29,9 +32,27 @@ public class GRpcServerProperties {
 
     private List<ServerItem> servers;
 
+    public static void checkScopeName(String scopeName) {
+        Preconditions.checkArgument(Strings.isNullOrEmpty(scopeName), "ScopeName is not empty.");
+    }
+
+    public List<ServerItem> getServers() {
+        return servers;
+    }
+
+    public void setServers(List<ServerItem> servers) {
+        final var setSize = servers.stream().map(c -> {
+            checkScopeName(c.scopeName);
+            return c.scopeName;
+        }).collect(Collectors.toSet()).size();
+        Preconditions.checkArgument(setSize != servers.size(), "Duplicate scopeName.");
+        this.servers = servers;
+    }
+
     public static final class ServerItem {
         private String scopeName;
         private String address;
+        private int shutdownGracefullyMills;
 
         public String getScopeName() {
             return scopeName;
@@ -48,14 +69,15 @@ public class GRpcServerProperties {
         public void setAddress(String address) {
             this.address = address;
         }
+
+        public int getShutdownGracefullyMills() {
+            return shutdownGracefullyMills;
+        }
+
+        public void setShutdownGracefullyMills(int shutdownGracefullyMills) {
+            this.shutdownGracefullyMills = shutdownGracefullyMills;
+        }
+
     }
 
-    public void setServers(List<ServerItem> servers) {
-
-        this.servers = servers;
-    }
-
-    public List<ServerItem> getServers() {
-        return servers;
-    }
 }

@@ -16,10 +16,6 @@
 
 package io.github.jojoti.grpcstatersbexamples;
 
-import io.github.jojoti.grpcstatersb.GRpcPrimaryService;
-import io.github.jojoti.grpcstatersb.GRpcServiceInterceptors;
-import io.grpc.stub.StreamObserver;
-
 /**
  *
  * @author JoJo Wang

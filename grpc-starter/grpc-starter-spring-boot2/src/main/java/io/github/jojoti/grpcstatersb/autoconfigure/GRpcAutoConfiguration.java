@@ -18,7 +18,6 @@ package io.github.jojoti.grpcstatersb.autoconfigure;
 
 import io.github.jojoti.grpcstatersb.GRpcScopeService;
 import io.github.jojoti.grpcstatersb.GRpcServerRunner;
-import io.grpc.services.HealthStatusManager;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,13 +33,8 @@ import org.springframework.context.annotation.Bean;
 public class GRpcAutoConfiguration {
 
     @Bean
-    public GRpcServerRunner grpcServerRunner(GRpcServerProperties gRpcServerProperties, HealthStatusManager healthStatusManager) {
-        return new GRpcServerRunner(gRpcServerProperties, healthStatusManager);
-    }
-
-    @Bean
-    public HealthStatusManager healthStatusManager() {
-        return new HealthStatusManager();
+    public GRpcServerRunner grpcServerRunner(GRpcServerProperties gRpcServerProperties) {
+        return new GRpcServerRunner(gRpcServerProperties);
     }
 
 }
