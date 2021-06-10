@@ -1,0 +1,30 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.jojoti.grpc-starter</groupId>
+        <artifactId>grpc-starter-named-starter-parent-kotlin</artifactId>
+        <version>${revision}</version>
+        <relativePath>../named-starter-parent-kotlin</relativePath>
+    </parent>
+
+    <artifactId>grpc-starter-spring-boot2-kotlin</artifactId>
+
+    <properties>
+        <main.basedir>${basedir}/../..</main.basedir>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.jojoti.grpc-starter</groupId>
+            <artifactId>grpc-starter-spring-boot2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jojoti</groupId>
+            <artifactId>starter-grpc-kotlin-netty-server</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

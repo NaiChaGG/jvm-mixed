@@ -6,31 +6,29 @@
     <!--  项目根目录禁止继承 starter  -->
     <parent>
         <groupId>io.github.jojoti</groupId>
-        <artifactId>build</artifactId>
+        <artifactId>starter-parent-kotlin</artifactId>
         <version>${revision}</version>
-        <relativePath>../</relativePath>
+        <relativePath>../../starter-parent-kotlin</relativePath>
     </parent>
 
     <groupId>io.github.jojoti.grpc-starter</groupId>
-    <artifactId>grpc-starter-parent</artifactId>
+    <artifactId>grpc-starter-named-starter-parent-kotlin</artifactId>
     <packaging>pom</packaging>
 
     <properties>
-        <main.basedir>${basedir}/..</main.basedir>
+        <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
     <modules>
-        <module>named-starter-parent</module>
-        <module>named-starter-parent-kotlin</module>
+        <module>../grpc-starter-spring-boot2-kotlin</module>
+        <module>../grpc-starter-spring-boot2-kotlin-examples</module>
     </modules>
 
-    <!--  这里管理两个分支有交互的 模块 依赖  -->
     <dependencyManagement>
         <dependencies>
-            <!--    grpc starter 模块之间有依赖，使用这里来确保两个分支的模块可以互相依赖       -->
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2</artifactId>
+                <artifactId>grpc-starter-spring-boot2-kotlin</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

@@ -15,7 +15,7 @@
 
     <profiles>
         <profile>
-            <id>aliyun</id>
+            <id>repositories-aliyun</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -71,6 +71,7 @@
             <modules>
                 <module>starter-dependencies</module>
                 <module>starter-parent</module>
+                <module>starter-parent-dagger</module>
                 <module>starter-parent-lombok</module>
                 <module>starter-parent-lombok-dagger</module>
                 <!--       kotlin 模式下不支持 lombok         -->

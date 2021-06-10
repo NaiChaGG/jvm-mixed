@@ -37,13 +37,13 @@ grpcs:
 
   servers:
     # 内置 primary
-    - scopedName: primary
+    - scopeName: primary
       address: 127.0.0.1:8001
       shadedNettyServerConfig:
         <<: *shadedNettyServer
 
     # 内置 private
-    - scopedName: private
+    - scopeName: private
       address: 127.0.0.1:8002
       shadedNettyServerConfig:
         <<: *shadedNettyServer

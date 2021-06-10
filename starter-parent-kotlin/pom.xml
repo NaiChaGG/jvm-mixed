@@ -15,6 +15,7 @@
 
     <properties>
         <main.basedir>${basedir}/..</main.basedir>
+        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
 
     <modules>
@@ -74,59 +75,48 @@
 
             <!--      默认启用 kotlin 混合编译      -->
             <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
+                <!--                https://github.com/GoogleCloudPlatform/kotlin-samples/blob/master/run/grpc-hello-world-mvn/pom.xml -->
+                <configuration>
+                    <args>
+                        <arg>-Xopt-in=kotlin.RequiresOptIn</arg>
+                    </args>
+                    <jvmTarget>${openjdk.version}</jvmTarget>
+                </configuration>
+                <!--       https://github.com/Kotlin/kotlin-examples/blob/master/maven/dagger-maven-example/pom.xml         -->
+                <!--                https://kotlinlang.org/docs/maven.html#compile-kotlin-and-java-sources                  -->
                 <executions>
                     <execution>
-                        <!-- https://github.com/Kotlin/kotlin-examples/blob/master/maven/dagger-maven-example/pom.xml -->
-                        <id>kapt</id>
-                        <goals>
-                            <goal>kapt</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>src/main/kotlin</sourceDir>
-                                <sourceDir>src/main/java</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>compile</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>src/main/kotlin</sourceDir>
-                                <sourceDir>src/main/java</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-kapt</id>
-                        <goals>
-                            <goal>test-kapt</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>src/test/kotlin</sourceDir>
-                                <sourceDir>src/test/java</sourceDir>
-                            </sourceDirs>
-                        </configuration>
+                        <!--    https://github.com/grpc/grpc-kotlin/issues/269  -->
+                        <!--    https://github.com/GoogleCloudPlatform/kotlin-samples/issues/200  -->
+                        <!--    暂时注销，支持 kotlin 调用 java，java 不能调用 kotlin                        -->
+                        <!--    fixme: 大佬不解决的话，再增加一个 starter 分支                    -->
+                        <!--                        <configuration>-->
+                        <!--                            <sourceDirs>-->
+                        <!--                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>-->
+                        <!--                                <sourceDir>${project.basedir}/src/main/java</sourceDir>-->
+                        <!--                            </sourceDirs>-->
+                        <!--                        </configuration>-->
                     </execution>
                     <execution>
                         <id>test-compile</id>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>src/test/kotlin</sourceDir>
-                                <sourceDir>src/test/java</sourceDir>
-                                <sourceDir>target/generated-sources/kapt/test</sourceDir>
-                            </sourceDirs>
-                        </configuration>
+                        <!--                        <configuration>-->
+                        <!--                            <sourceDirs>-->
+                        <!--                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>-->
+                        <!--                                <sourceDir>${project.basedir}/src/test/java</sourceDir>-->
+                        <!--                            </sourceDirs>-->
+                        <!--                        </configuration>-->
                     </execution>
                 </executions>
             </plugin>
@@ -136,9 +126,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <proc>none</proc>
                     <source>${openjdk.version}</source>
                     <target>${openjdk.version}</target>
+                    <encoding>${project.encoding}</encoding>
                 </configuration>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
@@ -174,6 +164,7 @@
                 <plugin>
                     <groupId>org.xolstice.maven.plugins</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
+                    <!--                    https://github.com/GoogleCloudPlatform/kotlin-samples/blob/master/run/grpc-hello-world-mvn/pom.xml-->
                     <executions>
                         <execution>
                             <id>compile</id>
@@ -182,9 +173,13 @@
                                 <goal>compile-custom</goal>
                             </goals>
                             <configuration>
-                                <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                                <protocArtifact>
+                                    com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                                </protocArtifact>
                                 <pluginId>grpc-java</pluginId>
-                                <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+                                <pluginArtifact>
+                                    io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+                                </pluginArtifact>
                                 <protocPlugins>
                                     <protocPlugin>
                                         <id>grpc-kotlin</id>
@@ -203,8 +198,11 @@
                                 <goal>compile-custom</goal>
                             </goals>
                             <configuration>
-                                <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                                <outputDirectory>${project.build.directory}/generated-sources/protobuf/kotlin</outputDirectory>
+                                <protocArtifact>
+                                    com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                                </protocArtifact>
+                                <outputDirectory>${project.build.directory}/generated-sources/protobuf/kotlin
+                                </outputDirectory>
                                 <pluginId>kotlin</pluginId>
                             </configuration>
                         </execution>

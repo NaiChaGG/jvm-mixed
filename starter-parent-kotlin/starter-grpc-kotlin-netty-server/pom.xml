@@ -20,14 +20,10 @@
     <!--  https://github.com/GoogleCloudPlatform/kotlin-samples/blob/master/run/grpc-hello-world-mvn/pom.xml  -->
     <dependencies>
 
+        <!--    kotlin 包已经自动引入    -->
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-kotlin-stub</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
         </dependency>
 
         <dependency>
@@ -35,10 +31,10 @@
             <artifactId>protobuf-kotlin</artifactId>
         </dependency>
 
+        <!--    以下配置和以上配置一致，kotlin 会自动引入    -->
         <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-            <scope>runtime</scope>
+            <groupId>io.github.jojoti</groupId>
+            <artifactId>starter-grpc-netty-server</artifactId>
         </dependency>
 
     </dependencies>

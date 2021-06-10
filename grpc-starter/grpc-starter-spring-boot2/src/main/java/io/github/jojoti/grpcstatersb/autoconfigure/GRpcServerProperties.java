@@ -14,15 +14,15 @@ public class GRpcServerProperties {
     private List<ServerItem> servers;
 
     public static final class ServerItem {
-        private String scopedName;
+        private String scopeName;
         private String address;
 
-        public String getScopedName() {
-            return scopedName;
+        public String getScopeName() {
+            return scopeName;
         }
 
-        public void setScopedName(String scopedName) {
-            this.scopedName = scopedName;
+        public void setScopeName(String scopeName) {
+            this.scopeName = scopeName;
         }
 
         public String getAddress() {
@@ -32,6 +32,11 @@ public class GRpcServerProperties {
         public void setAddress(String address) {
             this.address = address;
         }
+    }
+
+    public void setServers(List<ServerItem> servers) {
+
+        this.servers = servers;
     }
 
     public List<ServerItem> getServers() {

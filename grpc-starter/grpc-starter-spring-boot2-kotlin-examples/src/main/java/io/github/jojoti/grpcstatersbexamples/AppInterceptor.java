@@ -13,6 +13,9 @@ public class AppInterceptor implements ServerInterceptor {
     public static final Context.Key<Long> USER_ID_NTS = Context.key("userId");
     private static final Metadata.Key<String> USER_ID_METADATA_KEY = Metadata.Key.of("x-user-id", Metadata.ASCII_STRING_MARSHALLER);
 
+    public AppInterceptor() {
+    }
+
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
         var get = metadata.get(USER_ID_METADATA_KEY);
