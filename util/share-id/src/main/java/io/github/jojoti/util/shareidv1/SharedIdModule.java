@@ -28,8 +28,6 @@ public class SharedIdModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        bind(SignatureArg.class).toInstance(null);
-
         install(new FactoryModuleBuilder()
                 .implement(new TypeLiteral<SharedId<Long, SharedIdSignDecodeValue>>() {
                 }, SharedIdSignHash.class)

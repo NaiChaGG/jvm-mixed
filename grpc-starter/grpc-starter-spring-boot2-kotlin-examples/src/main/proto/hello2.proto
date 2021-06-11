@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package io.github.jojoti.grpcstatersbexamples;
+package io.github.jojoti.grpcstartersbexamples;
 
 service Foo2 {
 

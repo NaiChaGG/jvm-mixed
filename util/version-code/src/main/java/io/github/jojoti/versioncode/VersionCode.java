@@ -52,12 +52,12 @@ public class VersionCode {
     public int encode(String version) {
         List<String> items = Splitter.on('.').trimResults().splitToList(version);
         if (items.size() != this.versionLength) {
-            throw new RuntimeException("Version pattern error.");
+            throw new RuntimeException("Version pattern error");
         }
         StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).length() > this.versionCodeLength) {
-                throw new IllegalArgumentException(String.format("Version code do not allow more than %d digits.", this.versionCodeLength));
+                throw new IllegalArgumentException(String.format("Version code do not allow more than %d digits", this.versionCodeLength));
             }
             if (i > 0 && items.get(i).length() == 1) {
                 buffer.append('0');

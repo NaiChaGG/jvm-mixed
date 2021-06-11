@@ -36,7 +36,7 @@
 
     <modules>
         <module>named-starter-parent</module>
-        <module>named-starter-parent-kotlin</module>
+        <module>named-starter-parent-kotlin-dagger</module>
     </modules>
 
 </project>

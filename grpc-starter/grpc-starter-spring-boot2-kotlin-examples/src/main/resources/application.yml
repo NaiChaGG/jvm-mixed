@@ -38,13 +38,15 @@ grpcs:
   servers:
     # 内置 primary
     - scopeName: primary
-      address: 127.0.0.1:8001
+      address: 127.0.0.1:8081
+      enableHealthStatus: false
       shadedNettyServerConfig:
         <<: *shadedNettyServer
 
     # 内置 private
     - scopeName: private
-      address: 127.0.0.1:8002
+      address: 0.0.0.0:8080
+      enableHealthStatus: true
       shadedNettyServerConfig:
         <<: *shadedNettyServer
       # 注册发现配置
@@ -55,7 +57,8 @@ grpcs:
 
     # 自定义地址1
     - scopeName: mixed1
-      url: 127.0.0.1:9001
+      address: 192.168.115.221:8079
+      enableHealthStatus: true
       shadedNettyServerConfig:
         <<: *shadedNettyServer
       # 注册发现配置

@@ -85,6 +85,11 @@
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
                                 <sourceDir>${project.basedir}/src/main/java</sourceDir>
+
+                                <!--          grpc kotlin 混合编译需要全部配置都显示声明                      -->
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/grpc-java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/kotlin/</sourceDir>
                             </sourceDirs>
                             <annotationProcessorPaths>
                                 <annotationProcessorPath>
@@ -104,6 +109,11 @@
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
                                 <sourceDir>${project.basedir}/src/main/java</sourceDir>
+
+                                <!--          grpc kotlin 混合编译需要全部配置都显示声明                      -->
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/grpc-java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/kotlin/</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -116,6 +126,11 @@
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                 <sourceDir>${project.basedir}/src/test/java</sourceDir>
+
+                                <!--          grpc kotlin 混合编译需要全部配置都显示声明                      -->
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/grpc-java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/kotlin/</sourceDir>
                             </sourceDirs>
                             <annotationProcessorPaths>
                                 <annotationProcessorPath>
@@ -136,6 +151,11 @@
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                 <sourceDir>${project.basedir}/src/test/java</sourceDir>
                                 <sourceDir>${project.basedir}/target/generated-sources/kapt/test</sourceDir>
+
+                                <!--          grpc kotlin 混合编译需要全部配置都显示声明                      -->
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/grpc-java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/java/</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources/protobuf/kotlin/</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
