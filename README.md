@@ -1,6 +1,6 @@
 # jvm 技术整合
 
-## starters
+## 1.starters
 
 ### 1.0 basic starter
 
@@ -29,12 +29,12 @@
 
 + [解决方案Examples可以参考](./grpc-starter)
 
-## 3. util 该目录是一些从业以来的遇到的小需求，抽象成库
+## 2. util 该目录是一些从业以来的遇到的小需求，抽象成库
 
 + version-code 1.0.1 -> 10001 版本转化为数据，在数据库可以使用 > 查询出来, 而非 `1.1.1` 字符串需要依赖db的函数进行赛选查询
 + [更多模块](./util)
 
-## 4. examples 一些学习笔记
+## 3. examples 一些学习笔记
 
 + [`dagger` 学习笔记](./examples/dagger-project-server-with-server/src/main/java/io/github/jojoti/examples/dagger)
 + [更多笔记](./examples)
