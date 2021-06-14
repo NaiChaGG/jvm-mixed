@@ -37,6 +37,7 @@
         <module>starter-grpc-netty-server</module>
         <module>starter-grpc-netty-client</module>
         <module>starter-test-junit5</module>
+        <module>../trap-spring</module>
     </modules>
 
     <!--  最基础的包  -->
@@ -83,6 +84,13 @@
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
                 <artifactId>grpc-starter-spring-boot2-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!--     trap spring       -->
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-data-jdbc-postgres</artifactId>
                 <version>${revision}</version>
             </dependency>
 

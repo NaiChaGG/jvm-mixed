@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersbcli.autoconfigure;
+package io.github.jojoti.grpcstartersb.autoconfigure;
 
 import io.github.jojoti.grpcstartersb.GRpcScopeService;
 import io.github.jojoti.grpcstartersb.GRpcServers;

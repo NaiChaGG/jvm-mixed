@@ -1,0 +1,54 @@
+<!--
+  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--  项目根目录禁止继承 starter  -->
+    <parent>
+        <groupId>io.github.jojoti</groupId>
+        <artifactId>starter-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../starter-parent</relativePath>
+    </parent>
+
+    <groupId>io.github.jojoti.trap-spring</groupId>
+    <artifactId>trap-spring-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <main.basedir>${basedir}/..</main.basedir>
+    </properties>
+
+    <modules>
+        <module>trap-spring-data-jdbc</module>
+        <module>trap-spring-data-jdbc-postgres</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--    grpc starter 模块之间有依赖，使用这里来确保两个分支的模块可以互相依赖       -->
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-data-jdbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

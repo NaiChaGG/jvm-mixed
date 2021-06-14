@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 import com.google.common.net.InetAddresses;
-import io.github.jojoti.grpcstartersbcli.autoconfigure.GRpcServerProperties;
+import io.github.jojoti.grpcstartersb.autoconfigure.GRpcServerProperties;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.netty.NettyServerBuilder;
