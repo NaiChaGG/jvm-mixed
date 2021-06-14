@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersbexamples;
-
-import io.grpc.stub.StreamObserver;
-import org.springframework.beans.factory.annotation.Qualifier;
+package io.github.jojoti.util.sharedidv2;
 
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@GRpcMixed1Service
-public class Foo3Handler extends Foo3Grpc.Foo3ImplBase {
-
-    public Foo3Handler() {
-
-    }
-
-    @Override
-    public void bar(Hello3.BarRequest3 request, StreamObserver<Hello3.BarResponse3> responseObserver) {
-        super.bar(request, responseObserver);
-    }
-
-}
+//public interface SharedIdHashToken extends SharedId<> {
+//
+//
+//
+//}

@@ -36,6 +36,7 @@
 
     <modules>
         <module>starter-grpc-kotlin-netty-server</module>
+        <module>starter-grpc-kotlin-netty-client</module>
     </modules>
 
     <dependencies>
@@ -55,6 +56,23 @@
             <dependency>
                 <groupId>io.github.jojoti</groupId>
                 <artifactId>starter-grpc-kotlin-netty-server</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti</groupId>
+                <artifactId>starter-grpc-kotlin-netty-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!--    grpc starter        -->
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2-kotlin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2-client-kotlin</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

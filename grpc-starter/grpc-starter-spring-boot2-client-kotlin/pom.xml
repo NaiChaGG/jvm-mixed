@@ -19,17 +19,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
-        <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-kotlin-dagger</artifactId>
+        <groupId>io.github.jojoti.grpc-starter</groupId>
+        <artifactId>grpc-starter-named-starter-parent-kotlin</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent-kotlin-dagger</relativePath>
+        <relativePath>../named-starter-parent-kotlin</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent-kotlin-dagger</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>grpc-starter-spring-boot2-client-kotlin</artifactId>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
@@ -37,9 +34,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.jojoti.grpc-starter</groupId>
+            <artifactId>grpc-starter-spring-boot2-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
+            <artifactId>starter-grpc-kotlin-netty-client</artifactId>
         </dependency>
     </dependencies>
 

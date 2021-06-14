@@ -49,6 +49,11 @@
                 <artifactId>grpc-starter-spring-boot2</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

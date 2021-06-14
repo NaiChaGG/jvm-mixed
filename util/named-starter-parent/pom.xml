@@ -37,6 +37,7 @@
 
     <modules>
         <module>../share-id</module>
+        <module>../sharedidv2</module>
         <module>../sql-builder</module>
         <module>../version-code</module>
     </modules>

@@ -19,28 +19,37 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
         <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-kotlin-dagger</artifactId>
+        <artifactId>starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent-kotlin-dagger</relativePath>
+        <relativePath>../</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent-kotlin-dagger</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>starter-grpc-netty-client</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>

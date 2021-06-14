@@ -27,7 +27,6 @@
     </parent>
 
     <artifactId>examples-dagger-project-server-with-server</artifactId>
-    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>

@@ -1,6 +1,6 @@
 # 驱动配置信息
 debug: false # Enable debug logs.
-trace: false
+trace: false # Enable trace logs.
 
 ## include other yml config.
 spring.profiles:
@@ -14,25 +14,32 @@ spring.profiles:
 
 # 服务发现配置
 discovery: &discovery
-  provider: etcd/consul/zookeeper
+  # provider: local/dns/etcd/consul/zookeeper
+  # provider 会自动识别
+  # fixme 该模式无法复用配置，因为每次都是变更的，这里只是作为 examples 写在这里
+  local:
+    - 127.0.0.1:3001
+    - 127.0.0.1:3002
+  dns:
+    - 127.0.0.1:5001
+    - 127.0.0.1:5003
   etcd:
     endpoints:
       - 127.0.0.1:6000
       - 127.0.0.1:6001
-      - 127.0.0.1:6002
   consul:
-    address: 127.0.0.1:7001
+    agent: 127.0.0.1:7001
   zookeeper:
-    addresses:
-      - 127.0.0.1:7100
-      - 127.0.0.1:7101
-      - 127.0.0.1:7102
+    - 127.0.0.1:7100
 
 # grpc server 配置
 grpcs:
   # server 配置
-  serverConfig: &shadedNettyServer
-    maxInboundSize: 1024
+  serverConfig: &nettyServer
+    nettyConfig:
+      maxInboundSize: 1024
+    nettySharedConfig:
+
   # 默认支持的两个服务，该模式可以自动使用注解
 
   servers:
@@ -40,15 +47,13 @@ grpcs:
     - scopeName: primary
       address: 127.0.0.1:8081
       enableHealthStatus: false
-      shadedNettyServerConfig:
-        <<: *shadedNettyServer
+      <<: *nettyServer
 
     # 内置 private
     - scopeName: private
       address: 0.0.0.0:8080
       enableHealthStatus: true
-      shadedNettyServerConfig:
-        <<: *shadedNettyServer
+      <<: *nettyServer
       # 注册发现配置
       discovery:
         # 该值如果不设置 则 使用 默认配置
@@ -59,8 +64,7 @@ grpcs:
     - scopeName: mixed1
       address: 192.168.115.221:8079
       enableHealthStatus: true
-      shadedNettyServerConfig:
-        <<: *shadedNettyServer
+      <<: *nettyServer
       # 注册发现配置
       discovery:
         # 该值如果不设置 则 使用 默认配置
@@ -68,25 +72,31 @@ grpcs:
         <<: *discovery
 
 grpc:
+
   # grpc client 配置
-  client: &grpcClient
-    maxInboundSize: 1024
-  remote:
+  clientConfig: &nettyClient
+    nettyConfig:
+      maxInboundSize: 1024
+    nettySharedConfig:
+
+  client: &client
+    <<: *nettyClient
+    # 从远程 注册发现中心 发现配置
+    discovery:
+      <<: *discovery
+
+  clients:
     # 以下配置写法会从远程 service 读取到 远程注册到 注册发现 组件的 service address
     # 该 scopeName 则是使用本地的 scopeName 对应的 拦截器等等
-    - scopeName: private
-      clientConfig:
-        <<: *grpcClient
-      # 注册发现配置
+    # scopeName 保持唯一
+    - serviceName: examplesServiceRpc
+      <<: *nettyClient
+      # 从远程 注册发现中心 发现配置
       discovery:
-        # 该值如果不设置 则 使用 默认配置
-        serviceName: examplesPrivateService
-        <<: *discovery
+        local:
+          - 127.0.0.1:9001
+          - 127.0.0.1:9002
 
     # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
-    - scopeName: mixed1
-      clientConfig:
-        <<: *grpcClient
-      discovery:
-        # local 等于 空 或者 等于 mixed1 都行，表示引用本机 进程之间的服务
-        local: (空/mixed1)/127.0.0.1:9001
+    - serviceName: examplesService1Rpc
+      <<: *client

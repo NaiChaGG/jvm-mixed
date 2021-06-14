@@ -19,17 +19,15 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
-        <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-kotlin-dagger</artifactId>
+        <groupId>io.github.jojoti.util</groupId>
+        <artifactId>util-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent-kotlin-dagger</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent-kotlin-dagger</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>util-sharedidv2</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
@@ -37,9 +35,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
+            <groupId>org.hashids</groupId>
+            <artifactId>hashids</artifactId>
         </dependency>
     </dependencies>
 

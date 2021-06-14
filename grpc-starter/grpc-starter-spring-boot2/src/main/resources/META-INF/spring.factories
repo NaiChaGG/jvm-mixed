@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.github.jojoti.grpcstartersb.autoconfigure.GRpcAutoConfiguration
+io.github.jojoti.grpcstartersbcli.autoconfigure.GRpcAutoConfiguration

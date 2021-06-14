@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 import com.google.common.net.InetAddresses;
-import io.github.jojoti.grpcstartersb.autoconfigure.GRpcServerProperties;
+import io.github.jojoti.grpcstartersbcli.autoconfigure.GRpcServerProperties;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.netty.NettyServerBuilder;
@@ -277,6 +277,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+        // fixme 处理 netty netty shared
 
 //        final var socket = InetSocketAddress.createUnresolved(url.getHost(), url.getPort());
         // 使用 guava api 可以监听 127.0.0.1 0.0.0.0 等端口

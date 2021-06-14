@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersbexamples;
+package io.github.jojoti.grpcstartersbcli;
 
-import io.grpc.stub.StreamObserver;
-import org.springframework.beans.factory.annotation.Qualifier;
+import io.grpc.ServerInterceptor;
+
+import java.lang.annotation.*;
 
 /**
+ * 带作用域的 grpc starter
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@GRpcMixed1Service
-public class Foo3Handler extends Foo3Grpc.Foo3ImplBase {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface GRpcServiceInterceptors {
 
-    public Foo3Handler() {
+    Class<? extends ServerInterceptor>[] interceptors();
 
-    }
+    // 启用或者关闭全局拦截器
+    boolean applyGlobalInterceptors() default true;
 
-    @Override
-    public void bar(Hello3.BarRequest3 request, StreamObserver<Hello3.BarResponse3> responseObserver) {
-        super.bar(request, responseObserver);
-    }
+    // 启用或者关闭 scope 全局拦截器
+    boolean applyScopeGlobalInterceptors() default true;
 
 }

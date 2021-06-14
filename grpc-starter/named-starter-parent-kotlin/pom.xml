@@ -37,6 +37,7 @@
 
     <modules>
         <module>../grpc-starter-spring-boot2-kotlin</module>
+        <module>../grpc-starter-spring-boot2-client-kotlin</module>
         <module>../grpc-starter-spring-boot2-kotlin-examples</module>
     </modules>
 

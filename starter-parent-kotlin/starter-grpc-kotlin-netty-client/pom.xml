@@ -19,28 +19,40 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
         <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-kotlin-dagger</artifactId>
+        <artifactId>starter-parent-kotlin</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent-kotlin-dagger</relativePath>
+        <relativePath>../</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent-kotlin-dagger</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>starter-grpc-kotlin-netty-client</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
+    <!--  https://github.com/GoogleCloudPlatform/kotlin-samples/blob/master/run/grpc-hello-world-mvn/pom.xml  -->
     <dependencies>
+
+        <!--    kotlin 包已经自动引入    -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-kotlin-stub</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-kotlin</artifactId>
+        </dependency>
+
+        <!--    以下配置和以上配置一致，kotlin 会自动引入    -->
         <dependency>
             <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
+            <artifactId>starter-grpc-netty-client</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>
