@@ -40,5 +40,11 @@
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
 
+        <dependency>
+            <artifactId>javax.persistence-api</artifactId>
+            <groupId>javax.persistence</groupId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

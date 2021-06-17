@@ -14,33 +14,21 @@
  * limitations under the License.
  */
 
-package io.github.trapspring.datajdbc;
+package io.github.jojoti.grpcstartersb;
+
+import org.springframework.stereotype.Component;
+
+import java.lang.annotation.*;
 
 /**
+ * 用于 替代 spring mvc controller
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
-
-    private long createAt;
-
-    private long updateAt;
-
-    public long getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(long createAt) {
-        this.createAt = createAt;
-    }
-
-    public long getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(long updateAt) {
-        this.updateAt = updateAt;
-    }
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface ControllerWrapper {
 }

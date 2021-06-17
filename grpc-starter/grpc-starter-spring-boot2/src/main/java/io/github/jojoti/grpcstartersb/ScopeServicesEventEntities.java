@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package io.github.trapspring.datajdbc;
+package io.github.jojoti.grpcstartersb;
+
+import com.google.common.collect.Multimap;
+import io.grpc.ServiceDescriptor;
 
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
+public class ScopeServicesEventEntities {
 
-    private long createAt;
+    private final Multimap<GRpcScope, ServiceDescriptor> scopes;
 
-    private long updateAt;
-
-    public long getCreateAt() {
-        return createAt;
+    public ScopeServicesEventEntities(Multimap<GRpcScope, ServiceDescriptor> scopes) {
+        this.scopes = scopes;
     }
 
-    public void setCreateAt(long createAt) {
-        this.createAt = createAt;
-    }
-
-    public long getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(long updateAt) {
-        this.updateAt = updateAt;
+    public Multimap<GRpcScope, ServiceDescriptor> getScopes() {
+        return scopes;
     }
 
 }

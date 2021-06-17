@@ -38,6 +38,8 @@
     <modules>
         <module>../grpc-starter-spring-boot2</module>
         <module>../grpc-starter-spring-boot2-client</module>
+        <module>../grpc-starter-spring-boot2-ram</module>
+        <module>../grpc-starter-spring-boot2-ram-redis</module>
     </modules>
 
     <dependencyManagement>
@@ -46,6 +48,11 @@
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
                 <artifactId>grpc-starter-spring-boot2</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2-ram</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

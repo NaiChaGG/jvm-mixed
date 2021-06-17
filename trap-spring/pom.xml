@@ -38,6 +38,8 @@
     <modules>
         <module>trap-spring-data-jdbc</module>
         <module>trap-spring-data-jdbc-postgres</module>
+        <module>trap-spring-data-redis-lettuce</module>
+        <module>trap-spring-jpa-auto-ddl</module>
     </modules>
 
     <dependencyManagement>

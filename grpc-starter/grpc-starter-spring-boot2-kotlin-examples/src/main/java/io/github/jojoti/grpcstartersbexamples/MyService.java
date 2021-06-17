@@ -14,33 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.trapspring.datajdbc;
+package io.github.jojoti.grpcstartersbexamples;
 
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
+public interface MyService {
 
-    private long createAt;
-
-    private long updateAt;
-
-    public long getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(long createAt) {
-        this.createAt = createAt;
-    }
-
-    public long getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(long updateAt) {
-        this.updateAt = updateAt;
-    }
+    void foo();
 
 }

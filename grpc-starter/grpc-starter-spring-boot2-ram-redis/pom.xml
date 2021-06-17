@@ -20,31 +20,27 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.jojoti.trap-spring</groupId>
-        <artifactId>trap-spring-parent</artifactId>
+        <groupId>io.github.jojoti.grpc-starter</groupId>
+        <artifactId>grpc-starter-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <artifactId>trap-spring-data-jdbc-postgres</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>grpc-starter-spring-boot2-ram-redis</artifactId>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>io.github.jojoti.grpc-starter</groupId>
+            <artifactId>grpc-starter-spring-boot2-ram</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.github.jojoti.trap-spring</groupId>
-            <artifactId>trap-spring-data-jdbc</artifactId>
+            <artifactId>trap-spring-data-redis-lettuce</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
     </dependencies>
+
 </project>

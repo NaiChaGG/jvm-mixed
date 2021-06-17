@@ -38,7 +38,8 @@ grpcs:
   serverConfig: &nettyServer
     nettyConfig:
       maxInboundSize: 1024
-    nettySharedConfig:
+#    nettySharedConfig:
+#      xx: 1
 
   # 默认支持的两个服务，该模式可以自动使用注解
 
@@ -62,7 +63,7 @@ grpcs:
 
     # 自定义地址1
     - scopeName: mixed1
-      address: 192.168.115.221:8079
+      address: 127.0.0.1:8079
       enableHealthStatus: true
       <<: *nettyServer
       # 注册发现配置

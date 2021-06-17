@@ -87,10 +87,28 @@
                 <version>${revision}</version>
             </dependency>
 
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2-ram-redis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!--     trap spring       -->
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
                 <artifactId>trap-spring-data-jdbc-postgres</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-data-redis-lettuce</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-jpa-auto-ddl</artifactId>
                 <version>${revision}</version>
             </dependency>
 

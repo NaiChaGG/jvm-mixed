@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.trapspring.datajdbc;
+package io.github.jojoti.grpcstartersbram;
+
+import io.github.jojoti.grpcstartersb.GRpcScope;
+import io.grpc.ServiceDescriptor;
 
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
+public interface RAMAccess {
 
-    private long createAt;
-
-    private long updateAt;
-
-    public long getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(long createAt) {
-        this.createAt = createAt;
-    }
-
-    public long getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(long updateAt) {
-        this.updateAt = updateAt;
-    }
+    /**
+     * 校验是否可以直接访问数据库
+     *
+     * @param uuid 用户的唯一ID 看应用层自行约定
+     * @param ramItem 注解标记的属性
+     * @param gRpcScope 标注的注解属于哪个模块
+     * @param serviceDescriptor
+     * @return
+     */
+    boolean access(Object uuid, RAM.RAMItem ramItem, GRpcScope gRpcScope, ServiceDescriptor serviceDescriptor);
 
 }

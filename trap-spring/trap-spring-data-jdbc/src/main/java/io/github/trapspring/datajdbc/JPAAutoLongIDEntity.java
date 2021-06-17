@@ -16,15 +16,29 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.data.annotation.Id;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Configuration
-@EnableJdbcRepositories(repositoryBaseClass = OverrideCRUDRepository.class)
-public class AutoEnabled {
+public abstract class JPAAutoLongIDEntity extends TrapBaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
 }

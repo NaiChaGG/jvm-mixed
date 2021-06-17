@@ -120,6 +120,8 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
         final var serverBuilders = Lists.<ServerBuilders>newArrayList();
 
+        final var services = Multimaps.<GRpcScope, ServiceDescriptor>newListMultimap(Maps.newHashMap(), Lists::newArrayList);
+
         for (Map.Entry<GRpcScope, Collection<BindableService>> entry : scopeHandlers.asMap().entrySet()) {
             // 根据 scopeName 读取配置
             final var config = getServerConfigByScopeName(entry.getKey().value());
@@ -174,6 +176,8 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 }
 
                 serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
+                // 保存所有的 apis
+                services.put(entry.getKey(), bindableService.bindService().getServiceDescriptor());
             }
         }
 
@@ -208,6 +212,9 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
         this.running = true;
 
+        // 发布 api 完成注册的事件
+        this.applicationContext.publishEvent(new ScopeServicesEvent(new ScopeServicesEventEntities(services)));
+
         // 添加守护线程
         Thread awaitThread = new Thread(() -> {
             try {
@@ -223,6 +230,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
     @Override
     public void stop() {
+        log.info("grpc server stopping...");
         if (this.servers != null) {
             for (var server : this.servers) {
                 if (server.healthStatusManager != null) {

@@ -26,7 +26,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>trap-spring-data-jdbc-postgres</artifactId>
+    <artifactId>trap-spring-data-redis-lettuce</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -36,14 +36,13 @@
     <dependencies>
 
         <dependency>
-            <groupId>io.github.jojoti.trap-spring</groupId>
-            <artifactId>trap-spring-data-jdbc</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
         </dependency>
 
     </dependencies>

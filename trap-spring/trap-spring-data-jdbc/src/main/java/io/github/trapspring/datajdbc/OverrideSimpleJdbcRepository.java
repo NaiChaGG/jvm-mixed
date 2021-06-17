@@ -28,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @link github.com/jojoti
  */
 @Transactional(readOnly = true)
-public class OverrideCRUDRepository<T, ID> extends SimpleJdbcRepository<T, ID> {
+public class OverrideSimpleJdbcRepository<T, ID> extends SimpleJdbcRepository<T, ID> {
 
-    public OverrideCRUDRepository(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity) {
+    public OverrideSimpleJdbcRepository(JdbcAggregateOperations entityOperations, PersistentEntity<T, ?> entity) {
         super(entityOperations, entity);
     }
 

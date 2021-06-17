@@ -20,31 +20,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.jojoti.trap-spring</groupId>
-        <artifactId>trap-spring-parent</artifactId>
+        <groupId>io.github.jojoti.examples</groupId>
+        <artifactId>examples-named-starter-parent-dagger</artifactId>
         <version>${revision}</version>
-        <relativePath>../</relativePath>
+        <relativePath>../named-starter-parent-dagger</relativePath>
     </parent>
 
-    <artifactId>trap-spring-data-jdbc-postgres</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>examples-spring-kt-grpc-jdbc-redis</artifactId>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>io.github.jojoti.trap-spring</groupId>
-            <artifactId>trap-spring-data-jdbc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-    </dependencies>
 </project>
