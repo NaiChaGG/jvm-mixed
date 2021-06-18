@@ -19,7 +19,6 @@ package io.github.jojoti.grpcstartersb;
 import java.lang.annotation.*;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

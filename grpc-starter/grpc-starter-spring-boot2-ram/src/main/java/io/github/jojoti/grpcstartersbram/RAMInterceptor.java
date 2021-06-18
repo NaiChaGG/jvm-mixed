@@ -16,6 +16,9 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
+import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
+import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServicesEventEntities;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
@@ -30,7 +33,8 @@ import org.springframework.context.event.EventListener;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class RAMInterceptor implements ServerInterceptor {
+@GRpcGlobalInterceptor
+public class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
 
     private final RAMAccess ramAccess;
 
@@ -48,6 +52,11 @@ public class RAMInterceptor implements ServerInterceptor {
     public void onServicesRegister(ScopeServicesEventEntities servicesEventEntities) {
 
         // fixme 接受启动填充的
+    }
+
+    @Override
+    public GRpcScope getScope() {
+        return null;
     }
 
 }

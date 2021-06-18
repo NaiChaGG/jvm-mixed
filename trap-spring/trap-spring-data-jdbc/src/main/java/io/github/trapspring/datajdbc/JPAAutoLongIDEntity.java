@@ -16,16 +16,16 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
+@MappedSuperclass
 public abstract class JPAAutoLongIDEntity extends TrapBaseTimeEntity {
 
     @Id

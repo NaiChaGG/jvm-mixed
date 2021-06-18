@@ -47,10 +47,10 @@ import java.util.stream.Collectors;
 
 /**
  * rfs:
- *  https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/EmbeddedWebServerFactoryCustomizerAutoConfiguration.java
- *  https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerStartStopLifecycle.java
- *  https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerManager.java
- *
+ * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/EmbeddedWebServerFactoryCustomizerAutoConfiguration.java
+ * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerStartStopLifecycle.java
+ * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerManager.java
+ * <p>
  * 参考 spring boot 是 如何管理 多种类型的 server
  * 与 spring boot 无关，直接使用 spring context 来管理 grpc
  *
@@ -138,12 +138,18 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             for (BindableService bindableService : entry.getValue()) {
                 final var foundGRpcServiceInterceptors = bindableService.getClass().getAnnotation(GRpcServiceInterceptors.class);
 
-                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyGlobalInterceptors()) {
-                    for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
-                        // 先添加全局拦截器
-                        // grpc 拦截器是先添加的后执行
-                        newServerBuilder.intercept(allGlobalInterceptor);
+                // 拦截器先添加，后执行的
+
+                // 添加每个 service 特有的拦截器
+                if (foundGRpcServiceInterceptors != null && foundGRpcServiceInterceptors.interceptors().length > 0) {
+                    final var foundInterceptors = Lists.<ServerInterceptor>newArrayList();
+                    for (var interceptor : foundGRpcServiceInterceptors.interceptors()) {
+                        final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
+                        // 拦截器定义的 bean 没有找到
+                        Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found");
+                        foundInterceptors.add(findDefinedInterceptorBean);
                     }
+                    ServerInterceptors.intercept(bindableService, foundInterceptors);
                 }
 
                 if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyScopeGlobalInterceptors()) {
@@ -157,19 +163,22 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     }
                 }
 
-                // 添加每个 service 特有的拦截器
-                if (foundGRpcServiceInterceptors != null && foundGRpcServiceInterceptors.interceptors().length > 0) {
-                    final var foundInterceptors = Lists.<ServerInterceptor>newArrayList();
-                    for (var interceptor : foundGRpcServiceInterceptors.interceptors()) {
-                        final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
-                        // 拦截器定义的 bean 没有找到
-                        Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found");
-                        foundInterceptors.add(findDefinedInterceptorBean);
+                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyGlobalInterceptors()) {
+                    for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
+                        if (allGlobalInterceptor instanceof DynamicScopeFilter) {
+                            // 比较两个注解的 scope 是否是同一个里面
+                            if (entry.getKey().value().equals(((DynamicScopeFilter) allGlobalInterceptor).getScope().value())) {
+                                newServerBuilder.intercept(allGlobalInterceptor);
+                            }
+                        } else {
+                            // 先添加全局拦截器
+                            // grpc 拦截器是先添加的后执行
+                            newServerBuilder.intercept(allGlobalInterceptor);
+                        }
                     }
-                    ServerInterceptors.intercept(bindableService, foundInterceptors);
-                } else {
-                    newServerBuilder.addService(bindableService);
                 }
+
+                newServerBuilder.addService(bindableService);
 
                 if (health != null) {
                     health.setStatus(bindableService.bindService().getServiceDescriptor().getName(), HealthCheckResponse.ServingStatus.SERVING);
@@ -181,9 +190,17 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             }
         }
 
+        for (GRpcServerProperties.ServerItem server : this.gRpcServerProperties.getServers()) {
+            for (ServerBuilders serverBuilder : serverBuilders) {
+                if (!serverBuilder.config.getScopeName().equals(server.getScopeName())) {
+                    throw new IllegalArgumentException("Scope " + server.getScopeName() + " exists, but no handler is configured");
+                }
+            }
+        }
+
         if (serverBuilders.size() != allScopeHandlers.size() || serverBuilders.size() != this.gRpcServerProperties.getServers().size()) {
             // 启动的server与配置的 或者 bean注解的个数不匹配
-            throw new IllegalArgumentException("Config error, please check");
+            throw new IllegalArgumentException("Config error, please check config or annotation");
         }
 
         // 多个 latch

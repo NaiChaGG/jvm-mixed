@@ -18,11 +18,14 @@ package io.github.trapspring.datajdbc;
 
 import org.springframework.data.domain.Persistable;
 
+import javax.persistence.MappedSuperclass;
+
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
+@MappedSuperclass
 public abstract class TrapBaseEntity implements Persistable<Long> {
 
     // 禁止使用 save update 方法

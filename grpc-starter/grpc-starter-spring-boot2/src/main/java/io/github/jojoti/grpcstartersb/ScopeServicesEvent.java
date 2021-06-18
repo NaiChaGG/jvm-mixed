@@ -19,7 +19,6 @@ package io.github.jojoti.grpcstartersb;
 import org.springframework.context.ApplicationEvent;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -27,8 +26,9 @@ public class ScopeServicesEvent extends ApplicationEvent {
 
     /**
      * Create a new {@code ApplicationEvent}.
+     *
      * @param source the object on which the event initially occurred or with
-     * which the event is associated (never {@code null})
+     *               which the event is associated (never {@code null})
      */
     public ScopeServicesEvent(ScopeServicesEventEntities source) {
         super(source);

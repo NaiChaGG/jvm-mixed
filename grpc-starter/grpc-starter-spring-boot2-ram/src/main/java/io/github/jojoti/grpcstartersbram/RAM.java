@@ -16,13 +16,11 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import org.springframework.core.annotation.AliasFor;
 import org.springframework.lang.NonNull;
 
 import java.lang.annotation.*;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -31,7 +29,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface RAM {
 
-    RAMItem value();
+    RAMItem value() default @RAMItem;
 
     // 匿名访问使用频率高，所以这里特殊处理
     boolean allowAnonymous() default false;
@@ -47,11 +45,11 @@ public @interface RAM {
          *
          * @return
          */
-        @AliasFor("value()")
         int groupId() default 0;
 
         /**
          * 该 item 组对应的属性
+         *
          * @return
          */
         RAMAttr[] attrs() default {};

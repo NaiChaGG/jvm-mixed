@@ -16,11 +16,15 @@
 
 package io.github.trapspring.datajdbc;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
+@MappedSuperclass
 public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
 
     private long createAt;
