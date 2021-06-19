@@ -22,7 +22,6 @@ import io.github.jojoti.grpcstartersb.GRpcScopeService;
 import java.lang.annotation.*;
 
 /**
- *
  * 主要的 grpc server
  *
  * @author JoJo Wang

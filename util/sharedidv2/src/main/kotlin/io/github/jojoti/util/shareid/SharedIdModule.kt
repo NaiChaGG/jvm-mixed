@@ -1,7 +1,6 @@
 package io.github.jojoti.util.shareid
 
 import dagger.Binds
-import dagger.Module
 import javax.inject.Singleton
 
 /**

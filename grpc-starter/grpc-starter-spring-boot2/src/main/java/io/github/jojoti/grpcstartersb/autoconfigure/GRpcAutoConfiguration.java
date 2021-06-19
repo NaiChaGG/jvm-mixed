@@ -46,11 +46,11 @@ public class GRpcAutoConfiguration {
         return new GRpcServers(gRpcServerProperties);
     }
 
-//    @Bean
-//    @GRpcGlobalInterceptor
-//    public ServerInterceptor globalExceptionInterceptor() {
-//        return TransmitStatusRuntimeExceptionInterceptor.instance();
-//    }
+    @Bean
+    @GRpcGlobalInterceptor
+    public ServerInterceptor transmitStatusRuntimeExceptionInterceptor() {
+        return TransmitStatusRuntimeExceptionInterceptor.instance();
+    }
 
     @Bean
     @GRpcGlobalInterceptor

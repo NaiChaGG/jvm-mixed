@@ -38,8 +38,8 @@ grpcs:
   serverConfig: &nettyServer
     nettyConfig:
       maxInboundSize: 1024
-#    nettySharedConfig:
-#      xx: 1
+  #    nettySharedConfig:
+  #      xx: 1
 
   # 默认支持的两个服务，该模式可以自动使用注解
   ram:

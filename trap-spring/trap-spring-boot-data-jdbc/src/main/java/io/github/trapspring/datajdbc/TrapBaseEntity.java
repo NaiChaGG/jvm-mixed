@@ -21,7 +21,6 @@ import org.springframework.data.domain.Persistable;
 import javax.persistence.MappedSuperclass;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

@@ -17,10 +17,8 @@
 package io.github.jojoti.grpcstartersbexamples;
 
 import io.grpc.stub.StreamObserver;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

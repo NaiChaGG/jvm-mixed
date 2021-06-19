@@ -19,27 +19,32 @@ package io.github.jojoti.grpcstartersb;
 import io.grpc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.Order;
 
 /**
  * 全局异常处理
+ *
  * <p>
  * https://stackoverflow.com/questions/39797142/how-to-add-global-exception-interceptor-in-grpc-server
  * https://github.com/grpc/grpc-java/issues/1552
  * https://skyao.io/learning-grpc/server/status/exception_process.html
  * https://stackoverflow.com/questions/57123965/grpc-response-headers-based-on-the-incoming-value
+ * https://grpc.github.io/grpc-java/javadoc/io/grpc/util/TransmitStatusRuntimeExceptionInterceptor.html
+ * https://github.com/dconnelly/grpc-error-example/blob/master/src/main/java/example/Errors.java
+ * https://github.com/grpc/grpc-java/issues/681
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Deprecated(since = "new api https://grpc.github.io/grpc-java/javadoc/io/grpc/util/TransmitStatusRuntimeExceptionInterceptor.html")
 public final class GlobalExceptionInterceptor implements ServerInterceptor {
 
+    static final Metadata.Key<String> X_ERROR_METADATA_KEY = Metadata.Key.of("x-err", Metadata.ASCII_STRING_MARSHALLER);
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionInterceptor.class);
+    private static final Metadata trailers;
 
-    private static final Metadata EMPTY_HEADER = new Metadata();
-
-    private static final Metadata.Key<String> X_ERROR_METADATA_KEY = Metadata.Key.of("x-err", Metadata.ASCII_STRING_MARSHALLER);
+    static {
+        trailers = new Metadata();
+        trailers.put(X_ERROR_METADATA_KEY, "-1");
+    }
 
     GlobalExceptionInterceptor() {
     }
@@ -57,18 +62,12 @@ public final class GlobalExceptionInterceptor implements ServerInterceptor {
                 try {
                     super.onHalfClose();
                 } catch (Exception e) {
-                    if (e instanceof StatusRuntimeException) {
-                        // ignore 忽略错误
-                        call.close(Status.OK, ((StatusRuntimeException) e).getTrailers());
-                    } else {
-                        log.error("grpc close", e);
-                        call.close(Status.INTERNAL.withCause(e), EMPTY_HEADER);
-                    }
+                    // 异常处理项目抛出异常才会走到这里
+                    call.close(Status.INTERNAL, trailers);
+                    log.error("grpc close", e);
                 }
             }
-        }
-
-                ;
+        };
     }
 
 }

@@ -130,6 +130,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             final HealthStatusManager health = config.isEnableHealthStatus() ? new HealthStatusManager() : null;
 
             if (health != null) {
+                log.info("scopeName {} add health", entry.getKey().value());
                 // 添加健康 检查 service
                 newServerBuilder.addService(health.getHealthService());
             }
@@ -182,15 +183,14 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 }
 
                 newServerBuilder.addService(bindableService);
-
                 if (health != null) {
                     health.setStatus(bindableService.bindService().getServiceDescriptor().getName(), HealthCheckResponse.ServingStatus.SERVING);
                 }
-
-                serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
                 // 保存所有的 apis
                 services.put(entry.getKey(), bindableService.bindService().getServiceDescriptor());
             }
+
+            serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
         }
 
         for (GRpcServerProperties.ServerItem server : this.gRpcServerProperties.getServers()) {
@@ -206,7 +206,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             }
         }
 
-        if (serverBuilders.size() != allScopeHandlers.size() || serverBuilders.size() != this.gRpcServerProperties.getServers().size()) {
+        if (serverBuilders.size() != scopeHandlers.asMap().size() || serverBuilders.size() != this.gRpcServerProperties.getServers().size()) {
             // 启动的server与配置的 或者 bean注解的个数不匹配
             throw new IllegalArgumentException("Config error, please check config or annotation");
         }

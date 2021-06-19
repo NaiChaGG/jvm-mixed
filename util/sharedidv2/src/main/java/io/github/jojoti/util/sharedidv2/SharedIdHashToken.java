@@ -17,7 +17,6 @@
 package io.github.jojoti.util.sharedidv2;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

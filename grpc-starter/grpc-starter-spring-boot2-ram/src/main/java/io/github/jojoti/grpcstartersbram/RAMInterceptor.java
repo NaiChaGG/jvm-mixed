@@ -16,10 +16,8 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import com.google.common.collect.Lists;
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServicesEventEntities;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;

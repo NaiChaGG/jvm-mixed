@@ -18,7 +18,6 @@ package io.github.jojoti.grpcstartersbexamples;
 
 import com.google.common.base.Strings;
 import io.grpc.*;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * @author JoJo Wang

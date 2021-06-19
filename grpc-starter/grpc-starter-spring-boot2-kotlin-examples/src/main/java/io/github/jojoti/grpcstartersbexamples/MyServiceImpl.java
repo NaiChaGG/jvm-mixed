@@ -19,7 +19,6 @@ package io.github.jojoti.grpcstartersbexamples;
 import org.springframework.stereotype.Service;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

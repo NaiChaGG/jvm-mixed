@@ -17,7 +17,6 @@
 package io.github.trapspring.datajdbc;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

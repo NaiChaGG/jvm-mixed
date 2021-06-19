@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

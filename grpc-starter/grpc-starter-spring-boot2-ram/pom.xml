@@ -37,6 +37,10 @@
             <groupId>io.github.jojoti.grpc-starter</groupId>
             <artifactId>grpc-starter-spring-boot2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.jojoti.util</groupId>
+            <artifactId>util-hashid-token</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

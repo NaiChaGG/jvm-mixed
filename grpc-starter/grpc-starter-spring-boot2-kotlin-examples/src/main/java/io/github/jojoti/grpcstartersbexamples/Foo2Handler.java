@@ -16,13 +16,12 @@
 
 package io.github.jojoti.grpcstartersbexamples;
 
-import io.github.jojoti.grpcstartersb.HeaderErrorCode;
+import io.github.jojoti.grpcstartersb.ErrorCodeTrailers;
 import io.github.jojoti.grpcstartersb.GRpcPrimaryService;
 import io.github.jojoti.grpcstartersb.GRpcServiceInterceptors;
 import io.grpc.stub.StreamObserver;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -36,7 +35,7 @@ public class Foo2Handler extends Foo2Grpc.Foo2ImplBase {
 
     @Override
     public void bar(Hello2.BarRequest2 request, StreamObserver<Hello2.BarResponse2> responseObserver) {
-        responseObserver.onError(HeaderErrorCode.newCode(1));
+        responseObserver.onError(ErrorCodeTrailers.newStatus(1));
         super.bar(request, responseObserver);
     }
 

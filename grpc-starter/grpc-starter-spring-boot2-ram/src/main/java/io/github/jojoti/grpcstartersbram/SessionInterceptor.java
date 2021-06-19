@@ -16,10 +16,11 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
-import io.github.jojoti.grpcstartersb.GRpcScope;
+import io.github.jojoti.grpcstartersb.ScopeServicesEventEntities;
 import io.grpc.*;
+import org.springframework.context.event.EventListener;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
         }
 
         // 验证登录会话
-        final var user = this.sessionCreator.valid(found);
+        final var user = this.sessionCreator.valid(found, ImmutableList.<String>builder().build());
 
         final var context = Context.current().withValue(USER_ID_NTS, user);
 
@@ -65,4 +66,11 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
     public List<String> getScopes() {
         return this.gRpcSessionProperties.getSession();
     }
+
+    @EventListener
+    public void onServicesRegister(ScopeServicesEventEntities servicesEventEntities) {
+
+        // fixme 接受启动填充的
+    }
+
 }

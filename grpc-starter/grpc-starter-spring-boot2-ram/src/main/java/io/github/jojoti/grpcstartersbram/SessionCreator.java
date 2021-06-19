@@ -16,13 +16,15 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
 public interface SessionCreator extends Session {
 
-    SessionUser valid(String token);
+    SessionUser valid(String token, ImmutableList<String> attachInline);
 
     final class NewToken {
         private final String slat;

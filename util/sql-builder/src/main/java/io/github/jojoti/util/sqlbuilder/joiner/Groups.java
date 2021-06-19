@@ -25,8 +25,6 @@ import java.util.List;
  * Created by @JoJo Wang on 2016/7/30.
  *
  * @author JoJo Wang
- *
-
  */
 public final class Groups {
 

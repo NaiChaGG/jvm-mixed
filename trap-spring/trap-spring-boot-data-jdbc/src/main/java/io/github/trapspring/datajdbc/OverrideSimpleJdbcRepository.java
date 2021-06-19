@@ -23,7 +23,6 @@ import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

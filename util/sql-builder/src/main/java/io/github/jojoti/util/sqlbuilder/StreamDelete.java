@@ -23,8 +23,6 @@ import io.github.jojoti.util.sqlbuilder.joiner.Wheres;
  * Created by @JoJo Wang on 2016/7/31.
  *
  * @author JoJo Wang
- *
-
  */
 public class StreamDelete extends StreamBase implements IQueryDelete {
 

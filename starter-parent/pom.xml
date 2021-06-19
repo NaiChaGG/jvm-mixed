@@ -58,6 +58,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--      starters      -->
             <dependency>
                 <groupId>io.github.jojoti</groupId>
                 <artifactId>starter-test-junit5</artifactId>
@@ -112,6 +113,12 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!--      util      -->
+            <dependency>
+                <groupId>io.github.jojoti.util</groupId>
+                <artifactId>util-hashid-token</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

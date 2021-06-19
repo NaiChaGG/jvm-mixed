@@ -24,5 +24,4 @@ package io.github.jojoti.util.shareid
 open interface SharedIdFactory {
 
 
-
 }

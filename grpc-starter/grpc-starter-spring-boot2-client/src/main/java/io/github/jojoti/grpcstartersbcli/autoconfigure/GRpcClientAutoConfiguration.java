@@ -28,11 +28,9 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
- *
  * rfs:
- *  https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/EmbeddedWebServerFactoryCustomizerAutoConfiguration.java
- *  https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerStartStopLifecycle.java
- *
+ * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/EmbeddedWebServerFactoryCustomizerAutoConfiguration.java
+ * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerStartStopLifecycle.java
  *
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -49,7 +47,7 @@ public class GRpcClientAutoConfiguration {
     }
 
     /**
-     *  https://stackoverflow.com/questions/46118782/spel-conditionalonproperty-string-property-empty-or-nulll
+     * https://stackoverflow.com/questions/46118782/spel-conditionalonproperty-string-property-empty-or-nulll
      */
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

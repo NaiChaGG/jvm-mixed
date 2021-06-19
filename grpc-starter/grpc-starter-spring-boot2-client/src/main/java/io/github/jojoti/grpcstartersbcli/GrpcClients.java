@@ -19,7 +19,6 @@ package io.github.jojoti.grpcstartersbcli;
 import io.github.jojoti.grpcstartersbcli.autoconfigure.GRpcClientProperties;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

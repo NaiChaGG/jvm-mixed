@@ -1,7 +1,6 @@
 package io.github.jojoti.grpcstarterdkc;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

@@ -17,7 +17,6 @@
 package io.github.jojoti.grpcstartersbexamples;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

@@ -26,8 +26,6 @@ import java.util.Iterator;
  * Created by @JoJo Wang on 2016/7/31.
  *
  * @author JoJo Wang
- *
-
  */
 public class StreamUpdate extends StreamBase implements IQueryUpdate {
     private final StringBuffer sql = new StringBuffer();

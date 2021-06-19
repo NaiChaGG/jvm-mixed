@@ -22,7 +22,6 @@ import org.springframework.data.jdbc.repository.config.JdbcRepositoryConfigExten
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

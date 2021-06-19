@@ -20,7 +20,6 @@ import org.springframework.data.relational.core.conversion.MutableAggregateChang
 import org.springframework.data.relational.core.mapping.event.BeforeSaveCallback;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

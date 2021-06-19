@@ -16,11 +16,9 @@
 
 package io.github.trapspring.datajdbc;
 
-import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
