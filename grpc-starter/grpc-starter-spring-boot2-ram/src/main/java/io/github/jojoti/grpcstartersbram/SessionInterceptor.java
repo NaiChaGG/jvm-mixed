@@ -16,7 +16,12 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.collect.Lists;
+import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
+import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.grpc.*;
+
+import java.util.List;
 
 /**
  * 用户会话拦截器 这个需要依赖于 redis 的实现
@@ -24,12 +29,20 @@ import io.grpc.*;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public abstract class SessionInterceptor implements ServerInterceptor, SessionCreator {
+public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter {
 
     public static final Context.Key<SessionUser> USER_ID_NTS = Context.key("userId");
 
     // 用户头信息使用这个来获取
     private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
+
+    private final SessionCreator sessionCreator;
+    private final GRpcSessionProperties gRpcSessionProperties;
+
+    SessionInterceptor(SessionCreator sessionCreator, GRpcSessionProperties gRpcSessionProperties) {
+        this.sessionCreator = sessionCreator;
+        this.gRpcSessionProperties = gRpcSessionProperties;
+    }
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
@@ -41,11 +54,15 @@ public abstract class SessionInterceptor implements ServerInterceptor, SessionCr
         }
 
         // 验证登录会话
-        final var user = this.valid(found);
+        final var user = this.sessionCreator.valid(found);
 
         final var context = Context.current().withValue(USER_ID_NTS, user);
 
         return Contexts.interceptCall(context, serverCall, metadata, serverCallHandler);
     }
 
+    @Override
+    public List<String> getScopes() {
+        return this.gRpcSessionProperties.getSession();
+    }
 }

@@ -163,18 +163,16 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     }
                 }
 
-                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyGlobalInterceptors()) {
-                    for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
-                        if (allGlobalInterceptor instanceof DynamicScopeFilter) {
-                            // 比较两个注解的 scope 是否是同一个里面
-                            if (entry.getKey().value().equals(((DynamicScopeFilter) allGlobalInterceptor).getScope().value())) {
-                                newServerBuilder.intercept(allGlobalInterceptor);
-                            }
-                        } else {
-                            // 先添加全局拦截器
-                            // grpc 拦截器是先添加的后执行
+                for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
+                    if (allGlobalInterceptor instanceof DynamicScopeFilter) {
+                        // 比较两个注解的 scope 是否是同一个里面
+                        if (entry.getKey().value().equals(((DynamicScopeFilter) allGlobalInterceptor).getScope().value())) {
                             newServerBuilder.intercept(allGlobalInterceptor);
                         }
+                    } else {
+                        // 先添加全局拦截器
+                        // grpc 拦截器是先添加的后执行
+                        newServerBuilder.intercept(allGlobalInterceptor);
                     }
                 }
 
@@ -191,10 +189,15 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         }
 
         for (GRpcServerProperties.ServerItem server : this.gRpcServerProperties.getServers()) {
+            var exists = false;
             for (ServerBuilders serverBuilder : serverBuilders) {
-                if (!serverBuilder.config.getScopeName().equals(server.getScopeName())) {
-                    throw new IllegalArgumentException("Scope " + server.getScopeName() + " exists, but no handler is configured");
+                if (server.getScopeName().equals(serverBuilder.config.getScopeName())) {
+                    exists = true;
+                    break;
                 }
+            }
+            if (!exists) {
+                throw new IllegalArgumentException("Scope " + server.getScopeName() + " exists, but no handler is configured");
             }
         }
 

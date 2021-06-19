@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersb.autoconfigure;
+package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import io.github.jojoti.grpcstartersb.GRpcScopeService;
 import io.github.jojoti.grpcstartersb.GRpcServers;
-import io.grpc.ServerInterceptor;
-import io.grpc.util.TransmitStatusRuntimeExceptionInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * rfs:
- * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/EmbeddedWebServerFactoryCustomizerAutoConfiguration.java
- * https://github.com/spring-projects/spring-boot/blob/v2.5.1/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/web/reactive/context/WebServerStartStopLifecycle.java
+ * https://stackoverflow.com/questions/48840190/spring-expression-language-java-8-foreach-or-stream-on-list
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
 @Configuration(proxyBeanMethods = false)
-//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
-@ConditionalOnBean(annotation = {GRpcScopeService.class})
-@EnableConfigurationProperties(GRpcServerProperties.class)
-public class GRpcAutoConfiguration {
+// grpc server 正常启动
+@ConditionalOnBean(GRpcServers.class)
+@ConditionalOnExpression(value = "false")
+@EnableConfigurationProperties(GRpcRAMProperties.class)
+public class GRpcRAMAutoConfiguration {
 
     @Bean
-    public GRpcServers grpcServerRunner(GRpcServerProperties gRpcServerProperties) {
-        return new GRpcServers(gRpcServerProperties);
+    @ConditionalOnMissingBean(RAMAccess.class)
+    public RAMAccess ramAccess() {
+        return new RAMAccessDeny();
     }
 
     @Bean
     @GRpcGlobalInterceptor
-    public ServerInterceptor globalExceptionInterceptor() {
-        return TransmitStatusRuntimeExceptionInterceptor.instance();
+    public RAMInterceptor ramInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
+        return new RAMInterceptor(ramAccess, gRpcRAMProperties);
     }
 
 }

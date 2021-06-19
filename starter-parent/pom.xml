@@ -96,19 +96,19 @@
             <!--     trap spring       -->
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
-                <artifactId>trap-spring-data-jdbc-postgres</artifactId>
+                <artifactId>trap-spring-boot-data-jdbc-postgres</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
-                <artifactId>trap-spring-data-redis-lettuce</artifactId>
+                <artifactId>trap-spring-boot-data-redis-lettuce</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
-                <artifactId>trap-spring-jpa-auto-ddl</artifactId>
+                <artifactId>trap-spring-boot-jpa-auto-ddl</artifactId>
                 <version>${revision}</version>
             </dependency>
 

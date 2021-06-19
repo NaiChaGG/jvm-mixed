@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.versioncode;
+package io.github.jojoti.grpcstartersbram;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-class VersionCodeTest {
+@ConfigurationProperties(prefix = "grpcs")
+public class GRpcSessionProperties {
 
-    @org.junit.jupiter.api.Test
-    void encode() {
-        assertEquals(VersionCode.getDefault().encode("1.1.1"), 10101);
+    // 那些 scope 需要启用 ram 拦截
+    private List<String> session = null;
+
+    public List<String> getSession() {
+        return session;
     }
 
-    @org.junit.jupiter.api.Test
-    void compare() {
-        assertTrue(VersionCode.getDefault().compare("2.1.1", "1.9.99"));
-    }
-
-    @org.junit.jupiter.api.Test
-    void decode() {
-//        assertEquals("1.1.1", VersionCode.getDefault().decode(10101));
+    public void setSession(List<String> session) {
+        this.session = session;
     }
 }

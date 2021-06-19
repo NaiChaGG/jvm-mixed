@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.versioncode;
+package io.github.jojoti.utilsversioncode;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;

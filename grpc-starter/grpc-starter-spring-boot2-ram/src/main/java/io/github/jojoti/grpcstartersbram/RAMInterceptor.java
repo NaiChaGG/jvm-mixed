@@ -16,6 +16,7 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.collect.Lists;
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
 import io.github.jojoti.grpcstartersb.GRpcScope;
@@ -26,6 +27,8 @@ import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
 import org.springframework.context.event.EventListener;
 
+import java.util.List;
+
 /**
  * 访问控制和用户会话拦截器
  * 拦截器需要 使用者 自行添加到 grpc server 里面去，多server无法知道用户注入哪里
@@ -34,12 +37,14 @@ import org.springframework.context.event.EventListener;
  * @link github.com/jojoti
  */
 @GRpcGlobalInterceptor
-public class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
+class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
 
     private final RAMAccess ramAccess;
+    private final GRpcRAMProperties gRpcRAMProperties;
 
-    public RAMInterceptor(RAMAccess ramAccess) {
+    RAMInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
         this.ramAccess = ramAccess;
+        this.gRpcRAMProperties = gRpcRAMProperties;
     }
 
     @Override
@@ -55,7 +60,7 @@ public class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
     }
 
     @Override
-    public GRpcScope getScope() {
+    public List<String> getScopes() {
         return null;
     }
 

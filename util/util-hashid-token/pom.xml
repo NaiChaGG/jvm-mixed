@@ -20,13 +20,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.jojoti.trap-spring</groupId>
-        <artifactId>trap-spring-parent</artifactId>
+        <groupId>io.github.jojoti.util</groupId>
+        <artifactId>util-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <artifactId>trap-spring-data-jdbc-postgres</artifactId>
+    <artifactId>util-hashid-token</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -34,21 +34,10 @@
     </properties>
 
     <dependencies>
-
         <dependency>
-            <groupId>io.github.jojoti.trap-spring</groupId>
-            <artifactId>trap-spring-data-jdbc</artifactId>
+            <groupId>org.hashids</groupId>
+            <artifactId>hashids</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-
     </dependencies>
+
 </project>

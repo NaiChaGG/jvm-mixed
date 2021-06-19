@@ -14,17 +14,30 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersb;
+package io.github.jojoti.utilsversioncode;
 
-/*
- * 此拦截器用于动态拦截某些 scope 因为某些场景不能使用 注解标注，比如，全局拦截器只添加到某个特定 scope 下
- * 如: @GRpcGlobalInterceptor 要添加 到动态特定的 scope 下，那么目前的 注解是无法满足需求的
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public interface DynamicScopeFilter {
+class VersionCodeTest {
 
-    GRpcScope getScope();
+    @org.junit.jupiter.api.Test
+    void encode() {
+        assertEquals(VersionCode.getDefault().encode("1.1.1"), 10101);
+    }
 
+    @org.junit.jupiter.api.Test
+    void compare() {
+        assertTrue(VersionCode.getDefault().compare("2.1.1", "1.9.99"));
+    }
+
+    @org.junit.jupiter.api.Test
+    void decode() {
+//        assertEquals("1.1.1", VersionCode.getDefault().decode(10101));
+    }
 }

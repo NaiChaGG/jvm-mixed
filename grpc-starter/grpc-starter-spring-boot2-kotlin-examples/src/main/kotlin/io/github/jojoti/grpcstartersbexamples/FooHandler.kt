@@ -1,6 +1,7 @@
 package io.github.jojoti.grpcstartersbexamples
 
 import io.github.jojoti.grpcstartersb.GRpcPrivateService
+import io.github.jojoti.grpcstartersbkt.HeaderErrorHeaderThrows
 import io.github.jojoti.grpcstartersbram.RAM
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ open class FooHandler : FooGrpcKt.FooCoroutineImplBase() {
     @RAM(value = RAM.RAMItem(groupId = 1, attrs = arrayOf(RAM.RAMAttr(key = "access", value = "1"))))
     override suspend fun bar(request: Hello.BarRequest): Hello.BarResponse =
         withContext(Dispatchers.IO) {
+            HeaderErrorHeaderThrows.newCode(1)
             myService.foo()
             Hello.BarResponse.newBuilder().build();
         }

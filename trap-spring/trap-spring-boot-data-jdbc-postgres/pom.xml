@@ -19,36 +19,36 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
-        <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent</artifactId>
+        <groupId>io.github.jojoti.trap-spring</groupId>
+        <artifactId>trap-spring-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent</relativePath>
+        <relativePath>../</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>trap-spring-boot-data-jdbc-postgres</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
-    <modules>
-        <module>../share-id</module>
-        <module>../sharedidv2</module>
-        <module>../sql-builder</module>
-        <module>../version-code</module>
-        <module>../util-hashid-token</module>
-    </modules>
-
     <dependencies>
-        <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-data-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>

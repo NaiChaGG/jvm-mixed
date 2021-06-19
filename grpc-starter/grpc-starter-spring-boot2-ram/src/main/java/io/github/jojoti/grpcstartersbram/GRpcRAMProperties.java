@@ -16,29 +16,37 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
+
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public interface SessionCreator extends Session {
+@ConfigurationProperties(prefix = "grpcs")
+public class GRpcRAMProperties {
 
-    SessionUser valid(String token);
+    // 那些 scope 需要启用 ram 拦截
+    private List<ServerRam> servers;
 
-    final class NewToken {
-        private final String slat;
-        private final String tokenBase64;
+    public List<ServerRam> getServers() {
+        return servers;
+    }
 
-        public NewToken(String slat, String tokenBase64) {
-            this.slat = slat;
-            this.tokenBase64 = tokenBase64;
+    public void setServers(List<ServerRam> servers) {
+        this.servers = servers;
+    }
+
+    public static final class ServerRam {
+        private boolean enableRAM = false;
+
+        public boolean isEnableRAM() {
+            return enableRAM;
         }
 
-        public String getSlat() {
-            return slat;
-        }
-
-        public String getTokenBase64() {
-            return tokenBase64;
+        public void setEnableRAM(boolean enableRAM) {
+            this.enableRAM = enableRAM;
         }
     }
 

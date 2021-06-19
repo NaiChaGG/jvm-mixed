@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersb.autoconfigure;
+package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import io.github.jojoti.grpcstartersb.GRpcScopeService;
 import io.github.jojoti.grpcstartersb.GRpcServers;
-import io.grpc.ServerInterceptor;
-import io.grpc.util.TransmitStatusRuntimeExceptionInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,19 +36,20 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(proxyBeanMethods = false)
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
-@ConditionalOnBean(annotation = {GRpcScopeService.class})
-@EnableConfigurationProperties(GRpcServerProperties.class)
-public class GRpcAutoConfiguration {
-
-    @Bean
-    public GRpcServers grpcServerRunner(GRpcServerProperties gRpcServerProperties) {
-        return new GRpcServers(gRpcServerProperties);
-    }
+@ConditionalOnBean({GRpcServers.class, SessionCreator.class})
+@ConditionalOnExpression("'${grpcs.session}' != null && '${grpcs.session}'.size() > 0")
+@EnableConfigurationProperties(GRpcSessionProperties.class)
+public class GRpcSessionAutoConfiguration {
 
     @Bean
     @GRpcGlobalInterceptor
-    public ServerInterceptor globalExceptionInterceptor() {
-        return TransmitStatusRuntimeExceptionInterceptor.instance();
+    public SessionInterceptor ramInterceptor(SessionCreator sessionCreator, GRpcSessionProperties gRpcSessionProperties) {
+        return new SessionInterceptor(sessionCreator, gRpcSessionProperties);
+    }
+
+    @Bean
+    public SessionEnableBean sessionEnableBean() {
+        return new SessionEnableBean();
     }
 
 }
