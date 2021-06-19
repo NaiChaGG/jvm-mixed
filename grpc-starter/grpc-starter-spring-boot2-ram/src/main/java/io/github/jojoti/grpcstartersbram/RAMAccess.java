@@ -20,7 +20,6 @@ import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.grpc.ServiceDescriptor;
 
 /**
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -29,9 +28,9 @@ public interface RAMAccess {
     /**
      * 校验是否可以直接访问数据库
      *
-     * @param uuid 用户的唯一ID 看应用层自行约定
-     * @param ramItem 注解标记的属性
-     * @param gRpcScope 标注的注解属于哪个模块
+     * @param uuid              用户的唯一ID 看应用层自行约定
+     * @param ramItem           注解标记的属性
+     * @param gRpcScope         标注的注解属于哪个模块
      * @param serviceDescriptor
      * @return
      */

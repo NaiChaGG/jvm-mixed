@@ -36,8 +36,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration(proxyBeanMethods = false)
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
-@ConditionalOnBean({GRpcServers.class, SessionCreator.class})
-@ConditionalOnExpression("'${grpcs.session}' != null && '${grpcs.session}'.size() > 0")
+//@ConditionalOnBean({GRpcServers.class, SessionCreator.class})
+//@ConditionalOnExpression("'${grpcs.session}' != null && '${grpcs.session}'.size() > 0")
 @EnableConfigurationProperties(GRpcSessionProperties.class)
 public class GRpcSessionAutoConfiguration {
 

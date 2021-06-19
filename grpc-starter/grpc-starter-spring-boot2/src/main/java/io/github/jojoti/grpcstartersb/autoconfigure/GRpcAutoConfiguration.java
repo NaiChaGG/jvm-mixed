@@ -19,6 +19,7 @@ package io.github.jojoti.grpcstartersb.autoconfigure;
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
 import io.github.jojoti.grpcstartersb.GRpcScopeService;
 import io.github.jojoti.grpcstartersb.GRpcServers;
+import io.github.jojoti.grpcstartersb.GlobalExceptionInterceptor;
 import io.grpc.ServerInterceptor;
 import io.grpc.util.TransmitStatusRuntimeExceptionInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -45,10 +46,16 @@ public class GRpcAutoConfiguration {
         return new GRpcServers(gRpcServerProperties);
     }
 
+//    @Bean
+//    @GRpcGlobalInterceptor
+//    public ServerInterceptor globalExceptionInterceptor() {
+//        return TransmitStatusRuntimeExceptionInterceptor.instance();
+//    }
+
     @Bean
     @GRpcGlobalInterceptor
     public ServerInterceptor globalExceptionInterceptor() {
-        return TransmitStatusRuntimeExceptionInterceptor.instance();
+        return GlobalExceptionInterceptor.newGlobalExceptionInterceptor();
     }
 
 }

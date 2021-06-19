@@ -166,8 +166,13 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
                     if (allGlobalInterceptor instanceof DynamicScopeFilter) {
                         // 比较两个注解的 scope 是否是同一个里面
-                        if (entry.getKey().value().equals(((DynamicScopeFilter) allGlobalInterceptor).getScope().value())) {
-                            newServerBuilder.intercept(allGlobalInterceptor);
+                        if (((DynamicScopeFilter) allGlobalInterceptor).getScopes() != null) {
+                            for (String scope : ((DynamicScopeFilter) allGlobalInterceptor).getScopes()) {
+                                if (entry.getKey().value().equals(scope)) {
+                                    newServerBuilder.intercept(allGlobalInterceptor);
+                                    break;
+                                }
+                            }
                         }
                     } else {
                         // 先添加全局拦截器

@@ -13,16 +13,16 @@ public interface SessionUser {
     /**
      * 获取当前会话的 scopeId
      *
-     * @throws SessionIsNotCreatedException
      * @return
+     * @throws SessionIsNotCreatedException
      */
     int getScopeId();
 
     /**
      * 获取用户的 uid
      *
-     * @throws SessionIsNotCreatedException
      * @return
+     * @throws SessionIsNotCreatedException
      */
     long getUid();
 
@@ -35,6 +35,7 @@ public interface SessionUser {
 
     /**
      * 用户登出
+     *
      * @throws SessionIsNotCreatedException
      */
     void logout();
@@ -48,8 +49,9 @@ public interface SessionUser {
 
     /**
      * 刷新当前会话 token
-     * @throws SessionIsNotCreatedException
+     *
      * @return
+     * @throws SessionIsNotCreatedException
      */
     String refreshToken();
 
@@ -64,25 +66,25 @@ public interface SessionUser {
     /**
      * 不会读库
      *
-     * @throws SessionIsNotCreatedException
      * @param key
      * @return
+     * @throws SessionIsNotCreatedException
      */
     String getAttach(String key);
 
     /**
-     * @throws SessionIsNotCreatedException
      * @param key
      * @return
+     * @throws SessionIsNotCreatedException
      */
     default int getAttachAsInt(String key) {
         return Integer.parseInt(getAttach(key));
     }
 
     /**
-     * @throws SessionIsNotCreatedException
      * @param key
      * @return
+     * @throws SessionIsNotCreatedException
      */
     default long getAttachAsLong(String key) {
         return Long.parseLong(getAttach(key));
@@ -90,35 +92,37 @@ public interface SessionUser {
 
     /**
      * 不会读库
-     * @throws SessionIsNotCreatedException
+     *
      * @param key
      * @param t
      * @param <T>
      * @return
+     * @throws SessionIsNotCreatedException
      */
     <T> T getAttachJson(String key, Class<T> t);
 
     /**
      * 获取 缓存对象
-     * @throws SessionIsNotCreatedException
+     *
      * @param key
      * @return
+     * @throws SessionIsNotCreatedException
      */
     Object getAttachObject(String key);
 
     /**
-     * @throws SessionIsNotCreatedException
      * @return
+     * @throws SessionIsNotCreatedException
      */
     Map<String, Object> getAllAttach();
 
     /**
      * 会写库 谨慎操作
      *
-     * @throws SessionIsNotCreatedException
      * @param key
      * @param val
      * @return
+     * @throws SessionIsNotCreatedException
      */
     default SessionUser setAttachString(String key, String val) {
         return setAttachString(ImmutableMap.of(key, val));
@@ -127,20 +131,20 @@ public interface SessionUser {
     /**
      * 会写库 谨慎操作
      *
-     * @throws SessionIsNotCreatedException
      * @param jsonValues
      * @return
+     * @throws SessionIsNotCreatedException
      */
     SessionUser setAttachString(ImmutableMap<String, String> jsonValues);
 
     /**
      * 会写库 谨慎操作
      *
-     * @throws SessionIsNotCreatedException
      * @param key
      * @param t
      * @param <T>
      * @return
+     * @throws SessionIsNotCreatedException
      */
     default <T> SessionUser setAttachJson(String key, T t) {
         return setAttachJson(ImmutableMap.of(key, t));
@@ -149,10 +153,10 @@ public interface SessionUser {
     /**
      * 会写库 谨慎操作
      *
-     * @throws SessionIsNotCreatedException
      * @param jsonValues
      * @param <T>
      * @return
+     * @throws SessionIsNotCreatedException
      */
     <T> SessionUser setAttachJson(ImmutableMap<String, T> jsonValues);
 

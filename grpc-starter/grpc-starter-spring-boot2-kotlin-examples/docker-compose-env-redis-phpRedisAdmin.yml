@@ -1,0 +1,27 @@
+# @author JoJo Wang
+# @link github.com/jojoti
+# @url https://github.com/jojoti/jo2env/blob/master/envs/docker-compose-env-redis-phpRedisAdmin.yml
+version: "3"
+
+services:
+
+  redis:
+    image: redis:6.0
+    restart: always
+    #    指定密码
+    command: redis-server --requirepass example
+    ports:
+      # 外部访问端口 只有这台机器才能访问 3306 端口
+      - "6379:6379"
+
+  # https://hub.docker.com/r/erikdubbelboer/phpredisadmin
+  redis-admin:
+    image: erikdubbelboer/phpredisadmin:v1.13.2
+    restart: always
+    environment:
+      - REDIS_1_HOST=redis
+      - ADMIN_PASS=example
+    links:
+      - redis
+    ports:
+      - "6380:80"

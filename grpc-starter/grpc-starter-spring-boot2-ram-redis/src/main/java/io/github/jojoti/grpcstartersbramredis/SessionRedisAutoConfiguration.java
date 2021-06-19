@@ -19,7 +19,6 @@ package io.github.jojoti.grpcstartersbramredis;
 
 import io.github.jojoti.grpcstartersbram.SessionEnableBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +30,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @Configuration(proxyBeanMethods = false)
 // grpc server 正常启动
-@ConditionalOnBean({SessionEnableBean.class, StringRedisTemplate.class})
+//@ConditionalOnBean(StringRedisTemplate.class)
 public class SessionRedisAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(SessionRedis.class)
+//    @ConditionalOnMissingBean(SessionRedis.class)
     public SessionRedis ramAccess(StringRedisTemplate stringRedisTemplate) {
         return new SessionRedis(stringRedisTemplate);
     }

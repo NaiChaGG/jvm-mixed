@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * 用户会话实现
- *
+ * <p>
  * hash key -> {"slat":"","appendKey":(1), "appendKeys":""}
  *
  * @author JoJo Wang
