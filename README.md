@@ -12,7 +12,7 @@
 
 + grpc server starter 支持监听多个端口，应对服务之间调用走不同端口访问的模式
 + grpc server 支持向 `etcd`/`consul`/`zk` 等注册发现服务里注册
-+ grpc server 支持多种模式，比如 `spring boot`(servlet) , `akka`, `kotlin coroutinues` , `rxjava3` 等等 server 模式下运行
++ grpc server 支持多种模式，比如 `spring boot` , `akka`, `kotlin coroutinues` , `rxjava3` 等等 server 模式下运行
 + grpc client starter 支持 服务发现
 + [更多文档](./grpc-starter)
 
