@@ -26,7 +26,7 @@
         <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <artifactId>util-version-code</artifactId>
+    <artifactId>util-versioncode</artifactId>
     <packaging>jar</packaging>
 
     <properties>

@@ -1,12 +1,26 @@
-# grpc java starter
+# grpc starters
 
-提供了各种模式下 `grpc java` 的启动方式
+提供了各种模式下 `grpc java` 的 `server`&`client` 启动方式
 
-## 支持的模式
+## 基础代码模块
 
-+ grpc-starter-nospring-dagger-akka, 该模式使用 `dagger` 依赖注入，使用 `akka` 来跑异步模型，借助 `akka` 的生态可以高校开发基础服务
-+ grpc-starter-nospring-dagger-kt-coroutinues ， 该模式使用 `dagger` 注入，使用 `kotlin` 协程来跑异步线程，可以粘合各种java库，并且和复用线程模型
-+ grpc-starter-nospring-dagger-rxjava3 ， 该模式使用 `dagger` 注入，使用 `rxjava3` 的模式来 粘合各种库
-+ grpc-starter-spring-boot2 ，该模式完全依赖于 `spring` 一套解决方案, [为什么要造轮子](./grpc-starter-spring-boot2/)
-+ grpc-starter-spring-boot2-kotlin grpc-kotlin 支持
++ grpc-common-discovery 注册发现通用 模块 server & client 都需要接入 注册发现
++ grpc-common-multi-server 启动 多个 grpc server 通用代码
++ grpc-common-multi-client 启动 多个 grpc client 通用代码
+
+## 附加功能集成 session 访问控制
+
++ grpc-common-server-session session 支持
++ grpc-common-server-ram grpc server 访问控制 basic api , 包括对 session 和 access controller，这里需要调研一下 fixme spring security
+
+## 支持模式
+
+### 1: spring 家族
+
++ grpc-starter-spring-boot2 spring boot server starter
++ grpc-starter-spring-boot2-kotlin spring boot server starter kotlin 支持
++ grpc-starter-spring-boot2-session-redis redis session 支持
+
+### N.更多模式
+
 + 需要集成更多 server 模式，请发起`issue`,如 `quasar`, `netty event loop` 等等

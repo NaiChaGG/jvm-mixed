@@ -16,7 +16,7 @@
 
 package io.github.jojoti.grpcstartersbkt
 
-import io.github.jojoti.grpcstartersb.ErrorCodeTrailers
+import io.github.jojoti.grpcstartersb.Trailers
 import io.grpc.StatusException
 
 /**
@@ -25,10 +25,10 @@ import io.grpc.StatusException
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-object ErrorCodeTrailersThrows {
+object TrailersThrows {
 
-    fun newStatus(error: Int): StatusException {
-        throw ErrorCodeTrailers.newStatus(error)
+    fun newErrorCode(error: Int): StatusException {
+        throw Trailers.newErrorCode(error)
     }
 
 }
