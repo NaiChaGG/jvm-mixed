@@ -119,6 +119,13 @@
                 <artifactId>util-hashid-token</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.util</groupId>
+                <artifactId>util-guava-ext</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

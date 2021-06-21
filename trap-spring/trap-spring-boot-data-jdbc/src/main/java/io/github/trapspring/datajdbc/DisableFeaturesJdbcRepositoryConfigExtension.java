@@ -35,6 +35,10 @@ public class DisableFeaturesJdbcRepositoryConfigExtension extends JdbcRepository
     // copy of AnnotationRepositoryConfigurationSource
     private static final String REPOSITORY_BASE_CLASS = "repositoryBaseClass";
 
+    public DisableFeaturesJdbcRepositoryConfigExtension() {
+
+    }
+
     // 参考 父类 postProcess(BeanDefinitionBuilder builder, RepositoryConfigurationSource source)
     @Override
     public void postProcess(BeanDefinitionBuilder builder, AnnotationRepositoryConfigurationSource config) {

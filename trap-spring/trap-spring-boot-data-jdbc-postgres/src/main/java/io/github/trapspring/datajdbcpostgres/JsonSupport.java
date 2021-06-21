@@ -25,11 +25,12 @@ import java.sql.SQLException;
 @Configuration
 public class JsonSupport extends AbstractJdbcConfiguration {
 
-    private final ObjectMapper objectMapper;
-
-    public JsonSupport(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private ObjectMapper objectMapper;
+//    private final ObjectMapper objectMapper;
+//
+//    public JsonSupport(ObjectMapper objectMapper) {
+//        this.objectMapper = objectMapper;
+//    }
 
     @Bean
     @Override

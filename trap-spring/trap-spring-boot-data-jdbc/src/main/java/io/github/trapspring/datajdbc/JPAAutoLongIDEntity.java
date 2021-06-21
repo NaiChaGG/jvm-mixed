@@ -16,6 +16,8 @@
 
 package io.github.trapspring.datajdbc;
 
+import org.springframework.lang.NonNull;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,6 +35,7 @@ public abstract class JPAAutoLongIDEntity extends TrapBaseTimeEntity {
     private long id;
 
     @Override
+    @NonNull
     public Long getId() {
         return id;
     }

@@ -23,7 +23,7 @@ package io.github.trapspring.datajdbc;
 public class DisableCrudRepositoryException extends RuntimeException {
 
     public DisableCrudRepositoryException(String message) {
-
         super("Disable " + message + " method");
     }
+
 }

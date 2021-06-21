@@ -39,9 +39,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
+
+        <!--    https://blog.csdn.net/weixin_43328357/article/details/106993172    -->
         <dependency>
-            <artifactId>javax.persistence-api</artifactId>
-            <groupId>javax.persistence</groupId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+        <dependency>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <groupId>jakarta.persistence</groupId>
             <scope>provided</scope>
         </dependency>
 

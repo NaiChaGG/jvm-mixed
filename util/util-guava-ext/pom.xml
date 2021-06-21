@@ -19,38 +19,18 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
-        <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent</artifactId>
+        <groupId>io.github.jojoti.util</groupId>
+        <artifactId>util-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>util-guava-ext</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
-
-    <modules>
-        <module>../share-id</module>
-        <module>../sharedidv2</module>
-        <module>../sql-builder</module>
-        <module>../util-versioncode</module>
-        <module>../util-hashid-token</module>
-        <module>../util-jjwt-p8</module>
-        <module>../util-guava-ext</module>
-    </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
 </project>
