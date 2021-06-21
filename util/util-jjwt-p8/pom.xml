@@ -19,36 +19,40 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
-        <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent</artifactId>
+        <groupId>io.github.jojoti.util</groupId>
+        <artifactId>util-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.util</groupId>
-    <artifactId>util-named-starter-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>util-jwt-p8</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
 
-    <modules>
-        <module>../share-id</module>
-        <module>../sharedidv2</module>
-        <module>../sql-builder</module>
-        <module>../util-versioncode</module>
-        <module>../util-hashid-token</module>
-        <module>../util-jjwt-p8</module>
-    </modules>
-
     <dependencies>
+
         <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-test-junit5</artifactId>
-            <scope>test</scope>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
         </dependency>
     </dependencies>
 
