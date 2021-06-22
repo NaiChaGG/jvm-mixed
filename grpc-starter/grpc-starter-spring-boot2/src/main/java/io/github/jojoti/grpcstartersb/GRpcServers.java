@@ -127,10 +127,15 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             final var config = getServerConfigByScopeName(entry.getKey().value());
             final var newServerBuilder = getServerBuilder(config);
 
+            // 可以使用 此 api 动态的 扩展 grpc 配置
+            // 参考用法: io/github/jojoti/grpcstartersbram/SessionInterceptor.java:72
+            this.applicationContext.publishEvent(new GrpcServerBuilderCreateEvent(new GrpcServerBuilderCreate(entry.getKey(), newServerBuilder)));
+            // newServerBuilder
+
             final HealthStatusManager health = config.isEnableHealthStatus() ? new HealthStatusManager() : null;
 
             if (health != null) {
-                log.info("scopeName {} add health", entry.getKey().value());
+                log.info("scopeName {} add health service", entry.getKey().value());
                 // 添加健康 检查 service
                 newServerBuilder.addService(health.getHealthService());
             }
@@ -164,24 +169,25 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     }
                 }
 
-                for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
-                    if (allGlobalInterceptor instanceof DynamicScopeFilter) {
-                        // 比较两个注解的 scope 是否是同一个里面
-                        if (((DynamicScopeFilter) allGlobalInterceptor).getScopes() != null) {
-                            for (String scope : ((DynamicScopeFilter) allGlobalInterceptor).getScopes()) {
-                                if (entry.getKey().value().equals(scope)) {
-                                    newServerBuilder.intercept(allGlobalInterceptor);
-                                    break;
+                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyGlobalInterceptors()) {
+                    for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
+                        if (allGlobalInterceptor instanceof DynamicScopeFilter) {
+                            // 比较两个注解的 scope 是否是同一个里面
+                            if (((DynamicScopeFilter) allGlobalInterceptor).getScopes() != null) {
+                                for (String scope : ((DynamicScopeFilter) allGlobalInterceptor).getScopes()) {
+                                    if (entry.getKey().value().equals(scope)) {
+                                        newServerBuilder.intercept(allGlobalInterceptor);
+                                        break;
+                                    }
                                 }
                             }
+                        } else {
+                            // 先添加全局拦截器
+                            // grpc 拦截器是先添加的后执行
+                            newServerBuilder.intercept(allGlobalInterceptor);
                         }
-                    } else {
-                        // 先添加全局拦截器
-                        // grpc 拦截器是先添加的后执行
-                        newServerBuilder.intercept(allGlobalInterceptor);
                     }
                 }
-
                 newServerBuilder.addService(bindableService);
                 if (health != null) {
                     health.setStatus(bindableService.bindService().getServiceDescriptor().getName(), HealthCheckResponse.ServingStatus.SERVING);

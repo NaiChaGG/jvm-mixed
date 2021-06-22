@@ -38,16 +38,29 @@
             <groupId>io.github.jojoti.grpc-starter</groupId>
             <artifactId>grpc-starter-spring-boot2-kotlin</artifactId>
         </dependency>
+
         <!--    grpc client    -->
         <dependency>
             <groupId>io.github.jojoti.grpc-starter</groupId>
             <artifactId>grpc-starter-spring-boot2-client-kotlin</artifactId>
         </dependency>
-        <!--    grpc server ram    -->
+
+        <!--        grpc server ram-->
         <dependency>
             <groupId>io.github.jojoti.grpc-starter</groupId>
             <artifactId>grpc-starter-spring-boot2-ram-redis</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-jpa-auto-ddl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-data-jdbc-postgres</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

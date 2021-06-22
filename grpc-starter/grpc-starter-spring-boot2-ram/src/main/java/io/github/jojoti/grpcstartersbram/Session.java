@@ -38,17 +38,6 @@ public interface Session {
 
     SessionUser verify(long uid, int scopeId, ImmutableList<String> attachInline);
 
-//    /**
-//     * 根据 token 删除 会话
-//     * @param token
-//     */
-//    default void logout(String token) {
-//        var parseToken = TokenUtils._parseToken(token);
-//        final var uid = parseToken.ids[0];
-//        final var sid = parseToken.ids[1];
-//        this.logout(uid, (int) sid);
-//    }
-
     /**
      * 根据传入的参数退出
      *

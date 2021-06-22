@@ -18,13 +18,17 @@ package io.github.jojoti.grpcstartersbexamples
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
+
 
 /**
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
+//@SpringBootApplication(exclude = [JpaRepositoriesAutoConfiguration::class, RedisRepositoriesAutoConfiguration::class])
 @SpringBootApplication
+@EnableJdbcRepositories
 open class Application
 
 fun main(args: Array<String>) {

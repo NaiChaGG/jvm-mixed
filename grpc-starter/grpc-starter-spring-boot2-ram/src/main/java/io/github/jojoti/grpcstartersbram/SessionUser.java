@@ -57,27 +57,22 @@ public interface SessionUser {
     void logout();
 
     /**
-     * 获取当前请求的 token
-     *
-     * @return
-     */
-    String getCurrentToken();
-
-    /**
-     * 刷新当前会话 token
-     *
-     * @return
-     * @throws SessionIsNotCreatedException
-     */
-    String refreshToken();
-
-    /**
      * 登录
      *
      * @param uid
      * @return 返回 token
      */
-    String login(long uid);
+    NewTokenBuilder newToken(long uid, int scopeId);
+
+    interface NewTokenBuilder {
+
+        NewTokenBuilder setAttachString(String key, String val);
+
+        <T> NewTokenBuilder setAttachJson(String key, T t);
+
+        String build();
+
+    }
 
     /**
      * 不会读库
@@ -118,21 +113,6 @@ public interface SessionUser {
     <T> T getAttachJson(String key, Class<T> t);
 
     /**
-     * 获取 缓存对象
-     *
-     * @param key
-     * @return
-     * @throws SessionIsNotCreatedException
-     */
-    Object getAttachObject(String key);
-
-    /**
-     * @return
-     * @throws SessionIsNotCreatedException
-     */
-    Map<String, Object> getAllAttach();
-
-    /**
      * 会写库 谨慎操作
      *
      * @param key
@@ -147,11 +127,11 @@ public interface SessionUser {
     /**
      * 会写库 谨慎操作
      *
-     * @param jsonValues
+     * @param stringValues
      * @return
      * @throws SessionIsNotCreatedException
      */
-    SessionUser setAttachString(ImmutableMap<String, String> jsonValues);
+    SessionUser setAttachString(ImmutableMap<String, String> stringValues);
 
     /**
      * 会写库 谨慎操作

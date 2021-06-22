@@ -17,6 +17,8 @@
 package io.github.jojoti.grpcstartersbramredis;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -27,13 +29,17 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 @Configuration(proxyBeanMethods = false)
 // grpc server 正常启动
-//@ConditionalOnBean(StringRedisTemplate.class)
+@ConditionalOnClass(StringRedisTemplate.class)
 public class SessionRedisAutoConfiguration {
 
     @Bean
-//    @ConditionalOnMissingBean(SessionRedis.class)
-    public SessionRedis ramAccess(StringRedisTemplate stringRedisTemplate, ExpireTokenAsync expireToken) {
-        return new SessionRedis(stringRedisTemplate, expireToken);
+    public TokenDAO expireTokenAsync(StringRedisTemplate stringRedisTemplate) {
+        return new TokenDAO(stringRedisTemplate);
+    }
+
+    @Bean
+    public SessionRedis ramAccess(TokenDAO expireToken, ObjectMapper objectMapper) {
+        return new SessionRedis(expireToken, objectMapper);
     }
 
 }

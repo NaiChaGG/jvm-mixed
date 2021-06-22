@@ -52,13 +52,13 @@ grpcs:
   servers:
     # 内置 primary
     - scopeName: primary
-      address: 127.0.0.1:8081
+      address: 127.0.0.1:8101
       enableHealthStatus: false
       <<: *nettyServer
 
     # 内置 private
     - scopeName: private
-      address: 0.0.0.0:8080
+      address: 0.0.0.0:8102
       enableHealthStatus: true
       <<: *nettyServer
       # 注册发现配置
@@ -69,7 +69,7 @@ grpcs:
 
     # 自定义地址1
     - scopeName: mixed1
-      address: 127.0.0.1:8079
+      address: 127.0.0.1:8103
       enableHealthStatus: true
       <<: *nettyServer
       # 注册发现配置
@@ -107,3 +107,29 @@ grpc:
     # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
     - serviceName: examplesService1Rpc
       <<: *client
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 300000
+      idle-timeout: 60000
+      validation-timeout: 4000
+      max-lifetime: 200000
+      login-timeout: 50
+      maximum-pool-size: 15
+      minimum-idle: 5
+      #      auto-commit: true
+      pool-name: UcHikariCP
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  redis:
+    lettuce:
+      shutdown-timeout: 100ms
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 3
+        time-between-eviction-runs:

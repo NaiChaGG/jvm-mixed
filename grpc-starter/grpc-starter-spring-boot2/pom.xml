@@ -37,15 +37,23 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.github.jojoti</groupId>
             <artifactId>starter-grpc-netty-server</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.jojoti.util</groupId>
+            <artifactId>util-guava-ext</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

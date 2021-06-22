@@ -25,8 +25,10 @@ import io.grpc.stub.StreamObserver;
 @GRpcMixed1Service
 public class Foo3Handler extends Foo3Grpc.Foo3ImplBase {
 
-    public Foo3Handler() {
+    private final AccountGuestRepository accountGuestRepository;
 
+    public Foo3Handler(AccountGuestRepository accountGuestRepository) {
+        this.accountGuestRepository = accountGuestRepository;
     }
 
     @Override

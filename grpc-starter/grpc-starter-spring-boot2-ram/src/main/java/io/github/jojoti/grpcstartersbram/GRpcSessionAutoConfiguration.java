@@ -38,8 +38,8 @@ public class GRpcSessionAutoConfiguration {
 
     @Bean
     @GRpcGlobalInterceptor
-    public SessionInterceptor ramInterceptor(SessionCreator sessionCreator, GRpcSessionProperties gRpcSessionProperties) {
-        return new SessionInterceptor(sessionCreator, gRpcSessionProperties);
+    public SessionInterceptor ramInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
+        return new SessionInterceptor(session, gRpcSessionProperties);
     }
 
     @Bean

@@ -18,7 +18,7 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.collect.ImmutableList;
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
-import io.github.jojoti.grpcstartersb.ScopeServicesEventEntities;
+import io.github.jojoti.grpcstartersb.ScopeServicesEvent;
 import io.grpc.*;
 import org.springframework.context.event.EventListener;
 
@@ -37,11 +37,11 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
     // 用户头信息使用这个来获取
     private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
 
-    private final SessionCreator sessionCreator;
+    private final Session session;
     private final GRpcSessionProperties gRpcSessionProperties;
 
-    SessionInterceptor(SessionCreator sessionCreator, GRpcSessionProperties gRpcSessionProperties) {
-        this.sessionCreator = sessionCreator;
+    SessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
+        this.session = session;
         this.gRpcSessionProperties = gRpcSessionProperties;
     }
 
@@ -55,7 +55,7 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
         }
 
         // 验证登录会话
-        final var user = this.sessionCreator.valid(found, ImmutableList.<String>builder().build());
+        final var user = this.session.verify(found, ImmutableList.<String>builder().build());
 
         final var context = Context.current().withValue(USER_ID_NTS, user);
 
@@ -68,8 +68,7 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
     }
 
     @EventListener
-    public void onServicesRegister(ScopeServicesEventEntities servicesEventEntities) {
-
+    public void onServicesRegister(ScopeServicesEvent servicesEvent) {
         // fixme 接受启动填充的
     }
 

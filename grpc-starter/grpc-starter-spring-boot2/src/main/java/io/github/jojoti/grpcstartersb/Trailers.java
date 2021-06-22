@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersb;
 
 import com.google.common.base.Preconditions;
+import io.github.jojoti.utilguavaext.UniqueKey;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusException;
@@ -34,6 +35,7 @@ public interface Trailers {
     // onError 调用此方法 不必抛出异常
     // kotlin 下直接 throw 参考 grpc + kotlin 生成的 代码实现如何返回错误
     // 使用 此方法可以传递更多的 头信息给客户端
+
     static StatusException newErrorCode(int error) {
         Preconditions.checkArgument(error > 0);
         var trailers = new Metadata();
@@ -47,6 +49,10 @@ public interface Trailers {
         trailers.merge(mergerTrailers);
         trailers.put(GlobalExceptionInterceptor.X_ERROR_METADATA_KEY, String.valueOf(error));
         return new StatusException(Status.INTERNAL, trailers);
+    }
+
+    static StatusException newErrorCode(UniqueKey<Integer> error) {
+        return newErrorCode(error.get());
     }
 
 }

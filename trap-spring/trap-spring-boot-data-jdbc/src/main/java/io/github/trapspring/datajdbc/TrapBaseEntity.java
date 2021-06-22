@@ -17,6 +17,7 @@
 package io.github.trapspring.datajdbc;
 
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.MappedSuperclass;
 
@@ -25,6 +26,9 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
+// @Table 必须注解， 否则 Spring Data JDBC - Could not safely identify store assignment for repository candidate interface io.github.jojoti.grpcstartersbexamples.AccountGuestRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+// 会导致无法加载 bean
+@Table
 public abstract class TrapBaseEntity implements Persistable<Long> {
 
     // 禁止使用 save update 方法

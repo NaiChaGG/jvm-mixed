@@ -18,7 +18,7 @@ package io.github.jojoti.grpcstartersbexamples
 
 import io.github.jojoti.grpcstartersb.GRpcPrivateService
 import io.github.jojoti.grpcstartersb.Trailers
-import io.github.jojoti.grpcstartersbram.RAM
+//import io.github.jojoti.grpcstartersbram.RAM
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,7 +35,7 @@ open class FooHandler : FooGrpcKt.FooCoroutineImplBase() {
     @Autowired
     lateinit var myService: MyService
 
-    @RAM(value = RAM.RAMItem(groupId = 1, attrs = arrayOf(RAM.RAMAttr(key = "access", value = "1"))))
+//    @RAM(value = RAM.RAMItem(groupId = 1, attrs = arrayOf(RAM.RAMAttr(key = "access", value = "1"))))
     override suspend fun bar(request: Hello.BarRequest): Hello.BarResponse =
             withContext(Dispatchers.IO) {
                 throw Trailers.newErrorCode(111)

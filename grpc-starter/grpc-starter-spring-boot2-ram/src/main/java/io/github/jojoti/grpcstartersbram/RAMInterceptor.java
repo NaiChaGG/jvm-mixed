@@ -18,6 +18,7 @@ package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
+import io.github.jojoti.grpcstartersb.ScopeServicesEvent;
 import io.github.jojoti.grpcstartersb.ScopeServicesEventEntities;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
@@ -52,7 +53,7 @@ class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
     }
 
     @EventListener
-    public void onServicesRegister(ScopeServicesEventEntities servicesEventEntities) {
+    public void onServicesRegister(ScopeServicesEvent servicesEventEntities) {
 
         // fixme 接受启动填充的
     }

@@ -1,4 +1,17 @@
+# 驱动配置信息
 spring:
+  #  fixme 第一个版本上线前需要删除此配置
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    # 仅仅是开发有用
+    show-sql: true
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/example?useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true&useSSL=false
+    username: example
+    password: example
   redis:
     timeout: 50000ms
     database: 1
