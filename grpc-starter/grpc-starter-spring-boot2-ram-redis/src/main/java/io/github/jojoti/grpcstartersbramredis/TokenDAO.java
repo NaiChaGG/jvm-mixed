@@ -67,7 +67,7 @@ class TokenDAO {
         return attach;
     }
 
-    public void logoutSync(long uid, int scopeId) {
+    public void logoutSync(long uid, long scopeId) {
         final var deleteKey = TokenDAO.makeKey(uid, scopeId);
         final var rs = this.stringRedisTemplate.delete(deleteKey);
         if (rs != null && rs && log.isInfoEnabled()) {
@@ -81,11 +81,11 @@ class TokenDAO {
     }
 
     @Async
-    public void addAttachAsync(long uid, int scopeId, Map<String, String> attach) {
+    public void addAttachAsync(long uid, long scopeId, Map<String, String> attach) {
         this.addAttachSync(uid, scopeId, attach);
     }
 
-    public void addAttachSync(long uid, int scopeId, Map<String, String> attach) {
+    public void addAttachSync(long uid, long scopeId, Map<String, String> attach) {
         final var key = makeKey(uid, scopeId);
         stringRedisTemplate.execute(new SessionCallback<List<Object>>() {
             // https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#tx
@@ -98,7 +98,7 @@ class TokenDAO {
         });
     }
 
-    private static String makeKey(long uid, int sid) {
+    private static String makeKey(long uid, long sid) {
         return "dt" + uid + ":" + sid;
     }
 

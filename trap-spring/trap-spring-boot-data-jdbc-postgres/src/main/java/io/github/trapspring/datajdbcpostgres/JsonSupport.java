@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.postgresql.util.PGobject;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -30,6 +31,13 @@ public class JsonSupport extends AbstractJdbcConfiguration {
 
     JsonSupport(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    // 支持 别名
+    @Bean
+    @ConditionalOnMissingBean(ObjectMapper.class)
+    public static ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
     @Bean

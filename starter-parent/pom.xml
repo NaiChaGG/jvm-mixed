@@ -36,6 +36,7 @@
     <modules>
         <module>starter-grpc-netty-server</module>
         <module>starter-grpc-netty-client</module>
+        <module>starter-grpc-testing</module>
         <module>starter-test-junit5</module>
         <module>../trap-spring</module>
     </modules>
@@ -72,6 +73,11 @@
             <dependency>
                 <groupId>io.github.jojoti</groupId>
                 <artifactId>starter-grpc-netty-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti</groupId>
+                <artifactId>starter-grpc-testing</artifactId>
                 <version>${revision}</version>
             </dependency>
 

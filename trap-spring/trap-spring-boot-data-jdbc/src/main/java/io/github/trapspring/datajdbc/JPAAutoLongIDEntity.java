@@ -16,11 +16,11 @@
 
 package io.github.trapspring.datajdbc;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -28,10 +28,12 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
+@Table
 public abstract class JPAAutoLongIDEntity extends TrapBaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @javax.persistence.Id
+    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Override

@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter {
 
-    public static final Context.Key<SessionUser> USER_ID_NTS = Context.key("userId");
+    public static final Context.Key<SessionUser> USER_NTS = Context.key("userId");
 
     // 用户头信息使用这个来获取
     private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
@@ -48,16 +48,18 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
         final var found = metadata.get(TOKEN_METADATA_KEY);
-        if (found == null) {
-            serverCall.close(Status.UNAUTHENTICATED, new Metadata());
+        // 验证登录会话
+        final SessionUser user;
+        try {
+            user = this.session.verify(found, ImmutableList.<String>builder().build());
+        } catch (Exception e) {
+            final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
+            serverCall.close(error, new Metadata());
             return new ServerCall.Listener<>() {
             };
         }
 
-        // 验证登录会话
-        final var user = this.session.verify(found, ImmutableList.<String>builder().build());
-
-        final var context = Context.current().withValue(USER_ID_NTS, user);
+        final var context = Context.current().withValue(USER_NTS, user);
 
         return Contexts.interceptCall(context, serverCall, metadata, serverCallHandler);
     }

@@ -28,7 +28,7 @@ public interface HashIdToken {
         return new DecodeToken(slat, ids);
     }
 
-    static NewToken createToken(long uid, int scopeId) {
+    static NewToken createToken(long uid, long scopeId) {
         final var slat = UUID.randomUUID().toString().replace("-", "");
         var hashToken = new Hashids("session" + slat).encode(uid, scopeId);
         var token = slat + "|" + hashToken;

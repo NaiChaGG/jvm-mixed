@@ -30,12 +30,12 @@ final class AbstractSessionUser implements SessionUser {
 
     private static final class InlineEntity {
         private final long uid;
-        private final int scopeId;
+        private final long scopeId;
         // 这里面存的都是
         private final Map<String, String> attach;
         private final Map<String, Object> cached = Maps.newHashMap();
 
-        InlineEntity(long uid, int scopeId, Map<String, String> attach, ObjectMapper objectMapper) {
+        InlineEntity(long uid, long scopeId, Map<String, String> attach, ObjectMapper objectMapper) {
             this.uid = uid;
             this.scopeId = scopeId;
             this.attach = attach;
@@ -111,7 +111,7 @@ final class AbstractSessionUser implements SessionUser {
     }
 
     @Override
-    public int getScopeId() {
+    public long getScopeId() {
         final var entityRef = this.entity;
         this.checkSession(entityRef);
         return entityRef.scopeId;
@@ -138,7 +138,7 @@ final class AbstractSessionUser implements SessionUser {
     }
 
     @Override
-    public NewTokenBuilder newToken(long uid, int scopeId) {
+    public NewTokenBuilder newToken(long uid, long scopeId) {
         final var newToken = HashIdToken.createToken(uid, scopeId);
 
         final var hashValues = Maps.<String, String>newHashMap();

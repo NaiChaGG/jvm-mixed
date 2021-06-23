@@ -88,7 +88,7 @@
         <bouncycastle.version>1.66</bouncycastle.version>
 
         <!--    spring boot    -->
-        <spring.boot.version>2.5.0</spring.boot.version>
+        <spring.boot.version>2.4.7</spring.boot.version>
         <!--    此 version 要和 spring boot 里面的保持一致 整合 mybatis 等需要在 maven 里面配置 mysql version 需要使用 mysql.version 否则会和spring boot mysql version 不一致   -->
         <postgresql.version>42.2.20</postgresql.version>
         <mysql.version>8.0.25</mysql.version>

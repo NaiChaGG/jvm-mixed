@@ -16,6 +16,7 @@
 
 package io.github.trapspring.datajdbc;
 
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.MappedSuperclass;
@@ -30,8 +31,12 @@ import javax.persistence.MappedSuperclass;
 @Table
 public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
 
+    @Column
+    @javax.persistence.Column
     private long createAt;
 
+    @Column
+    @javax.persistence.Column
     private long updateAt;
 
     public long getCreateAt() {

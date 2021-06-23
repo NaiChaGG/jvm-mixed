@@ -32,7 +32,7 @@ public interface SessionUser {
      * @return
      * @throws SessionIsNotCreatedException
      */
-    int getScopeId();
+    long getScopeId();
 
     /**
      * 获取用户的 uid
@@ -62,7 +62,7 @@ public interface SessionUser {
      * @param uid
      * @return 返回 token
      */
-    NewTokenBuilder newToken(long uid, int scopeId);
+    NewTokenBuilder newToken(long uid, long scopeId);
 
     interface NewTokenBuilder {
 
