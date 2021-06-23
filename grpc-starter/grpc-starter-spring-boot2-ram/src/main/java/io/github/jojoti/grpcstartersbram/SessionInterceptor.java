@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter {
 
-    public static final Context.Key<SessionUser> USER_NTS = Context.key("userId");
+    public static final Context.Key<SessionUser> USER_NTS = Context.key("user");
 
     // 用户头信息使用这个来获取
     private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);

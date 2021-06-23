@@ -197,6 +197,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             }
 
             serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
+            log.info("scopeName {} add new builder", entry.getKey().value());
         }
 
         for (GRpcServerProperties.ServerItem server : this.gRpcServerProperties.getServers()) {

@@ -18,8 +18,6 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.collect.ImmutableMap;
 
-import java.util.Map;
-
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -49,6 +47,10 @@ public interface SessionUser {
      */
     boolean isAnonymous();
 
+    default boolean isLogin() {
+        return !isAnonymous();
+    }
+
     /**
      * 用户登出
      *
@@ -63,6 +65,10 @@ public interface SessionUser {
      * @return 返回 token
      */
     NewTokenBuilder newToken(long uid, long scopeId);
+
+    default NewTokenBuilder newToken(long uid) {
+        return newToken(uid, 0L);
+    }
 
     interface NewTokenBuilder {
 

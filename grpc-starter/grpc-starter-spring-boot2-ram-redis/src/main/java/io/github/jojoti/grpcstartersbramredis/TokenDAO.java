@@ -61,7 +61,7 @@ class TokenDAO {
 
         final Map<String, String> attach = Maps.newHashMap();
         for (int i = 0; i < hashValues.size(); i++) {
-            attach.put(hashKeys.get(i + 1), hashValues.get(i));
+            attach.put(hashKeys.get(i), hashValues.get(i));
         }
 
         return attach;

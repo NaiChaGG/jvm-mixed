@@ -26,6 +26,8 @@ import io.grpc.StatusException;
  * https://juejin.cn/post/6943618407393099807
  * grpc Trailers Vs Header
  * Trailers 表示请求结束时发送的 头信息，Header 是建立连接时发送的头信息
+ * <p>
+ * 1000 以内使用 约定
  *
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -37,14 +39,14 @@ public interface Trailers {
     // 使用 此方法可以传递更多的 头信息给客户端
 
     static StatusException newErrorCode(int error) {
-        Preconditions.checkArgument(error > 0);
+        Preconditions.checkArgument(error > 1000);
         var trailers = new Metadata();
         trailers.put(GlobalExceptionInterceptor.X_ERROR_METADATA_KEY, String.valueOf(error));
         return new StatusException(Status.INTERNAL, trailers);
     }
 
     static StatusException newErrorCode(int error, Metadata mergerTrailers) {
-        Preconditions.checkArgument(error > 0);
+        Preconditions.checkArgument(error > 1000);
         var trailers = new Metadata();
         trailers.merge(mergerTrailers);
         trailers.put(GlobalExceptionInterceptor.X_ERROR_METADATA_KEY, String.valueOf(error));
@@ -53,6 +55,10 @@ public interface Trailers {
 
     static StatusException newErrorCode(UniqueKey<Integer> error) {
         return newErrorCode(error.get());
+    }
+
+    static StatusException newArgsError() {
+        return newErrorCode(2);
     }
 
 }
