@@ -99,7 +99,7 @@ class TokenDAO {
     }
 
     private static String makeKey(long uid, long sid) {
-        return "dt" + uid + ":" + sid;
+        return "dt:" + uid + ":" + sid;
     }
 
 }

@@ -1,44 +1,30 @@
 package io.github.jojoti.grpcstartersbexamples;
 
-import io.github.trapspring.datajdbc.TrapBaseTimeEntity;
-
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Entity(name = "account_guest")
-@Table(indexes = {
-        @Index(columnList = "cliIdSha256,appId", unique = true),
-})
-public class AccountGuestEntity extends TrapBaseTimeEntity {
+@Table("account_guest")
+public class AccountGuestEntity {
 
     @Id
     private long uid;
 
-    @Column
     private long appId;
 
-    @Column
     private long channelId;
 
-    @Column
     private String cliIdSha256;
 
-    @Column
     private String cliIdRaw;
 
     /**
      * 封号被禁言的到期时间
      */
-    @Column
     private long blockExpireTime;
-
-    @Override
-    public Long getId() {
-        return this.uid;
-    }
 
     public long getUid() {
         return uid;

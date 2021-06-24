@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.github.trapspring.datajdbcpostgres.JsonSupport
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#io.github.trapspring.datajdbcpostgres.JsonSupport

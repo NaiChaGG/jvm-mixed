@@ -2,6 +2,7 @@ package io.github.jojoti.grpcstartersbramredis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -20,7 +21,8 @@ import java.util.Map;
  */
 final class AbstractSessionUser implements SessionUser {
 
-    private static final String ATTACH_SLAT_KEY = "__slat";
+    private static final String ATTACH_SLAT_KEY = "_slat";
+    private static final String CUSTOMER_KEY_PREFIX = "_";
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionUser.class);
 
     private final TokenDAO tokenDAO;
@@ -72,10 +74,16 @@ final class AbstractSessionUser implements SessionUser {
         final var uid = tokenParse.getUid();
         final var scopeId = tokenParse.getScopeId();
 
-        final var hashKeys = ImmutableList.<String>builder().add(AbstractSessionUser.ATTACH_SLAT_KEY).addAll(attachInline).build();
+        if (attachInline.size() > 0) {
+            for (String s : attachInline) {
+                Preconditions.checkArgument(!s.startsWith(CUSTOMER_KEY_PREFIX));
+            }
+        }
+
+        final var hashKeys = ImmutableList.<String>builder().add(AbstractSessionUser.ATTACH_SLAT_KEY).addAll(attachInline);
 
         // 只获取这次需要一次查询的，否则使用延迟查询
-        final var hashValues = this.tokenDAO.getSession(uid, scopeId, hashKeys);
+        final var hashValues = this.tokenDAO.getSession(uid, scopeId, hashKeys.build());
 
         // 至少要存在 slat
         if (hashValues.size() < 1) {
@@ -148,14 +156,14 @@ final class AbstractSessionUser implements SessionUser {
         return new NewTokenBuilder() {
             @Override
             public NewTokenBuilder setAttachString(String key, String val) {
-                newInline.attach.put(key, val);
+                newInline.attach.put("_" + key, val);
                 return this;
             }
 
             @Override
             public <T> NewTokenBuilder setAttachJson(String key, T t) {
                 try {
-                    newInline.attach.put(key, objectMapper.writeValueAsString(t));
+                    newInline.attach.put("_" + key, objectMapper.writeValueAsString(t));
                     // 这里 不做字符串缓存，因为写了还要读出来是低概率
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
@@ -206,7 +214,10 @@ final class AbstractSessionUser implements SessionUser {
     public SessionUser setAttachString(ImmutableMap<String, String> stringValues) {
         final var entityRef = this.entity;
         this.checkSession(entityRef);
-        stringValues.forEach(entityRef.attach::put);
+        stringValues.forEach((K, V) -> {
+            Preconditions.checkArgument(!K.startsWith(CUSTOMER_KEY_PREFIX));
+            entityRef.attach.put(K, V);
+        });
         tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, stringValues);
         return this;
     }
@@ -217,6 +228,7 @@ final class AbstractSessionUser implements SessionUser {
         this.checkSession(entityRef);
         final var strings = Maps.<String, String>newHashMap();
         for (Map.Entry<String, T> stringTEntry : jsonValues.entrySet()) {
+            Preconditions.checkArgument(!stringTEntry.getKey().startsWith(CUSTOMER_KEY_PREFIX));
             try {
                 entityRef.cached.put(stringTEntry.getKey(), stringTEntry.getValue());
                 strings.put(stringTEntry.getKey(), this.objectMapper.writeValueAsString(stringTEntry.getValue()));

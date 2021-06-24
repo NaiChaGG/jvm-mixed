@@ -57,6 +57,12 @@ public interface Trailers {
         return newErrorCode(error.get());
     }
 
+    static StatusException newErrorTraces(Exception exception) {
+        return Status.fromCode(Status.INTERNAL.getCode())
+                .withDescription(exception.getMessage())
+                .withCause(exception).asException();
+    }
+
     static StatusException newArgsError() {
         return newErrorCode(2);
     }

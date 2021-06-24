@@ -24,11 +24,11 @@ import org.springframework.context.annotation.Configuration;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Configuration(proxyBeanMethods = false)
-@ConditionalOnBean(value = AutoTime.class)
+//@Configuration(proxyBeanMethods = false)
+//@ConditionalOnBean(value = AutoTime.class)
 public class AutoTimeConfiguration {
 
-    @Bean
+//    @Bean
     public AutoTimeEvent autoTimeEvent() {
         return new AutoTimeEvent();
     }
