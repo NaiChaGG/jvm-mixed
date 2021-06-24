@@ -1,7 +1,9 @@
 package io.github.jojoti.grpcstartersbexamples;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
@@ -14,9 +16,9 @@ import javax.sql.DataSource;
  * @author Wang Yue
  */
 @SpringBootApplication
-@EnableJdbcRepositories(basePackages = "io.github.jojoti.grpcstartersbexamples")
+@EnableJdbcRepositories
 @Configuration
-//@AutoConfigureAfter({HibernateJpaAutoConfiguration.class})
+@AutoConfigureAfter({HibernateJpaAutoConfiguration.class})
 public class App {
 
     public static void main(String[] args) {

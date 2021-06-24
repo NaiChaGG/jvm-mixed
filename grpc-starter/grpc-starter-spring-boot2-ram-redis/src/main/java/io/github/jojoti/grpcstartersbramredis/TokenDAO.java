@@ -39,7 +39,7 @@ class TokenDAO {
     private static final Logger log = LoggerFactory.getLogger(TokenDAO.class);
 
     private final StringRedisTemplate stringRedisTemplate;
-    private final long ttl = 600;
+    private final long ttl = 60;
 
     public TokenDAO(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -92,7 +92,7 @@ class TokenDAO {
             public List<Object> execute(RedisOperations operations) throws DataAccessException {
                 operations.multi();
                 operations.opsForHash().putAll(key, attach);
-                operations.expire(key, ttl, TimeUnit.SECONDS);
+                operations.expire(key, ttl, TimeUnit.DAYS);
                 return operations.exec();
             }
         });

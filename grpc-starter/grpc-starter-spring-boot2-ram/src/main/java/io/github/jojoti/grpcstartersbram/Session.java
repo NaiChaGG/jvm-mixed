@@ -36,7 +36,15 @@ public interface Session {
      */
     SessionUser verify(String tokenVal, ImmutableList<String> attachInline);
 
+    default SessionUser verify(String tokenVal) {
+        return verify(tokenVal, ImmutableList.of());
+    }
+
     SessionUser verify(long uid, int scopeId, ImmutableList<String> attachInline);
+
+    default SessionUser verify(long uid, int scopeId) {
+        return verify(uid, scopeId, ImmutableList.of());
+    }
 
     /**
      * 根据传入的参数退出

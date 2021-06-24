@@ -17,7 +17,9 @@ public class InitData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        var rs = this.accountGuestRepository.findMemberLoginByAppId(1);
 
+        System.out.println(rs);
     }
 
 }

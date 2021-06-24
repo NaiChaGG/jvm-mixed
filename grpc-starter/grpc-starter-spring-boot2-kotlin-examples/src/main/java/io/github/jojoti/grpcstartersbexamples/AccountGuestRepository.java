@@ -2,6 +2,7 @@ package io.github.jojoti.grpcstartersbexamples;
 
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ public interface AccountGuestRepository extends CrudRepository<AccountGuestEntit
      *
      * @return
      */
-    @Query
-    List<MemberLogin> findMemberLoginByAppId(long appId);
+    @Query("select uid, block_expire_time from public.account_guest where app_id =:appId")
+    List<MemberLogin> findMemberLoginByAppId(@Param("appId") long appId);
 
     class MemberLogin {
         private long uid;
