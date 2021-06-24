@@ -16,7 +16,7 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import java.lang.annotation.*;
 
@@ -27,6 +27,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-public @interface AutoTime {
+@Configuration
+public @interface DataJdbcAutoTime {
 }

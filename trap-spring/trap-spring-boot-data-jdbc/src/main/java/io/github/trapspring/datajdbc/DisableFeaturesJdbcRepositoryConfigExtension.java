@@ -25,7 +25,7 @@ import org.springframework.data.repository.config.AnnotationRepositoryConfigurat
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-//@Configuration(proxyBeanMethods = false)
+@Configuration(proxyBeanMethods = false)
 // 这样声明会覆盖 spring boot 的自动加载
 // 	@Configuration(proxyBeanMethods = false)
 //	@ConditionalOnMissingBean(JdbcRepositoryConfigExtension.class)

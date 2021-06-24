@@ -48,7 +48,7 @@ class TokenDAO {
     @Async
     public void expireTokenAsync(long uid, int scopeId) {
         // 异步延长 token 过期时间
-        this.stringRedisTemplate.expire(TokenDAO.makeKey(uid, scopeId), ttl, TimeUnit.SECONDS);
+        this.stringRedisTemplate.expire(TokenDAO.makeKey(uid, scopeId), ttl, TimeUnit.DAYS);
     }
 
     public Map<String, String> getSession(long uid, int scopeId, ImmutableList<String> hashKeys) {
