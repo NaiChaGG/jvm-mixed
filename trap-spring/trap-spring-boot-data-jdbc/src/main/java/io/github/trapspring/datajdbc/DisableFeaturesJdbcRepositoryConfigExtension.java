@@ -17,9 +17,14 @@
 package io.github.trapspring.datajdbc;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jdbc.repository.config.JdbcRepositoryConfigExtension;
 import org.springframework.data.repository.config.AnnotationRepositoryConfigurationSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import javax.sql.DataSource;
 
 /**
  * @author JoJo Wang

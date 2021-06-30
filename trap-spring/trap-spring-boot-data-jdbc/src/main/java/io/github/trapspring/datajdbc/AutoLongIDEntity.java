@@ -29,7 +29,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 @Table
-public abstract class JPAAutoLongIDEntity extends TrapBaseTimeEntity {
+public abstract class AutoLongIDEntity extends TrapBaseTimeEntity {
 
     @Id
     @javax.persistence.Id
