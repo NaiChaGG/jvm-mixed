@@ -19,15 +19,10 @@ import javax.sql.DataSource;
 @EnableJdbcRepositories
 @Configuration
 @AutoConfigureAfter({HibernateJpaAutoConfiguration.class})
-public class App {
+public class AppGRpcStarterKtExample {
 
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
-    }
-
-    @Bean
-    NamedParameterJdbcOperations namedParameterJdbcOperations(DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
+        SpringApplication.run(AppGRpcStarterKtExample.class, args);
     }
 
 }

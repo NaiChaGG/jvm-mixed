@@ -32,17 +32,17 @@ public class GRpcClientProperties {
 
     private List<ClientItem> clients;
 
-    private static void checkScopeName(String scopeName) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(scopeName), "ScopeName is not empty");
+    private static void checkServiceName(String serviceName) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(serviceName), "ServiceName is not empty");
     }
 
-    public void validServiceName(String scopeName) {
+    public void validServiceName(String serviceName) {
         for (ClientItem server : this.getClients()) {
-            if (server.getServiceName().equals(scopeName)) {
+            if (server.getServiceName().equals(serviceName)) {
                 return;
             }
         }
-        throw new IllegalArgumentException("ScopeName " + scopeName + " config key not found");
+        throw new IllegalArgumentException("ServiceName " + serviceName + " config key not found");
     }
 
     public List<ClientItem> getClients() {
@@ -51,7 +51,7 @@ public class GRpcClientProperties {
 
     public void setClients(List<ClientItem> clients) {
         final var setSize = clients.stream().map(c -> {
-            checkScopeName(c.serviceName);
+            checkServiceName(c.serviceName);
             return c.serviceName;
         }).collect(Collectors.toSet()).size();
 
@@ -154,7 +154,6 @@ public class GRpcClientProperties {
         public void setDns(List<String> dns) {
             this.dns = dns;
         }
-
     }
 
 }

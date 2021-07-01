@@ -17,14 +17,12 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
-import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import io.github.jojoti.grpcstartersb.ScopeServicesEvent;
-import io.github.jojoti.grpcstartersb.ScopeServicesEventEntities;
+import io.github.jojoti.grpcstartersb.GRpcScope;
+import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
-import io.grpc.ServerInterceptor;
-import org.springframework.context.event.EventListener;
+import io.grpc.ServiceDescriptor;
 
 import java.util.List;
 
@@ -35,8 +33,7 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@GRpcGlobalInterceptor
-class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
+class RAMInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
 
     private final RAMAccess ramAccess;
     private final GRpcRAMProperties gRpcRAMProperties;
@@ -52,15 +49,14 @@ class RAMInterceptor implements ServerInterceptor, DynamicScopeFilter {
         return null;
     }
 
-    @EventListener
-    public void onServicesRegister(ScopeServicesEvent servicesEventEntities) {
-
-        // fixme 接受启动填充的
+    @Override
+    public List<String> getScopes() {
+        return this.gRpcRAMProperties.enableScopeNames();
     }
 
     @Override
-    public List<String> getScopes() {
-        return null;
+    public void onServicesRegister(GRpcScope scope, List<ServiceDescriptor> servicesEvent) {
+
     }
 
 }

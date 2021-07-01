@@ -19,6 +19,7 @@ package io.github.jojoti.grpcstartersbram;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author JoJo Wang
@@ -28,26 +29,45 @@ import java.util.List;
 public class GRpcRAMProperties {
 
     // 那些 scope 需要启用 ram 拦截
-    private List<ServerRam> servers;
+    private List<RAMItem> servers;
 
-    public List<ServerRam> getServers() {
+    public List<RAMItem> getServers() {
         return servers;
     }
 
-    public void setServers(List<ServerRam> servers) {
+    public void setServers(List<RAMItem> servers) {
         this.servers = servers;
     }
 
-    public static final class ServerRam {
-        private boolean enableRAM = false;
+    static final class RAMItem {
+        private String scopeName;
+        // 访问控制默认打开
+        private boolean enableRam = true;
 
-        public boolean isEnableRAM() {
-            return enableRAM;
+        public String getScopeName() {
+            return scopeName;
         }
 
-        public void setEnableRAM(boolean enableRAM) {
-            this.enableRAM = enableRAM;
+        public void setScopeName(String scopeName) {
+            this.scopeName = scopeName;
+        }
+
+        public boolean isEnableRam() {
+            return enableRam;
+        }
+
+        public void setEnableRam(boolean enableRam) {
+            this.enableRam = enableRam;
         }
     }
+
+    List<String> enableScopeNames() {
+        var scopes = servers.stream().filter(RAMItem::isEnableRam).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
+        if (scopes.size() <= 0) {
+            throw new IllegalArgumentException("Bug fix ram scope conditional error");
+        }
+        return scopes;
+    }
+
 
 }

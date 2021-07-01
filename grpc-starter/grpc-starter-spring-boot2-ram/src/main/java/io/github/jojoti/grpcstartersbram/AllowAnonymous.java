@@ -16,9 +16,15 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import java.lang.annotation.*;
+
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class SessionIsNotCreatedException extends RuntimeException {
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AllowAnonymous {
+
 }

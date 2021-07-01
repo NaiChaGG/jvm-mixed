@@ -17,7 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcScope;
-import io.grpc.ServiceDescriptor;
+import io.grpc.MethodDescriptor;
 
 /**
  * @author JoJo Wang
@@ -26,7 +26,7 @@ import io.grpc.ServiceDescriptor;
 class RAMAccessDeny implements RAMAccess {
 
     @Override
-    public boolean access(Object uuid, RAM.RAMItem ramItem, GRpcScope gRpcScope, ServiceDescriptor serviceDescriptor) {
+    public boolean access(GRpcScope gRpcScope, RAM ramItem, MethodDescriptor<?, ?> methodDescriptor) {
         return false;
     }
 

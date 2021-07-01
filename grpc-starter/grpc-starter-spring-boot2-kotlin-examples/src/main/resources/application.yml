@@ -38,22 +38,15 @@ grpcs:
   serverConfig: &nettyServer
     nettyConfig:
       maxInboundSize: 1024
-  #    nettySharedConfig:
-  #      xx: 1
-
-  # 默认支持的两个服务，该模式可以自动使用注解
-  ram:
-    # 给特定 server 启用
-    - primary
-  # 特定 server 启用 session
-  session:
-    - primary
 
   servers:
     # 内置 primary
     - scopeName: primary
       address: 127.0.0.1:8101
       enableHealthStatus: false
+      enableSession: true
+      enableRam: true
+      ram: true
       <<: *nettyServer
 
     # 内置 private

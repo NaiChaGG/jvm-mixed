@@ -28,7 +28,7 @@ public interface SessionUser {
      * 获取当前会话的 scopeId
      *
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     long getScopeId();
 
@@ -36,7 +36,7 @@ public interface SessionUser {
      * 获取用户的 uid
      *
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     long getUid();
 
@@ -54,7 +54,7 @@ public interface SessionUser {
     /**
      * 用户登出
      *
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     void logout();
 
@@ -85,14 +85,14 @@ public interface SessionUser {
      *
      * @param key
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     String getAttach(String key);
 
     /**
      * @param key
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     default int getAttachAsInt(String key) {
         return Integer.parseInt(getAttach(key));
@@ -101,7 +101,7 @@ public interface SessionUser {
     /**
      * @param key
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     default long getAttachAsLong(String key) {
         return Long.parseLong(getAttach(key));
@@ -114,7 +114,7 @@ public interface SessionUser {
      * @param t
      * @param <T>
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     <T> T getAttachJson(String key, Class<T> t);
 
@@ -124,7 +124,7 @@ public interface SessionUser {
      * @param key
      * @param val
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     default SessionUser setAttachString(String key, String val) {
         return setAttachString(ImmutableMap.of(key, val));
@@ -135,7 +135,7 @@ public interface SessionUser {
      *
      * @param stringValues
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     SessionUser setAttachString(ImmutableMap<String, String> stringValues);
 
@@ -146,7 +146,7 @@ public interface SessionUser {
      * @param t
      * @param <T>
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     default <T> SessionUser setAttachJson(String key, T t) {
         return setAttachJson(ImmutableMap.of(key, t));
@@ -158,7 +158,7 @@ public interface SessionUser {
      * @param jsonValues
      * @param <T>
      * @return
-     * @throws SessionIsNotCreatedException
+     * @throws SessionNotCreatedException
      */
     <T> SessionUser setAttachJson(ImmutableMap<String, T> jsonValues);
 

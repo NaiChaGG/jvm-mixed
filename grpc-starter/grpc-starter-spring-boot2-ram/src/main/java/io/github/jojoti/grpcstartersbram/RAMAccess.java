@@ -17,7 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcScope;
-import io.grpc.ServiceDescriptor;
+import io.grpc.MethodDescriptor;
 
 /**
  * @author JoJo Wang
@@ -26,14 +26,11 @@ import io.grpc.ServiceDescriptor;
 public interface RAMAccess {
 
     /**
-     * 校验是否可以直接访问数据库
-     *
-     * @param uuid              用户的唯一ID 看应用层自行约定
-     * @param ramItem           注解标记的属性
-     * @param gRpcScope         标注的注解属于哪个模块
-     * @param serviceDescriptor
+     * @param gRpcScope        标注的注解属于哪个模块
+     * @param ramItem          注解标记的属性
+     * @param methodDescriptor
      * @return
      */
-    boolean access(Object uuid, RAM.RAMItem ramItem, GRpcScope gRpcScope, ServiceDescriptor serviceDescriptor);
+    boolean access(GRpcScope gRpcScope, RAM ramItem, MethodDescriptor<?, ?> methodDescriptor);
 
 }

@@ -18,6 +18,7 @@ package io.github.jojoti.grpcstartersbramredis;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,6 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
+ * fixme session 后续可能会支持独立数据源 待定
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -34,13 +37,23 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @ConditionalOnClass(StringRedisTemplate.class)
 public class SessionRedisAutoConfiguration {
 
+    // 不存在 TokenDAO & 存在 SessionRedisSrc 触发这个 支持 自定义 redis 源
     @Bean
-    public TokenDAO expireTokenAsync(StringRedisTemplate stringRedisTemplate) {
+    @ConditionalOnMissingBean(value = TokenDAO.class)
+    @ConditionalOnBean(annotation = SessionRedisSrc.class)
+    public TokenDAO tokenDao(@Qualifier("sessionRedis") StringRedisTemplate stringRedisTemplate) {
+        return new TokenDAO(stringRedisTemplate);
+    }
+
+    // 不存在 SessionRedisSrc & TokenDAO 使用这个
+    @Bean
+    @ConditionalOnMissingBean(value = TokenDAO.class, annotation = SessionRedisSrc.class)
+    public TokenDAO tokenDaoPrimary(StringRedisTemplate stringRedisTemplate) {
         return new TokenDAO(stringRedisTemplate);
     }
 
     @Bean
-    public SessionRedis ramAccess(TokenDAO expireToken, ObjectMapper objectMapper) {
+    public SessionRedis sessionRedis(TokenDAO expireToken, ObjectMapper objectMapper) {
         return new SessionRedis(expireToken, objectMapper);
     }
 

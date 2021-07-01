@@ -29,32 +29,19 @@ import java.lang.annotation.*;
 @Documented
 public @interface RAM {
 
-    RAMItem value() default @RAMItem;
-
-    // 匿名访问使用频率高，所以这里特殊处理
-    boolean allowAnonymous() default false;
+    /**
+     * 组ID
+     *
+     * @return
+     */
+    int groupId() default 0;
 
     /**
-     * 表主 ram item 属性
+     * 该 item 组对应的属性
+     *
+     * @return
      */
-    @Target({ElementType.ANNOTATION_TYPE})
-    @interface RAMItem {
-
-        /**
-         * 组ID
-         *
-         * @return
-         */
-        int groupId() default 0;
-
-        /**
-         * 该 item 组对应的属性
-         *
-         * @return
-         */
-        RAMAttr[] attrs() default {};
-
-    }
+    RAMAttr[] attrs() default {};
 
     @Target({ElementType.ANNOTATION_TYPE})
     @interface RAMAttr {

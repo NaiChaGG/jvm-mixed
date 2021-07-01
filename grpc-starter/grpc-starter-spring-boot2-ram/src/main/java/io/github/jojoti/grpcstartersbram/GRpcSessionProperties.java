@@ -19,6 +19,7 @@ package io.github.jojoti.grpcstartersbram;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author JoJo Wang
@@ -28,13 +29,43 @@ import java.util.List;
 public class GRpcSessionProperties {
 
     // 那些 scope 需要启用 ram 拦截
-    private List<String> session = null;
+    private List<SessionItem> servers;
 
-    public List<String> getSession() {
-        return session;
+    static final class SessionItem {
+        private String scopeName;
+        private boolean enableSession = false;
+
+        public String getScopeName() {
+            return scopeName;
+        }
+
+        public void setScopeName(String scopeName) {
+            this.scopeName = scopeName;
+        }
+
+        public boolean isEnableSession() {
+            return enableSession;
+        }
+
+        public void setEnableSession(boolean enableSession) {
+            this.enableSession = enableSession;
+        }
     }
 
-    public void setSession(List<String> session) {
-        this.session = session;
+    List<String> enableScopeNames() {
+        var scopes = servers.stream().filter(SessionItem::isEnableSession).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
+        if (scopes.size() <= 0) {
+            throw new IllegalArgumentException("Bug fix session scope conditional error");
+        }
+        return scopes;
     }
+
+    public List<SessionItem> getServers() {
+        return servers;
+    }
+
+    public void setServers(List<SessionItem> servers) {
+        this.servers = servers;
+    }
+
 }

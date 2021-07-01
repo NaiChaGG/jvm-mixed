@@ -17,9 +17,16 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
+import io.github.jojoti.grpcstartersb.GRpcServers;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+
+import java.util.List;
 
 /**
  * rfs:
@@ -33,18 +40,37 @@ import org.springframework.context.annotation.Configuration;
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
 //@ConditionalOnBean({GRpcServers.class, SessionCreator.class})
 //@ConditionalOnExpression("'${grpcs.session}' != null && '${grpcs.session}'.size() > 0")
+// 需要 外部 导入了 server 正常启动 & session 实例
+@ConditionalOnBean({GRpcServers.class, Session.class})
+// 且 配置文件里面配置了 session
+@Conditional(GRpcSessionAutoConfiguration.EnableSession.class)
 @EnableConfigurationProperties(GRpcSessionProperties.class)
 public class GRpcSessionAutoConfiguration {
 
     @Bean
     @GRpcGlobalInterceptor
-    public SessionInterceptor ramInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
+    @Order(0)
+    public SessionInterceptor sessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
         return new SessionInterceptor(session, gRpcSessionProperties);
     }
 
-    @Bean
-    public SessionEnableBean sessionEnableBean() {
-        return new SessionEnableBean();
+    static final class EnableSession implements Condition {
+
+        private static final Bindable<List<GRpcSessionProperties.SessionItem>> STRING_LIST = Bindable.listOf(GRpcSessionProperties.SessionItem.class);
+
+        // rf: org.springframework.boot.autoconfigure.condition.OnPropertyListCondition
+        @Override
+        public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+            var found = Binder.get(conditionContext.getEnvironment()).bind("grpcs.servers", STRING_LIST);
+            if (found.isBound()) {
+                for (var ramItem : found.get()) {
+                    if (ramItem.isEnableSession()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
 }

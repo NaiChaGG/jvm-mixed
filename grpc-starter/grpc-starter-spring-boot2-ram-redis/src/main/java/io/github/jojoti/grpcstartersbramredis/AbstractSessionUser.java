@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import io.github.jojoti.grpcstartersbram.SessionIsNotCreatedException;
+import io.github.jojoti.grpcstartersbram.SessionNotCreatedException;
 import io.github.jojoti.grpcstartersbram.SessionUser;
 import io.github.jojoti.utilhashidtoken.HashIdToken;
 import org.slf4j.Logger;
@@ -114,7 +114,7 @@ final class AbstractSessionUser implements SessionUser {
 
     private void checkSession(InlineEntity inlineEntity) {
         if (inlineEntity.uid <= 0) {
-            throw new SessionIsNotCreatedException();
+            throw new SessionNotCreatedException();
         }
     }
 

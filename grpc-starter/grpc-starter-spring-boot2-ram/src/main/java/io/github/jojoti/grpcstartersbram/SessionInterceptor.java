@@ -18,6 +18,8 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.collect.ImmutableList;
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
+import io.github.jojoti.grpcstartersb.GRpcScope;
+import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.github.jojoti.grpcstartersb.ScopeServicesEvent;
 import io.grpc.*;
 import org.springframework.context.event.EventListener;
@@ -30,7 +32,7 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter {
+public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
 
     public static final Context.Key<SessionUser> USER_NTS = Context.key("user");
 
@@ -66,12 +68,12 @@ public class SessionInterceptor implements ServerInterceptor, DynamicScopeFilter
 
     @Override
     public List<String> getScopes() {
-        return this.gRpcSessionProperties.getSession();
+        return this.gRpcSessionProperties.enableScopeNames();
     }
 
-    @EventListener
-    public void onServicesRegister(ScopeServicesEvent servicesEvent) {
-        // fixme 接受启动填充的
+    @Override
+    public void onServicesRegister(GRpcScope scope, List<ServiceDescriptor> servicesEvent) {
+
     }
 
 }

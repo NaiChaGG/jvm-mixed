@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 import com.google.common.net.InetAddresses;
 import io.github.jojoti.grpcstartersb.autoconfigure.GRpcServerProperties;
 import io.grpc.*;
@@ -77,7 +78,6 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
     @Override
     public void start() {
         log.info("Starting gRPC Server ...");
-
         // 添加到所有 grpc server 的拦截器
         // 拦截器先添加后执行的请 自行使用 spring @Order 注解排序
         final var allGlobalInterceptors = applicationContext.getBeansWithAnnotation(GRpcGlobalInterceptor.class)
@@ -110,17 +110,19 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         final var allScopeInterceptors = applicationContext.getBeansWithAnnotation(GRpcScopeGlobalInterceptor.class);
         for (Object value : allScopeInterceptors.values()) {
             Preconditions.checkArgument(value instanceof ServerInterceptor, "Annotation @GRpcScopeService class must be instance of io.grpc.ServerInterceptor");
+
             // 肯定能找到
             final var foundScope = AnnotationUtils.findAnnotation(value.getClass(), GRpcScopeGlobalInterceptor.class).scope();
 
             this.gRpcServerProperties.validScopeName(foundScope.value());
-
             scopeInterceptors.put(foundScope, (ServerInterceptor) value);
         }
 
         final var serverBuilders = Lists.<ServerBuilders>newArrayList();
 
         final var services = Multimaps.<GRpcScope, ServiceDescriptor>newListMultimap(Maps.newHashMap(), Lists::newArrayList);
+        // 一个作用域之下 存在 多个 拦截器
+        final var scopeInterceptor = Multimaps.<GRpcScope, ScopeServerInterceptor>newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
 
         for (Map.Entry<GRpcScope, Collection<BindableService>> entry : scopeHandlers.asMap().entrySet()) {
             // 根据 scopeName 读取配置
@@ -153,6 +155,10 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                         final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
                         // 拦截器定义的 bean 没有找到
                         Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found");
+                        if (findDefinedInterceptorBean instanceof ScopeServerInterceptor) {
+                            scopeInterceptor.put(entry.getKey(), (ScopeServerInterceptor) findDefinedInterceptorBean);
+                        }
+
                         foundInterceptors.add(findDefinedInterceptorBean);
                     }
                     ServerInterceptors.intercept(bindableService, foundInterceptors);
@@ -163,6 +169,9 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     final var foundScopeInterceptors = scopeInterceptors.get(entry.getKey());
                     if (foundScopeInterceptors != null && foundScopeInterceptors.size() > 0) {
                         for (ServerInterceptor foundScopeInterceptor : foundScopeInterceptors) {
+                            if (foundScopeInterceptor instanceof ScopeServerInterceptor) {
+                                scopeInterceptor.put(entry.getKey(), (ScopeServerInterceptor) foundScopeInterceptor);
+                            }
                             // grpc 拦截器是先添加的后执行
                             newServerBuilder.intercept(foundScopeInterceptor);
                         }
@@ -173,15 +182,22 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
                         if (allGlobalInterceptor instanceof DynamicScopeFilter) {
                             // 比较两个注解的 scope 是否是同一个里面
+                            // 只有超全局拦截器才会用到 动态 tag
                             if (((DynamicScopeFilter) allGlobalInterceptor).getScopes() != null) {
                                 for (String scope : ((DynamicScopeFilter) allGlobalInterceptor).getScopes()) {
                                     if (entry.getKey().value().equals(scope)) {
+                                        if (allGlobalInterceptor instanceof ScopeServerInterceptor) {
+                                            scopeInterceptor.put(entry.getKey(), (ScopeServerInterceptor) allGlobalInterceptor);
+                                        }
                                         newServerBuilder.intercept(allGlobalInterceptor);
                                         break;
                                     }
                                 }
                             }
                         } else {
+                            if (allGlobalInterceptor instanceof ScopeServerInterceptor) {
+                                scopeInterceptor.put(entry.getKey(), (ScopeServerInterceptor) allGlobalInterceptor);
+                            }
                             // 先添加全局拦截器
                             // grpc 拦截器是先添加的后执行
                             newServerBuilder.intercept(allGlobalInterceptor);
@@ -216,6 +232,13 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         if (serverBuilders.size() != scopeHandlers.asMap().size() || serverBuilders.size() != this.gRpcServerProperties.getServers().size()) {
             // 启动的server与配置的 或者 bean注解的个数不匹配
             throw new IllegalArgumentException("Config error, please check config or annotation");
+        }
+
+        // 发送 message 到 对应的 拦截器 通知到 bean 注册成功的消息
+        for (Map.Entry<GRpcScope, ScopeServerInterceptor> entry : scopeInterceptor.entries()) {
+            var found = services.get(entry.getKey());
+            Preconditions.checkNotNull(found);
+            entry.getValue().onServicesRegister(entry.getKey(), found);
         }
 
         // 多个 latch
@@ -346,7 +369,10 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             this.healthStatusManager = healthStatusManager;
             this.config = config;
         }
-
     }
+
+//    private void scopeServerInterceptorFilter(GRpcScope scope, ServerBuilder<?> serverBuilder, ServerInterceptor serverInterceptor) {
+//
+//    }
 
 }
