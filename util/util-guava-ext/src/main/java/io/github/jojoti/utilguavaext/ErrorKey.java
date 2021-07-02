@@ -11,6 +11,7 @@ public interface ErrorKey extends UniqueKey<Integer> {
 
     /**
      * 唯一的错误码
+     *
      * @return
      */
     int getUniqueKey();

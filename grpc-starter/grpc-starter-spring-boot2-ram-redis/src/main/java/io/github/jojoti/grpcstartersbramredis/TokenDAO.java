@@ -45,6 +45,10 @@ class TokenDAO {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
+    private static String makeKey(long uid, long sid) {
+        return "dt:" + uid + ":" + sid;
+    }
+
     @Async
     public void expireTokenAsync(long uid, int scopeId) {
         // 异步延长 token 过期时间
@@ -96,10 +100,6 @@ class TokenDAO {
                 return operations.exec();
             }
         });
-    }
-
-    private static String makeKey(long uid, long sid) {
-        return "dt:" + uid + ":" + sid;
     }
 
 }

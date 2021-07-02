@@ -24,14 +24,6 @@ public interface AccountGuestRepository extends CrudRepository<AccountGuestEntit
         private long uid;
         private long blockExpireTime;
 
-        public void setUid(long uid) {
-            this.uid = uid;
-        }
-
-        public void setBlockExpireTime(long blockExpireTime) {
-            this.blockExpireTime = blockExpireTime;
-        }
-
         public boolean isBlock() {
             return blockExpireTime > System.currentTimeMillis();
         }
@@ -40,8 +32,16 @@ public interface AccountGuestRepository extends CrudRepository<AccountGuestEntit
             return uid;
         }
 
+        public void setUid(long uid) {
+            this.uid = uid;
+        }
+
         public long getBlockExpireTime() {
             return blockExpireTime;
+        }
+
+        public void setBlockExpireTime(long blockExpireTime) {
+            this.blockExpireTime = blockExpireTime;
         }
     }
 

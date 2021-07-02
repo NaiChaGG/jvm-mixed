@@ -19,11 +19,11 @@ public final class JsonMap {
         this.type = type;
     }
 
-    public static JsonMap fromJsonList(Map<?, ?>  array) {
+    public static JsonMap fromJsonList(Map<?, ?> array) {
         return new JsonMap(array, JSON_TYPE.JSON);
     }
 
-    public static JsonMap fromJsonbList(Map<?, ?>  array) {
+    public static JsonMap fromJsonbList(Map<?, ?> array) {
         return new JsonMap(array, JSON_TYPE.JSONB);
     }
 

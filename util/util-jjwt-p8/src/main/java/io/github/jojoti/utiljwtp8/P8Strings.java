@@ -7,5 +7,4 @@ package io.github.jojoti.utiljwtp8;
 public interface P8Strings {
 
 
-
 }

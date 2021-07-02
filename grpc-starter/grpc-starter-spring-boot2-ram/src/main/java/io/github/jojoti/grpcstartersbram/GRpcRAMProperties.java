@@ -39,6 +39,14 @@ public class GRpcRAMProperties {
         this.servers = servers;
     }
 
+    List<String> enableScopeNames() {
+        var scopes = servers.stream().filter(RAMItem::isEnableRam).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
+        if (scopes.size() <= 0) {
+            throw new IllegalArgumentException("Bug fix ram scope conditional error");
+        }
+        return scopes;
+    }
+
     static final class RAMItem {
         private String scopeName;
         // 访问控制默认打开
@@ -59,14 +67,6 @@ public class GRpcRAMProperties {
         public void setEnableRam(boolean enableRam) {
             this.enableRam = enableRam;
         }
-    }
-
-    List<String> enableScopeNames() {
-        var scopes = servers.stream().filter(RAMItem::isEnableRam).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
-        if (scopes.size() <= 0) {
-            throw new IllegalArgumentException("Bug fix ram scope conditional error");
-        }
-        return scopes;
     }
 
 

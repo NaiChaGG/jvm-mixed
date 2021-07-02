@@ -31,6 +31,22 @@ public class GRpcSessionProperties {
     // 那些 scope 需要启用 ram 拦截
     private List<SessionItem> servers;
 
+    List<String> enableScopeNames() {
+        var scopes = servers.stream().filter(SessionItem::isEnableSession).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
+        if (scopes.size() <= 0) {
+            throw new IllegalArgumentException("Bug fix session scope conditional error");
+        }
+        return scopes;
+    }
+
+    public List<SessionItem> getServers() {
+        return servers;
+    }
+
+    public void setServers(List<SessionItem> servers) {
+        this.servers = servers;
+    }
+
     static final class SessionItem {
         private String scopeName;
         private boolean enableSession = false;
@@ -50,22 +66,6 @@ public class GRpcSessionProperties {
         public void setEnableSession(boolean enableSession) {
             this.enableSession = enableSession;
         }
-    }
-
-    List<String> enableScopeNames() {
-        var scopes = servers.stream().filter(SessionItem::isEnableSession).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
-        if (scopes.size() <= 0) {
-            throw new IllegalArgumentException("Bug fix session scope conditional error");
-        }
-        return scopes;
-    }
-
-    public List<SessionItem> getServers() {
-        return servers;
-    }
-
-    public void setServers(List<SessionItem> servers) {
-        this.servers = servers;
     }
 
 }

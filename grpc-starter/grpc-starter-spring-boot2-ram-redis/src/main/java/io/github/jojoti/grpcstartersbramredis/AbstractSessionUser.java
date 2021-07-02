@@ -30,21 +30,6 @@ final class AbstractSessionUser implements SessionUser {
     // 更新时使用 影子实例来更新属性，避开多线程锁的问题
     private volatile InlineEntity entity;
 
-    private static final class InlineEntity {
-        private final long uid;
-        private final long scopeId;
-        // 这里面存的都是
-        private final Map<String, String> attach;
-        private final Map<String, Object> cached = Maps.newHashMap();
-
-        InlineEntity(long uid, long scopeId, Map<String, String> attach, ObjectMapper objectMapper) {
-            this.uid = uid;
-            this.scopeId = scopeId;
-            this.attach = attach;
-        }
-
-    }
-
     protected AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, String token, ImmutableList<String> attachInline) {
         this.tokenDAO = tokenDAO;
         this.objectMapper = objectMapper;
@@ -238,6 +223,21 @@ final class AbstractSessionUser implements SessionUser {
         }
         tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, strings);
         return this;
+    }
+
+    private static final class InlineEntity {
+        private final long uid;
+        private final long scopeId;
+        // 这里面存的都是
+        private final Map<String, String> attach;
+        private final Map<String, Object> cached = Maps.newHashMap();
+
+        InlineEntity(long uid, long scopeId, Map<String, String> attach, ObjectMapper objectMapper) {
+            this.uid = uid;
+            this.scopeId = scopeId;
+            this.attach = attach;
+        }
+
     }
 
 }

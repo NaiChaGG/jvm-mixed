@@ -37,6 +37,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @ConditionalOnClass(StringRedisTemplate.class)
 public class SessionRedisAutoConfiguration {
 
+    @Bean
+    @ConditionalOnMissingBean(ObjectMapper.class)
+    public static ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
     // 不存在 TokenDAO & 存在 SessionRedisSrc 触发这个 支持 自定义 redis 源
     @Bean
     @ConditionalOnMissingBean(value = TokenDAO.class)
@@ -55,12 +61,6 @@ public class SessionRedisAutoConfiguration {
     @Bean
     public SessionRedis sessionRedis(TokenDAO expireToken, ObjectMapper objectMapper) {
         return new SessionRedis(expireToken, objectMapper);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(ObjectMapper.class)
-    public static ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 
 }

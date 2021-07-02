@@ -36,10 +36,10 @@ open class FooHandler : FooGrpcKt.FooCoroutineImplBase() {
 
     //    @RAM(value = RAM.RAMItem(groupId = 1, attrs = arrayOf(RAM.RAMAttr(key = "access", value = "1"))))
     override suspend fun bar(request: Hello.BarRequest): Hello.BarResponse =
-            Coroutines.newSyncIo {
-                throw Trailers.newErrorCode(111)
+        Coroutines.newSyncIo {
+            throw Trailers.newErrorCode(111)
 //                myService.foo()
 //                Hello.BarResponse.newBuilder().build();
-            }
+        }
 
 }

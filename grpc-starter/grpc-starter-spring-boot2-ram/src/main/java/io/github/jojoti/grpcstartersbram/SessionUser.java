@@ -70,16 +70,6 @@ public interface SessionUser {
         return newToken(uid, 0L);
     }
 
-    interface NewTokenBuilder {
-
-        NewTokenBuilder setAttachString(String key, String val);
-
-        <T> NewTokenBuilder setAttachJson(String key, T t);
-
-        String build();
-
-    }
-
     /**
      * 不会读库
      *
@@ -161,5 +151,15 @@ public interface SessionUser {
      * @throws SessionNotCreatedException
      */
     <T> SessionUser setAttachJson(ImmutableMap<String, T> jsonValues);
+
+    interface NewTokenBuilder {
+
+        NewTokenBuilder setAttachString(String key, String val);
+
+        <T> NewTokenBuilder setAttachJson(String key, T t);
+
+        String build();
+
+    }
 
 }

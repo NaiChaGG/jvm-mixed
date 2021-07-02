@@ -16,9 +16,9 @@
 
 package io.github.jojoti.grpcstartersbexamples;
 
-import io.github.jojoti.grpcstartersb.Trailers;
 import io.github.jojoti.grpcstartersb.GRpcPrimaryService;
 import io.github.jojoti.grpcstartersb.GRpcServiceInterceptors;
+import io.github.jojoti.grpcstartersb.Trailers;
 import io.github.jojoti.grpcstartersbram.RAM;
 import io.grpc.stub.StreamObserver;
 
