@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcScope;
+import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 
 /**
@@ -26,8 +27,7 @@ import io.grpc.MethodDescriptor;
 class RAMAccessDeny implements RAMAccess {
 
     @Override
-    public boolean access(GRpcScope gRpcScope, RAM ramItem, MethodDescriptor<?, ?> methodDescriptor) {
+    public boolean access(MethodDescriptor<?, ?> methodDescriptor, GRpcScope gRpcScope, RAM ramItem, Metadata metadata) {
         return false;
     }
-
 }

@@ -26,7 +26,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>trap-spring-boot-data-jdbc-postgres</artifactId>
+    <artifactId>trap-spring-boot-data-jdbc-mysql</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -46,8 +46,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
     </dependencies>

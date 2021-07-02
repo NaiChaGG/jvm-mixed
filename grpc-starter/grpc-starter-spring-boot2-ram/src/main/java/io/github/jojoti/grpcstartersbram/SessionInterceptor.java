@@ -16,13 +16,13 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
-import io.github.jojoti.grpcstartersb.ScopeServicesEvent;
 import io.grpc.*;
-import org.springframework.context.event.EventListener;
 
 import java.util.List;
 
@@ -42,6 +42,8 @@ public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeF
     private final Session session;
     private final GRpcSessionProperties gRpcSessionProperties;
 
+    private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches = ImmutableMap.of();
+
     SessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
         this.session = session;
         this.gRpcSessionProperties = gRpcSessionProperties;
@@ -53,7 +55,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeF
         // 验证登录会话
         final SessionUser user;
         try {
-            user = this.session.verify(found, ImmutableList.<String>builder().build());
+            user = this.session.verify(found, this.attaches.getOrDefault(serverCall.getMethodDescriptor(), ImmutableList.of()));
         } catch (Exception e) {
             final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
             serverCall.close(error, new Metadata());
@@ -73,7 +75,18 @@ public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeF
 
     @Override
     public void onServicesRegister(GRpcScope scope, List<ServiceDescriptor> servicesEvent) {
-
+        var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, SessionAttach.class, false);
+        var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
+        for (var entry : found.entrySet()) {
+            Preconditions.checkNotNull(entry.getValue().value());
+            Preconditions.checkArgument(entry.getValue().value().length > 0);
+            builder.put(entry.getKey(), ImmutableList.copyOf(entry.getValue().value()));
+        }
+        if (this.attaches.size() > 0) {
+            // fixme 暂未实现 目前没有应用场景
+            throw new UnsupportedOperationException("Session does not support multiple");
+        }
+        this.attaches = builder.build();
     }
 
 }

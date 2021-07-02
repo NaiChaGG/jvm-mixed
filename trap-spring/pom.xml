@@ -38,6 +38,7 @@
     <modules>
         <module>trap-spring-boot-data-jdbc</module>
         <module>trap-spring-boot-data-jdbc-postgres</module>
+        <module>trap-spring-boot-data-jdbc-mysql</module>
         <module>trap-spring-boot-data-redis-lettuce</module>
         <module>trap-spring-boot-jpa-auto-ddl</module>
     </modules>

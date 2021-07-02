@@ -17,9 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import io.github.jojoti.grpcstartersb.GRpcServers;
 import org.springframework.beans.BeansException;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -27,6 +25,7 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import java.util.List;
@@ -41,7 +40,6 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(GRpcRAMProperties.class)
 // grpc server 正常启动
-@ConditionalOnBean({GRpcServers.class})
 // https://www.cnblogs.com/zhuxudong/p/10295077.html
 // https://blog.csdn.net/liujianyangbj/article/details/108810726
 // https://www.jianshu.com/p/d4cb052ebfc2
@@ -62,6 +60,7 @@ public class GRpcRAMAutoConfiguration {
 
     @Bean
     @GRpcGlobalInterceptor
+    @Order(1)
     public RAMInterceptor ramInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
         return new RAMInterceptor(ramAccess, gRpcRAMProperties);
     }

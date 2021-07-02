@@ -1,24 +1,18 @@
-package io.github.trapspring.datajdbcpostgres;
+package io.github.trapspring.datajdbcmysql;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import io.github.trapspring.datajdbc.JSON_TYPE;
+import com.mysql.cj.xdevapi.JsonString;
 import io.github.trapspring.datajdbc.JsonArray;
 import io.github.trapspring.datajdbc.JsonMap;
-import org.postgresql.util.PGobject;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-import org.springframework.data.jdbc.core.convert.*;
+import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * https://stackoverflow.com/questions/64521056/how-to-read-write-postgres-jsonb-type-with-spring-data-jdbc
@@ -60,7 +54,7 @@ public class JsonSupport extends AbstractJdbcConfiguration {
     public JdbcCustomConversions jdbcCustomConversions() {
         return new JdbcCustomConversions(Lists.newArrayList(
                 new JsonObjectWritingConverter(objectMapper),
-//                new JsonObjectReadingConverter(objectMapper),
+                new JsonObjectReadingConverter(objectMapper),
                 new JsonListWritingConverter(objectMapper),
                 new JsonListReadingConverter(objectMapper)
         ));
@@ -69,7 +63,7 @@ public class JsonSupport extends AbstractJdbcConfiguration {
 }
 
 @WritingConverter
-class JsonObjectWritingConverter implements Converter<JsonMap, PGobject> {
+class JsonObjectWritingConverter implements Converter<JsonMap, JsonString> {
 
     private final ObjectMapper objectMapper;
 
@@ -78,21 +72,22 @@ class JsonObjectWritingConverter implements Converter<JsonMap, PGobject> {
     }
 
     @Override
-    public PGobject convert(JsonMap jsonField) {
-        var jsonObject = new PGobject();
-        jsonObject.setType(jsonField.getJsonType().type);
-        try {
-            jsonObject.setValue(objectMapper.writeValueAsString(jsonField.maps));
-        } catch (SQLException | JsonProcessingException throwables) {
-            throw new RuntimeException(throwables);
-        }
-        return jsonObject;
+    public JsonString convert(JsonMap jsonField) {
+//        var jsonObject = new PGobject();
+//        jsonObject.setType(jsonField.getJsonType().type);
+//        try {
+//            jsonObject.setValue(objectMapper.writeValueAsString(jsonField.maps));
+//        } catch (SQLException | JsonProcessingException throwables) {
+//            throw new RuntimeException(throwables);
+//        }
+//        return jsonObject;
+        return null;
     }
 
 }
 
 @ReadingConverter
-class JsonObjectReadingConverter implements Converter<PGobject, JsonMap> {
+class JsonObjectReadingConverter implements Converter<JsonString, JsonMap> {
     private final ObjectMapper objectMapper;
 
     JsonObjectReadingConverter(ObjectMapper objectMapper) {
@@ -100,22 +95,23 @@ class JsonObjectReadingConverter implements Converter<PGobject, JsonMap> {
     }
 
     @Override
-    public JsonMap convert(PGobject source) {
-        try {
-            if (JSON_TYPE.JSON.type.equals(source.getType())) {
-                return JsonMap.fromJsonList(objectMapper.readValue(source.getValue(), Map.class));
-            } else {
-                return JsonMap.fromJsonbList(objectMapper.readValue(source.getValue(), Map.class));
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public JsonMap convert(JsonString source) {
+//        try {
+//            if (JSON_TYPE.JSON.type.equals(source.getType())) {
+//                return JsonMap.fromJsonList(objectMapper.readValue(source.getValue(), Map.class));
+//            } else {
+//                return JsonMap.fromJsonbList(objectMapper.readValue(source.getValue(), Map.class));
+//            }
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+        return null;
     }
 
 }
 
 @WritingConverter
-class JsonListWritingConverter implements Converter<JsonArray, PGobject> {
+class JsonListWritingConverter implements Converter<JsonArray, JsonString> {
 
     private final ObjectMapper objectMapper;
 
@@ -124,21 +120,22 @@ class JsonListWritingConverter implements Converter<JsonArray, PGobject> {
     }
 
     @Override
-    public PGobject convert(JsonArray jsonField) {
-        var jsonObject = new PGobject();
-        jsonObject.setType(jsonField.getJsonType().type);
-        try {
-            jsonObject.setValue(objectMapper.writeValueAsString(jsonField.arrays));
-        } catch (SQLException | JsonProcessingException throwables) {
-            throw new RuntimeException(throwables);
-        }
-        return jsonObject;
+    public JsonString convert(JsonArray jsonField) {
+//        var jsonObject = new PGobject();
+//        jsonObject.setType(jsonField.getJsonType().type);
+//        try {
+//            jsonObject.setValue(objectMapper.writeValueAsString(jsonField.arrays));
+//        } catch (SQLException | JsonProcessingException throwables) {
+//            throw new RuntimeException(throwables);
+//        }
+//        return jsonObject;
+        return new JsonString().setValue("{\"data\":1}");
     }
 
 }
 
 @ReadingConverter
-class JsonListReadingConverter implements Converter<PGobject, JsonArray> {
+class JsonListReadingConverter implements Converter<JsonString, JsonArray> {
     private final ObjectMapper objectMapper;
 
     JsonListReadingConverter(ObjectMapper objectMapper) {
@@ -146,16 +143,17 @@ class JsonListReadingConverter implements Converter<PGobject, JsonArray> {
     }
 
     @Override
-    public JsonArray convert(PGobject source) {
-        try {
-            if (JSON_TYPE.JSON.type.equals(source.getType())) {
-                return JsonArray.fromJsonList(objectMapper.readValue(source.getValue(), List.class));
-            } else {
-                return JsonArray.fromJsonbList(objectMapper.readValue(source.getValue(), List.class));
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public JsonArray convert(JsonString source) {
+//        try {
+//            if (JSON_TYPE.JSON.type.equals(source.getType())) {
+//                return JsonArray.fromJsonList(objectMapper.readValue(source.getValue(), List.class));
+//            } else {
+//                return JsonArray.fromJsonbList(objectMapper.readValue(source.getValue(), List.class));
+//            }
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+        return null;
     }
 
 }

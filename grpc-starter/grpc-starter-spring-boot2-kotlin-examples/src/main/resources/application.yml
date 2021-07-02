@@ -103,7 +103,7 @@ grpc:
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-timeout: 300000
       idle-timeout: 60000
@@ -116,7 +116,7 @@ spring:
       pool-name: UcHikariCP
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
   redis:
     lettuce:
       shutdown-timeout: 100ms

@@ -137,7 +137,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             final HealthStatusManager health = config.isEnableHealthStatus() ? new HealthStatusManager() : null;
 
             if (health != null) {
-                log.info("scopeName {} add health service", entry.getKey().value());
+                log.info("GRPC scopeName {} add health service", entry.getKey().value());
                 // 添加健康 检查 service
                 newServerBuilder.addService(health.getHealthService());
             }
@@ -213,7 +213,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             }
 
             serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
-            log.info("scopeName {} add new builder", entry.getKey().value());
+            log.info("GRPC scopeName {} add new builder", entry.getKey().value());
         }
 
         for (GRpcServerProperties.ServerItem server : this.gRpcServerProperties.getServers()) {
@@ -251,7 +251,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 server = serverBuilder.serverBuilder.build().start();
             } catch (IOException e) {
                 // 打断流程
-                log.error("gRPC Server {} start error", serverBuilder.config.getScopeName(), e);
+                log.error("GRPC Server {} start error", serverBuilder.config.getScopeName(), e);
                 this.stop();
                 // 关闭所有 countDown
                 for (long i = 0; i < this.latch.getCount(); i++) {
@@ -261,7 +261,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             }
 
             // 如需要注册的 consul 等 在这里发布 event
-            log.info("gRPC Server {} started, listening on port {}", serverBuilder.config.getScopeName(), server.getPort());
+            log.info("GRPC Server {} started, listening on port {}", serverBuilder.config.getScopeName(), server.getPort());
             this.servers.add(new MultiServer(server, serverBuilder.healthStatusManager, serverBuilder.config));
         }
 
@@ -275,10 +275,10 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             try {
                 latch.await();
             } catch (InterruptedException e) {
-                log.error("gRPC server awaiter interrupted", e);
+                log.error("GRPC server awaiter interrupted", e);
             }
         });
-        awaitThread.setName("multi grpc server awaiter");
+        awaitThread.setName("Multi grpc server awaiter");
         awaitThread.setDaemon(false);
         awaitThread.start();
     }

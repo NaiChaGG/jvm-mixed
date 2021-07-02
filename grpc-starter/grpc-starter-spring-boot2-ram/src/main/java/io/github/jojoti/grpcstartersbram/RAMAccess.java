@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcScope;
+import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 
 /**
@@ -25,12 +26,17 @@ import io.grpc.MethodDescriptor;
  */
 public interface RAMAccess {
 
+    // 启动注册 ram 列表权限
+    default void onRegister() {
+
+    }
+
     /**
      * @param gRpcScope        标注的注解属于哪个模块
      * @param ramItem          注解标记的属性
      * @param methodDescriptor
      * @return
      */
-    boolean access(GRpcScope gRpcScope, RAM ramItem, MethodDescriptor<?, ?> methodDescriptor);
+    boolean access(MethodDescriptor<?, ?> methodDescriptor, GRpcScope gRpcScope, RAM ramItem, Metadata metadata);
 
 }

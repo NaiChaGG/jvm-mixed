@@ -1,6 +1,5 @@
-package io.github.trapspring.datajdbcpostgres;
+package io.github.trapspring.datajdbc;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,24 +10,24 @@ import java.util.Map;
  */
 public final class JsonMap {
 
-    final Map<?, ?> maps;
+    public final Map<?, ?> maps;
 
-    private final JsonObject.JSON_TYPE type;
+    private final JSON_TYPE type;
 
-    JsonMap(Map<?, ?> maps, JsonObject.JSON_TYPE type) {
+    JsonMap(Map<?, ?> maps, JSON_TYPE type) {
         this.maps = maps;
         this.type = type;
     }
 
     public static JsonMap fromJsonList(Map<?, ?>  array) {
-        return new JsonMap(array, JsonObject.JSON_TYPE.JSON);
+        return new JsonMap(array, JSON_TYPE.JSON);
     }
 
     public static JsonMap fromJsonbList(Map<?, ?>  array) {
-        return new JsonMap(array, JsonObject.JSON_TYPE.JSONB);
+        return new JsonMap(array, JSON_TYPE.JSONB);
     }
 
-    public JsonObject.JSON_TYPE getJsonType() {
+    public JSON_TYPE getJsonType() {
         return type;
     }
 

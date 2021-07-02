@@ -20,6 +20,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 /**
  * @author JoJo Wang
@@ -31,10 +32,19 @@ import javax.persistence.MappedSuperclass;
 @Table
 public abstract class TrapBaseEntity implements Persistable<Long> {
 
-    // 禁止使用 save update 方法
+    // 默认 禁用了 save update 方法
+    @Transient
+    @org.springframework.data.annotation.Transient
+    private transient boolean isNew = true;
+
     @Override
-    public final boolean isNew() {
-        return true;
+    public boolean isNew() {
+        return isNew;
+    }
+
+    // 需要手动开启 save update 方法
+    public void enableSaveUpdate() {
+        isNew = false;
     }
 
 }

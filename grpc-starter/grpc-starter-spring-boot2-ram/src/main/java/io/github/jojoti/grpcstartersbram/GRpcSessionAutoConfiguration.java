@@ -40,8 +40,7 @@ import java.util.List;
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
 //@ConditionalOnBean({GRpcServers.class, SessionCreator.class})
 //@ConditionalOnExpression("'${grpcs.session}' != null && '${grpcs.session}'.size() > 0")
-// 需要 外部 导入了 server 正常启动 & session 实例
-@ConditionalOnBean({GRpcServers.class, Session.class})
+// 需要 外部 导入了  session 实例
 // 且 配置文件里面配置了 session
 @Conditional(GRpcSessionAutoConfiguration.EnableSession.class)
 @EnableConfigurationProperties(GRpcSessionProperties.class)

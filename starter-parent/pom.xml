@@ -109,6 +109,12 @@
 
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-boot-data-jdbc-mysql</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
                 <artifactId>trap-spring-boot-data-redis-lettuce</artifactId>
                 <version>${revision}</version>
             </dependency>
