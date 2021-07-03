@@ -37,12 +37,12 @@ class SessionRedis implements Session {
 
     @Override
     public SessionUser verify(String tokenVal, ImmutableList<String> attachInline) {
-        return new AbstractSessionUser(tokenDAO, objectMapper, tokenVal, attachInline);
+        return new AbstractSessionUser(tokenDAO, objectMapper, tokenVal, Session.checkAttachKey(attachInline));
     }
 
     @Override
     public SessionUser verify(long uid, int scopeId, ImmutableList<String> attachInline) {
-        return new AbstractSessionUser(tokenDAO, objectMapper, uid, scopeId, attachInline);
+        return new AbstractSessionUser(tokenDAO, objectMapper, uid, scopeId, Session.checkAttachKey(attachInline));
     }
 
     @Override

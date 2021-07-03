@@ -16,6 +16,7 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -27,6 +28,20 @@ import com.google.common.collect.ImmutableList;
  * @link github.com/jojoti
  */
 public interface Session {
+
+    static String checkAttachKey(String key) {
+        Preconditions.checkArgument(!key.startsWith("_"), "Key is not allow prefix _");
+        return key;
+    }
+
+    static ImmutableList<String> checkAttachKey(ImmutableList<String> attachInline) {
+        if (attachInline.size() > 0) {
+            for (String s : attachInline) {
+                checkAttachKey(attachInline);
+            }
+        }
+        return attachInline;
+    }
 
     /**
      * 验证用户会话 直接返回登录 uid >  0 表示已经登录

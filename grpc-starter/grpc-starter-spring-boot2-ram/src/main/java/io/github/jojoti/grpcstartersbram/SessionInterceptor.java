@@ -19,10 +19,14 @@ package io.github.jojoti.grpcstartersbram;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
+import com.google.common.collect.Lists;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.*;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.util.List;
 
@@ -32,7 +36,7 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
+public class SessionInterceptor implements ScopeServerInterceptor, ApplicationContextAware {
 
     public static final Context.Key<SessionUser> USER_NTS = Context.key("user");
 
@@ -42,7 +46,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeF
     private final Session session;
     private final GRpcSessionProperties gRpcSessionProperties;
 
-    private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches = ImmutableMap.of();
+    private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches;
 
     SessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
         this.session = session;
@@ -74,19 +78,64 @@ public class SessionInterceptor implements ScopeServerInterceptor, DynamicScopeF
     }
 
     @Override
-    public void onServicesRegister(GRpcScope scope, List<ServiceDescriptor> servicesEvent) {
+    public void aware(GRpcScope currentGRpcScope, ImmutableList<ServiceDescriptor> servicesEvent) {
         var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, SessionAttach.class, false);
         var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
         for (var entry : found.entrySet()) {
             Preconditions.checkNotNull(entry.getValue().value());
-            Preconditions.checkArgument(entry.getValue().value().length > 0);
-            builder.put(entry.getKey(), ImmutableList.copyOf(entry.getValue().value()));
-        }
-        if (this.attaches.size() > 0) {
-            // fixme 暂未实现 目前没有应用场景
-            throw new UnsupportedOperationException("Session does not support multiple");
+            Preconditions.checkArgument(entry.getValue().value().length > 0, "@SessionAttach value is not allow empty");
+
+            // 校验自定义 attach key 和 全局的 key 不能重复
+            // 这里和 全局的 key merge 是 牺牲空间换效率的做法
+            final var attach = Lists.<String>newArrayList();
+            if (globalAttach != null && globalAttach.size() > 0) {
+                attach.addAll(globalAttach);
+            }
+            for (String s : entry.getValue().value()) {
+                if (attach.contains(s)) {
+                    throw new IllegalArgumentException("Session attach duplicated key: " + s);
+                }
+                attach.add(s);
+            }
+
+            builder.put(entry.getKey(), Session.checkAttachKey(ImmutableList.copyOf(attach)));
         }
         this.attaches = builder.build();
+        // 全局 引用删除 build 完成之后这个已经没啥用了
+        this.globalAttach = null;
+    }
+
+    private List<String> globalAttach;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        final var fundGroup = applicationContext.getBeansWithAnnotation(SessionGlobalAttach.class);
+        if (fundGroup.size() > 0) {
+            final var foundValues = Lists.<String>newArrayList();
+            for (Object value : fundGroup.values()) {
+                var found = AnnotationUtils.findAnnotation(value.getClass(), SessionGlobalAttach.class);
+                if (found != null) {
+                    Preconditions.checkArgument(found.value().length > 0, "@SessionGlobalAttach value is not allow empty");
+                    for (String s : found.value()) {
+                        if (foundValues.contains(s)) {
+                            throw new IllegalArgumentException("Session global attach duplicated key: " + s);
+                        }
+                        foundValues.add(s);
+                    }
+                }
+            }
+            Session.checkAttachKey(ImmutableList.copyOf(foundValues));
+            this.globalAttach = foundValues;
+        }
+    }
+
+    @Override
+    public ScopeServerInterceptor cloneThis() {
+        try {
+            return (ScopeServerInterceptor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

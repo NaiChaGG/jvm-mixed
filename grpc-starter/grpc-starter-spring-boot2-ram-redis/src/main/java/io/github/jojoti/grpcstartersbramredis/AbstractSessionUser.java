@@ -7,6 +7,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import io.github.jojoti.grpcstartersbram.Session;
 import io.github.jojoti.grpcstartersbram.SessionNotCreatedException;
 import io.github.jojoti.grpcstartersbram.SessionUser;
 import io.github.jojoti.utilhashidtoken.HashIdToken;
@@ -21,8 +22,7 @@ import java.util.Map;
  */
 final class AbstractSessionUser implements SessionUser {
 
-    private static final String ATTACH_SLAT_KEY = "_slat";
-    private static final String CUSTOMER_KEY_PREFIX = "_";
+    private static final String ATTACH_SLAT_KEY = "slat";
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionUser.class);
 
     private final TokenDAO tokenDAO;
@@ -58,12 +58,6 @@ final class AbstractSessionUser implements SessionUser {
 
         final var uid = tokenParse.getUid();
         final var scopeId = tokenParse.getScopeId();
-
-        if (attachInline.size() > 0) {
-            for (String s : attachInline) {
-                Preconditions.checkArgument(!s.startsWith(CUSTOMER_KEY_PREFIX));
-            }
-        }
 
         final var hashKeys = ImmutableList.<String>builder().add(AbstractSessionUser.ATTACH_SLAT_KEY).addAll(attachInline);
 
@@ -200,8 +194,7 @@ final class AbstractSessionUser implements SessionUser {
         final var entityRef = this.entity;
         this.checkSession(entityRef);
         stringValues.forEach((K, V) -> {
-            Preconditions.checkArgument(!K.startsWith(CUSTOMER_KEY_PREFIX));
-            entityRef.attach.put(K, V);
+            entityRef.attach.put(Session.checkAttachKey(K), V);
         });
         tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, stringValues);
         return this;
@@ -213,9 +206,8 @@ final class AbstractSessionUser implements SessionUser {
         this.checkSession(entityRef);
         final var strings = Maps.<String, String>newHashMap();
         for (Map.Entry<String, T> stringTEntry : jsonValues.entrySet()) {
-            Preconditions.checkArgument(!stringTEntry.getKey().startsWith(CUSTOMER_KEY_PREFIX));
             try {
-                entityRef.cached.put(stringTEntry.getKey(), stringTEntry.getValue());
+                entityRef.cached.put(Session.checkAttachKey(stringTEntry.getKey()), stringTEntry.getValue());
                 strings.put(stringTEntry.getKey(), this.objectMapper.writeValueAsString(stringTEntry.getValue()));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);

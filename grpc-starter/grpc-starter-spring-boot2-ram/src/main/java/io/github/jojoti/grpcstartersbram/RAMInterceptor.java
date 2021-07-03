@@ -18,7 +18,6 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import io.github.jojoti.grpcstartersb.DynamicScopeFilter;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.*;
@@ -32,14 +31,13 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-class RAMInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
+class RAMInterceptor implements ScopeServerInterceptor {
 
     private final RAMAccess ramAccess;
     private final GRpcRAMProperties gRpcRAMProperties;
 
-    private ImmutableList<MethodDescriptor<?, ?>> allowAnonymous = ImmutableList.of();
-
-    private ImmutableMap<MethodDescriptor<?, ?>, RAM> rams = ImmutableMap.of();
+    private ImmutableList<MethodDescriptor<?, ?>> allowAnonymous;
+    private ImmutableMap<MethodDescriptor<?, ?>, RAM> rams;
 
     RAMInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
         this.ramAccess = ramAccess;
@@ -61,7 +59,7 @@ class RAMInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
             try {
                 // 可以从 metadata 获取 ip 啥的
                 // fixme @GRpcScope 暂不支持
-                rs = this.ramAccess.access(serverCall.getMethodDescriptor(), null, foundRam, metadata);
+                rs = this.ramAccess.access(this.currentGRpcScope, serverCall.getMethodDescriptor(), foundRam, metadata);
             } catch (Exception e) {
                 final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
                 serverCall.close(error, new Metadata());
@@ -86,18 +84,18 @@ class RAMInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
         return this.gRpcRAMProperties.enableScopeNames();
     }
 
+    private GRpcScope currentGRpcScope;
+
     @Override
-    public void onServicesRegister(GRpcScope scope, List<ServiceDescriptor> servicesEvent) {
+    public void aware(GRpcScope currentGRpcScope, ImmutableList<ServiceDescriptor> servicesEvent) {
+        this.currentGRpcScope = currentGRpcScope;
+
         this.addAllowAnonymous(servicesEvent);
 
         var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAM.class, true);
         var builder = ImmutableMap.<MethodDescriptor<?, ?>, RAM>builder();
         for (var entry : found.entrySet()) {
             builder.put(entry.getKey(), entry.getValue());
-        }
-        if (this.rams.size() > 0) {
-            // fixme 暂未实现 目前没有应用场景
-            throw new UnsupportedOperationException("Ram does not support multiple");
         }
         this.rams = builder.build();
     }
@@ -113,6 +111,15 @@ class RAMInterceptor implements ScopeServerInterceptor, DynamicScopeFilter {
             throw new UnsupportedOperationException("AllowAnonymous does not support multiple");
         }
         this.allowAnonymous = builder.build();
+    }
+
+    @Override
+    public ScopeServerInterceptor cloneThis() {
+        try {
+            return (ScopeServerInterceptor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

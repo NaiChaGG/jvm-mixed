@@ -25,8 +25,9 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public interface DynamicScopeFilter {
+interface DynamicScopeFilter {
 
+    // 此 scope 仅仅是用于 grpc server 启动时 匹配是否需要 启用此 拦截器
     List<String> getScopes();
 
 }

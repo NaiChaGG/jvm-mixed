@@ -1,15 +1,16 @@
 package io.github.jojoti.grpcstartersbram;
 
+import org.springframework.stereotype.Component;
+
 import java.lang.annotation.*;
 
 /**
  * @author Wang Yue
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-// 暂未实现 fixme 需要实现时实现即可
-@Deprecated
+@Component
 public @interface SessionGlobalAttach {
 
     /**
@@ -17,6 +18,8 @@ public @interface SessionGlobalAttach {
      * <p>
      * 附件 级联 keys
      * 配置到此处才会 去 redis 里面在当前请求里读取 redis hash 里面保存的用户上下文的缓存
+     *
+     * key 不能 以 下划线 _ 开头
      */
     String[] value() default {};
 

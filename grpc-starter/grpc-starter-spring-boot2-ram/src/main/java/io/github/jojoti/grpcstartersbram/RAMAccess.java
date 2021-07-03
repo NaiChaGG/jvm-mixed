@@ -20,6 +20,8 @@ import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 
+import java.util.List;
+
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -27,7 +29,8 @@ import io.grpc.MethodDescriptor;
 public interface RAMAccess {
 
     // 启动注册 ram 列表权限
-    default void onRegister() {
+    // 这个可能会执行多次
+    default void onRegister(GRpcScope gRpcScope, List<MethodDescriptor<?, ?>> methods) {
 
     }
 
@@ -37,6 +40,6 @@ public interface RAMAccess {
      * @param methodDescriptor
      * @return
      */
-    boolean access(MethodDescriptor<?, ?> methodDescriptor, GRpcScope gRpcScope, RAM ramItem, Metadata metadata);
+    boolean access(GRpcScope gRpcScope, MethodDescriptor<?, ?> methodDescriptor, RAM ramItem, Metadata metadata);
 
 }

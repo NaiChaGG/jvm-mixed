@@ -27,7 +27,7 @@ import io.grpc.MethodDescriptor;
 class RAMAccessDeny implements RAMAccess {
 
     @Override
-    public boolean access(MethodDescriptor<?, ?> methodDescriptor, GRpcScope gRpcScope, RAM ramItem, Metadata metadata) {
+    public boolean access(GRpcScope gRpcScope,MethodDescriptor<?, ?> methodDescriptor,  RAM ramItem, Metadata metadata) {
         return false;
     }
 }
