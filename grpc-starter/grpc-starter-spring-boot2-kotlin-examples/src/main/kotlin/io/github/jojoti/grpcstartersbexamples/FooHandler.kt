@@ -17,7 +17,7 @@
 package io.github.jojoti.grpcstartersbexamples
 
 //import io.github.jojoti.grpcstartersbram.RAM
-import io.github.jojoti.grpcstartersb.GRpcPrivateService
+import io.github.jojoti.grpcstartersb.GRpcAdminService
 import io.github.jojoti.grpcstartersb.Trailers
 import io.github.jojoti.grpcstartersbkt.Coroutines
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@GRpcPrivateService
+@GRpcAdminService
 open class FooHandler : FooGrpcKt.FooCoroutineImplBase() {
 
     @Autowired

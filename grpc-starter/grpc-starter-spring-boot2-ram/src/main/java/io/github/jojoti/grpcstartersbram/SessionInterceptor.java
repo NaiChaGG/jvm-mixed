@@ -79,7 +79,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
     }
 
     @Override
-    public void aware(GRpcScope currentGRpcScope, ImmutableList<ServiceDescriptor> servicesEvent) {
+    public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
         var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, SessionAttach.class, false);
         var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
         for (var entry : found.entrySet()) {

@@ -23,6 +23,7 @@ import java.lang.annotation.*;
  *
  * @author JoJo Wang
  * @link github.com/jojoti
+ * @see GRpcScope
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

@@ -92,7 +92,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
     }
 
     @Override
-    public void aware(GRpcScope currentGRpcScope, ImmutableList<ServiceDescriptor> servicesEvent) {
+    public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
         this.currentGRpcScope = currentGRpcScope;
 
         this.addAllowAnonymous(servicesEvent);
@@ -105,15 +105,11 @@ class RAMInterceptor implements ScopeServerInterceptor {
         this.rams = builder.build();
     }
 
-    private void addAllowAnonymous(List<ServiceDescriptor> servicesEvent) {
+    private void addAllowAnonymous(List<BindableService> servicesEvent) {
         var foundAllowAnonymous = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAMAllowAnonymous.class, false);
         var builder = ImmutableList.<MethodDescriptor<?, ?>>builder();
         for (var entry : foundAllowAnonymous.entrySet()) {
             builder.add(entry.getKey());
-        }
-        if (this.allowAnonymous.size() > 0) {
-            // fixme 暂未实现 目前没有应用场景
-            throw new UnsupportedOperationException("AllowAnonymous does not support multiple");
         }
         this.allowAnonymous = builder.build();
     }

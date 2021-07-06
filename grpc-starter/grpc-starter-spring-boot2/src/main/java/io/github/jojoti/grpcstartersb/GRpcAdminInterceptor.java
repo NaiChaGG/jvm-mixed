@@ -21,10 +21,11 @@ import java.lang.annotation.*;
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
+ * @see GRpcScope
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@GRpcScopeGlobalInterceptor(scope = @GRpcScope(value = GRpcPrivateService.scopeName))
-public @interface GRpcPrivateGlobalInterceptor {
+@GRpcScopeServiceInterceptor(scope = @GRpcScope(value = GRpcAdminService.scopeName))
+public @interface GRpcAdminInterceptor {
 }

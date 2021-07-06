@@ -1,8 +1,8 @@
 package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.collect.ImmutableMap;
+import io.grpc.BindableService;
 import io.grpc.MethodDescriptor;
-import io.grpc.ServiceDescriptor;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -16,32 +16,23 @@ import java.util.List;
 interface ServiceDescriptorAnnotations {
 
     static <T extends Annotation> ImmutableMap<MethodDescriptor<?, ?>, T> getAnnotationMaps(
-            List<ServiceDescriptor> servicesEvent, Class<T> t, boolean forced) {
-        var builder = ImmutableMap.<MethodDescriptor<?, ?>, T>builder();
-
-        for (ServiceDescriptor serviceDescriptor : servicesEvent) {
-            for (MethodDescriptor<?, ?> method : serviceDescriptor.getMethods()) {
-                try {
-                    var services = Class.forName(method.getServiceName());
-
-                    var foundMethodName = method.getFullMethodName().substring(method.getServiceName().length());
-
-                    for (Method servicesMethod : services.getMethods()) {
-                        if (servicesMethod.getName().equals(foundMethodName)) {
-                            var foundAnnotations = AnnotationUtils.getAnnotation(servicesMethod, t);
-                            if (foundAnnotations != null) {
-                                builder.put(method, foundAnnotations);
-                            } else {
-                                if (forced) {
-                                    throw new IllegalArgumentException("Annotation: @" + t.getPackageName() + "." + t.getSimpleName() + " must be used, method : " + servicesMethod);
-                                }
+            List<BindableService> serviceObjects, Class<T> t, boolean forced) {
+        final var builder = ImmutableMap.<MethodDescriptor<?, ?>, T>builder();
+        for (var serviceObject : serviceObjects) {
+            for (var methodObject : serviceObject.bindService().getMethods()) {
+                for (Method method1 : serviceObject.getClass().getMethods()) {
+                    // 定义到 pb 里面的 代码
+                    if (method1.getName().equals(methodObject.getMethodDescriptor().getBareMethodName())) {
+                        var foundAnnotations = AnnotationUtils.getAnnotation(method1, t);
+                        if (foundAnnotations != null) {
+                            builder.put(methodObject.getMethodDescriptor(), foundAnnotations);
+                        } else {
+                            if (forced) {
+                                throw new IllegalArgumentException("Annotation: @" + t.getPackageName() + "." + t.getSimpleName() + " must be used, method : " + methodObject.getMethodDescriptor());
                             }
                         }
                     }
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
                 }
-
             }
         }
         return builder.build();

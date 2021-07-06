@@ -120,7 +120,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
         final var serverBuilders = Lists.<ServerBuilders>newArrayList();
 
-        final var services = Multimaps.<GRpcScope, ServiceDescriptor>newListMultimap(Maps.newHashMap(), Lists::newArrayList);
+        final var services = Multimaps.<GRpcScope, BindableService>newListMultimap(Maps.newHashMap(), Lists::newArrayList);
         // 一个作用域之下 存在 多个 拦截器
 
         final var scopeInterceptorUtils = new DynamicScopeFilterUtils();
@@ -203,7 +203,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     health.setStatus(bindableService.bindService().getServiceDescriptor().getName(), HealthCheckResponse.ServingStatus.SERVING);
                 }
                 // 保存所有的 apis
-                services.put(entry.getKey(), bindableService.bindService().getServiceDescriptor());
+                services.put(entry.getKey(), bindableService);
             }
 
             serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
@@ -262,7 +262,8 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         this.running = true;
 
         // 发布 api 完成注册的事件
-        this.applicationContext.publishEvent(new ScopeServicesEvent(new ScopeServicesEventEntities(services)));
+        // fixme 暂无需要使用的场景
+//        this.applicationContext.publishEvent(new ScopeServicesEvent(new ScopeServicesEventEntities(services)));
 
         // 添加守护线程
         Thread awaitThread = new Thread(() -> {
@@ -334,8 +335,6 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-
-        NettyServerBuilder
 
         // fixme 处理 netty netty shared
 

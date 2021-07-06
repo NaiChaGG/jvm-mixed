@@ -19,12 +19,18 @@ package io.github.jojoti.grpcstartersb;
 import java.lang.annotation.*;
 
 /**
+ * 主要的 grpc server 主要用于 admin api 的 暴露
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
+ * @see GRpcScope
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@GRpcScopeServiceInterceptor(scope = @GRpcScope(value = GRpcPrivateService.scopeName))
-public @interface GRpcPrivateInterceptor {
+@GRpcScopeService(scope = @GRpcScope(value = GRpcAdminService.scopeName))
+public @interface GRpcAdminService {
+
+    String scopeName = "admin";
+
 }

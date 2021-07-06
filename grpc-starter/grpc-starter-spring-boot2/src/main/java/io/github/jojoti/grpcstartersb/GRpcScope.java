@@ -25,6 +25,12 @@ import java.lang.annotation.Target;
 
 /**
  * 多个 grpc service 作用域
+ * <p>
+ * 默认 scope 为:
+ * primary 主要用于暴露给终端的 api
+ * admin 管理员调用的接口
+ * 2rd 给当前应用边界之外的公司内部其它项目调用 统称 二方调用 参考 参考 阿里巴巴 https://github.com/alibaba/p3c 工程结构一章 对二方库的定义
+ * 3rd 给公司外部的项目使用
  *
  * @author JoJo Wang
  * @link github.com/jojoti

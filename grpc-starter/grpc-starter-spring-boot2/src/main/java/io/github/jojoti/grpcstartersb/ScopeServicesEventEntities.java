@@ -17,21 +17,22 @@
 package io.github.jojoti.grpcstartersb;
 
 import com.google.common.collect.Multimap;
-import io.grpc.ServiceDescriptor;
+import io.grpc.BindableService;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
+@Deprecated
 public class ScopeServicesEventEntities {
 
-    private final Multimap<GRpcScope, ServiceDescriptor> scopes;
+    private final Multimap<GRpcScope, BindableService> scopes;
 
-    public ScopeServicesEventEntities(Multimap<GRpcScope, ServiceDescriptor> scopes) {
+    public ScopeServicesEventEntities(Multimap<GRpcScope, BindableService> scopes) {
         this.scopes = scopes;
     }
 
-    public Multimap<GRpcScope, ServiceDescriptor> getScopes() {
+    public Multimap<GRpcScope, BindableService> getScopes() {
         return scopes;
     }
 

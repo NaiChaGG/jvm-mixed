@@ -49,7 +49,7 @@ grpcs:
       <<: *nettyServer
 
     # 内置 private
-    - scopeName: private
+    - scopeName: admin
       address: 0.0.0.0:8102
       enableHealthStatus: true
       enableSession: true
