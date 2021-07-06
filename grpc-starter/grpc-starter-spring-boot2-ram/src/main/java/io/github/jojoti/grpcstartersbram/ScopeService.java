@@ -1,7 +1,8 @@
 package io.github.jojoti.grpcstartersbram;
 
 /**
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 public interface ScopeService {
 

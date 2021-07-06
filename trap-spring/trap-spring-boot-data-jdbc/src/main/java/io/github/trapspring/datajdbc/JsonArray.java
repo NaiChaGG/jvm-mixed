@@ -6,7 +6,8 @@ import java.util.List;
  * use pgsql json
  * rf https://www.postgresql.org/docs/9.5/functions-json.html
  *
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 public final class JsonArray {
 

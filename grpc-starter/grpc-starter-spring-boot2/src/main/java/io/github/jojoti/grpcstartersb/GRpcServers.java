@@ -334,6 +334,9 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+
+        NettyServerBuilder
+
         // fixme 处理 netty netty shared
 
 //        final var socket = InetSocketAddress.createUnresolved(url.getHost(), url.getPort());

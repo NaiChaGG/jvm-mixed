@@ -1,7 +1,8 @@
 package io.github.trapspring.datajdbc;
 
 /**
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 public
 enum JSON_TYPE {

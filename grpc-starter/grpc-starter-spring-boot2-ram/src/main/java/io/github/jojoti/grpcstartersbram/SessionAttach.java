@@ -3,7 +3,8 @@ package io.github.jojoti.grpcstartersbram;
 import java.lang.annotation.*;
 
 /**
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

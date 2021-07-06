@@ -46,13 +46,14 @@ grpcs:
       enableHealthStatus: false
       enableSession: true
       enableRam: true
-      ram: true
       <<: *nettyServer
 
     # 内置 private
     - scopeName: private
       address: 0.0.0.0:8102
       enableHealthStatus: true
+      enableSession: true
+      enableRam: true
       <<: *nettyServer
       # 注册发现配置
       discovery:
@@ -64,6 +65,8 @@ grpcs:
     - scopeName: mixed1
       address: 127.0.0.1:8103
       enableHealthStatus: true
+      enableSession: true
+      enableRam: true
       <<: *nettyServer
       # 注册发现配置
       discovery:

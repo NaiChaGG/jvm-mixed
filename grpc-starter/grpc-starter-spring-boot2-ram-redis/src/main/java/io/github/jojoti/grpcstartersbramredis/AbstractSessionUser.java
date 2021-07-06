@@ -2,7 +2,6 @@ package io.github.jojoti.grpcstartersbramredis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -93,7 +92,7 @@ final class AbstractSessionUser implements SessionUser {
 
     private void checkSession(InlineEntity inlineEntity) {
         if (inlineEntity.uid <= 0) {
-            throw new SessionNotCreatedException();
+            throw SessionNotCreatedException.newUnauthenticated("uid not found");
         }
     }
 

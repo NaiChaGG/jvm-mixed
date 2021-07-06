@@ -16,9 +16,19 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class SessionNotCreatedException extends RuntimeException {
+public interface SessionNotCreatedException {
+
+    static StatusRuntimeException newUnauthenticated(String exception) {
+        return Status.fromCode(Status.UNAUTHENTICATED.getCode())
+                .withDescription(exception)
+                .asRuntimeException();
+    }
+
 }

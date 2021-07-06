@@ -40,6 +40,12 @@ public interface RAMAccess {
      * @param methodDescriptor
      * @return
      */
+    default boolean checkSession(GRpcScope gRpcScope, MethodDescriptor<?, ?> methodDescriptor, RAM ramItem, Metadata metadata) {
+        // 后续可以根据 不同的 scope 选择不同的实现
+        // 默认使用 内置 session 实现
+        return !SessionInterceptor.USER_NTS.get().isAnonymous();
+    }
+
     boolean access(GRpcScope gRpcScope, MethodDescriptor<?, ?> methodDescriptor, RAM ramItem, Metadata metadata);
 
 }

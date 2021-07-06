@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 
 /**
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 object Coroutines {
 

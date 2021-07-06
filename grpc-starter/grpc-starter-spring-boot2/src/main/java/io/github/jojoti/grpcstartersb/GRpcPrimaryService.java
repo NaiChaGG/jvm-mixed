@@ -19,7 +19,7 @@ package io.github.jojoti.grpcstartersb;
 import java.lang.annotation.*;
 
 /**
- * 主要的 grpc server
+ * 主要的 grpc server 主要用于 对客户端的 api 暴露
  *
  * @author JoJo Wang
  * @link github.com/jojoti

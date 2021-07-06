@@ -10,7 +10,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 interface ServiceDescriptorAnnotations {
 

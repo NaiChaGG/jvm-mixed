@@ -7,7 +7,8 @@ import io.grpc.ServiceDescriptor;
 /**
  * ScopeServerInterceptor 会 使用 clone 对象的 模式 来为多个 拦截器创建自己独立的 bean
  *
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 public interface ScopeServerInterceptor extends ServerInterceptor, DynamicScopeFilter, Cloneable {
 

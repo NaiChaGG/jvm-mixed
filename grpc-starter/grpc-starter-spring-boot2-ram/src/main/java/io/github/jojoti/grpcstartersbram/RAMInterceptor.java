@@ -38,6 +38,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
 
     private ImmutableList<MethodDescriptor<?, ?>> allowAnonymous;
     private ImmutableMap<MethodDescriptor<?, ?>, RAM> rams;
+    private GRpcScope currentGRpcScope;
 
     RAMInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
         this.ramAccess = ramAccess;
@@ -55,25 +56,31 @@ class RAMInterceptor implements ScopeServerInterceptor {
 
         final var foundRam = rams.get(serverCall.getMethodDescriptor());
         if (foundRam != null) {
-            boolean rs;
             try {
+                // 判断用户是否登陆
+                var isLogin = this.ramAccess.checkSession(this.currentGRpcScope, serverCall.getMethodDescriptor(), foundRam, metadata);
+                if (isLogin) {
+                    // 权限不足
+                    final var error = Status.fromCode(Status.UNAUTHENTICATED.getCode()).withDescription("Auth failed, please check session");
+                    serverCall.close(error, new Metadata());
+                    return new ServerCall.Listener<>() {
+                    };
+                }
                 // 可以从 metadata 获取 ip 啥的
-                // fixme @GRpcScope 暂不支持
-                rs = this.ramAccess.access(this.currentGRpcScope, serverCall.getMethodDescriptor(), foundRam, metadata);
+                var rs = this.ramAccess.access(this.currentGRpcScope, serverCall.getMethodDescriptor(), foundRam, metadata);
+                if (rs) {
+                    return serverCallHandler.startCall(serverCall, metadata);
+                }
             } catch (Exception e) {
                 final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
                 serverCall.close(error, new Metadata());
                 return new ServerCall.Listener<>() {
                 };
             }
-            // 权限校验成功
-            if (rs) {
-                return serverCallHandler.startCall(serverCall, metadata);
-            }
         }
 
         // 权限不足
-        final var error = Status.fromCode(Status.UNAUTHENTICATED.getCode()).withDescription("Auth failed, please check access");
+        final var error = Status.fromCode(Status.PERMISSION_DENIED.getCode()).withDescription("Auth failed, please check access");
         serverCall.close(error, new Metadata());
         return new ServerCall.Listener<>() {
         };
@@ -83,8 +90,6 @@ class RAMInterceptor implements ScopeServerInterceptor {
     public List<String> getScopes() {
         return this.gRpcRAMProperties.enableScopeNames();
     }
-
-    private GRpcScope currentGRpcScope;
 
     @Override
     public void aware(GRpcScope currentGRpcScope, ImmutableList<ServiceDescriptor> servicesEvent) {
@@ -101,7 +106,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
     }
 
     private void addAllowAnonymous(List<ServiceDescriptor> servicesEvent) {
-        var foundAllowAnonymous = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, AllowAnonymous.class, false);
+        var foundAllowAnonymous = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAMAllowAnonymous.class, false);
         var builder = ImmutableList.<MethodDescriptor<?, ?>>builder();
         for (var entry : foundAllowAnonymous.entrySet()) {
             builder.add(entry.getKey());

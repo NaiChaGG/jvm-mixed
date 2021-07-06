@@ -16,47 +16,17 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import org.springframework.lang.NonNull;
-
 import java.lang.annotation.*;
 
 /**
+ * 允许 匿名访问 用得挺多的 特殊处理
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RAM {
-
-    /**
-     * 组ID
-     */
-    int groupId();
-
-    /**
-     * 组名
-     */
-    String groupName() default "";
-
-    /**
-     * 是否禁用
-     */
-    boolean disable() default false;
-
-    /**
-     * 附加属性
-     */
-    RAMAttr[] attrs() default {};
-
-    @Target({ElementType.ANNOTATION_TYPE})
-    @interface RAMAttr {
-
-        @NonNull
-        String key();
-
-        @NonNull
-        String value() default "";
-    }
+public @interface RAMAllowAnonymous {
 
 }

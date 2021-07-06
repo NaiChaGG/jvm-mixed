@@ -96,6 +96,12 @@
 
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
+                <artifactId>grpc-starter-spring-boot2-ram</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.grpc-starter</groupId>
                 <artifactId>grpc-starter-spring-boot2-ram-redis</artifactId>
                 <version>${revision}</version>
             </dependency>

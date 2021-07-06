@@ -131,7 +131,6 @@
                         <!--    https://github.com/grpc/grpc-kotlin/issues/269  -->
                         <!--    https://github.com/GoogleCloudPlatform/kotlin-samples/issues/200  -->
                         <!--    https://stackoverflow.com/questions/59360741/compiling-grpc-with-both-kotlin-and-java-using-maven-various-packages-not-found  -->
-                        <!--    暂时注销，支持 kotlin 调用 java，java 不能调用 kotlin                        -->
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>

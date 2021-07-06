@@ -5,7 +5,8 @@ import java.lang.annotation.*;
 /**
  * rf: org.springframework.context.annotation.Primary
  *
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

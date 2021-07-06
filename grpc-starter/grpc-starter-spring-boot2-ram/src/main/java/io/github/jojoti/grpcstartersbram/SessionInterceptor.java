@@ -47,6 +47,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
     private final GRpcSessionProperties gRpcSessionProperties;
 
     private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches;
+    private List<String> globalAttach;
 
     SessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
         this.session = session;
@@ -104,8 +105,6 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         // 全局 引用删除 build 完成之后这个已经没啥用了
         this.globalAttach = null;
     }
-
-    private List<String> globalAttach;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

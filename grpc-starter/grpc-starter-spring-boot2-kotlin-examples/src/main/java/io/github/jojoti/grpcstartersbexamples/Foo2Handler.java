@@ -35,7 +35,7 @@ public class Foo2Handler extends Foo2Grpc.Foo2ImplBase {
     }
 
     @Override
-    @RAM
+    @RAM(groupId = 1, groupName = "1")
     public void bar(Hello2.BarRequest2 request, StreamObserver<Hello2.BarResponse2> responseObserver) {
         responseObserver.onError(Trailers.newErrorCode(1));
         super.bar(request, responseObserver);

@@ -14,49 +14,21 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersbram;
-
-import org.springframework.lang.NonNull;
+package io.github.jojoti.grpcstartersb;
 
 import java.lang.annotation.*;
 
 /**
+ * 2rd 设计 参考 阿里巴巴 https://github.com/alibaba/p3c
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RAM {
-
-    /**
-     * 组ID
-     */
-    int groupId();
-
-    /**
-     * 组名
-     */
-    String groupName() default "";
-
-    /**
-     * 是否禁用
-     */
-    boolean disable() default false;
-
-    /**
-     * 附加属性
-     */
-    RAMAttr[] attrs() default {};
-
-    @Target({ElementType.ANNOTATION_TYPE})
-    @interface RAMAttr {
-
-        @NonNull
-        String key();
-
-        @NonNull
-        String value() default "";
-    }
+@GRpcScopeService(scope = @GRpcScope(value = GRpc2RDService.scopeName))
+public @interface GRpc2RDService {
+    String scopeName = "2rd";
 
 }

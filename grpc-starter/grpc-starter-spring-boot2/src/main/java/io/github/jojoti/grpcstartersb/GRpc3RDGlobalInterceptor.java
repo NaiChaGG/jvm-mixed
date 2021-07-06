@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersbram;
+package io.github.jojoti.grpcstartersb;
 
 import java.lang.annotation.*;
 
 /**
+ * 3rd 设计 参考 阿里巴巴 https://github.com/alibaba/p3c
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface AllowAnonymous {
-
+@GRpcScopeGlobalInterceptor(scope = @GRpcScope(value = GRpc3RDService.scopeName))
+public @interface GRpc3RDGlobalInterceptor {
 }
