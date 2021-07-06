@@ -18,6 +18,8 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.time.Duration;
+
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -155,6 +157,8 @@ public interface SessionUser {
     interface NewTokenBuilder {
 
         NewTokenBuilder setAttachString(String key, String val);
+
+        NewTokenBuilder setTtl(Duration ttl);
 
         <T> NewTokenBuilder setAttachJson(String key, T t);
 

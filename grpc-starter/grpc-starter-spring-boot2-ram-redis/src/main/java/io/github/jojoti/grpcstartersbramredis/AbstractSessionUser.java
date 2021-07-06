@@ -13,6 +13,7 @@ import io.github.jojoti.utilhashidtoken.HashIdToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Map;
 
 /**
@@ -22,6 +23,7 @@ import java.util.Map;
 final class AbstractSessionUser implements SessionUser {
 
     private static final String ATTACH_SLAT_KEY = "slat";
+    private static final String ATTACH_TTL_KEY = "ttl";
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionUser.class);
 
     private final TokenDAO tokenDAO;
@@ -43,7 +45,7 @@ final class AbstractSessionUser implements SessionUser {
             this.newAnonymous();
         } else {
             // 查询到了，表示会话存在
-            this.entity = new InlineEntity(uid, scopeId, session, objectMapper);
+            this.entity = new InlineEntity(uid, scopeId, session);
         }
     }
 
@@ -58,36 +60,56 @@ final class AbstractSessionUser implements SessionUser {
         final var uid = tokenParse.getUid();
         final var scopeId = tokenParse.getScopeId();
 
-        final var hashKeys = ImmutableList.<String>builder().add(AbstractSessionUser.ATTACH_SLAT_KEY).addAll(attachInline);
+        // fixme 可以针对 scopeId 对 ATTACH_TTL_KEY 做缓存，减少 redis 查询出来的数据
+        // 后续需要再优化
+        final var hashKeys = ImmutableList.<String>builder().add(ATTACH_SLAT_KEY).add(ATTACH_TTL_KEY).addAll(attachInline);
 
         // 只获取这次需要一次查询的，否则使用延迟查询
         final var hashValues = this.tokenDAO.getSession(uid, scopeId, hashKeys.build());
 
         // 至少要存在 slat
-        if (hashValues.size() < 1) {
+        if (hashValues.size() < 2) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
-            log.error("redis data error, check read & write");
+            log.error("redis data error 1, check read & write");
             return;
         }
 
-        final var foundSlat = hashValues.remove(AbstractSessionUser.ATTACH_SLAT_KEY);
+        final var foundSlat = hashValues.remove(ATTACH_SLAT_KEY);
 
         if (Strings.isNullOrEmpty(foundSlat) || !foundSlat.equals(tokenParse.salt)) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
-            log.error("redis data error, check read & write");
+            log.error("redis data error 2, check read & write");
             return;
         }
 
-        // 异步延长 token
-        this.tokenDAO.expireTokenAsync(uid, scopeId);
+        final var foundTtl = hashValues.remove(ATTACH_TTL_KEY);
+        if (Strings.isNullOrEmpty(foundTtl)) {
+            this.newAnonymous();
+            this.tokenDAO.logoutAsync(uid, scopeId);
+            log.error("redis data error 3, check read & write");
+            return;
+        }
+        Duration ttl;
+        try {
+            ttl = Duration.parse(foundTtl);
+        } catch (Exception e) {
+            this.newAnonymous();
+            this.tokenDAO.logoutAsync(uid, scopeId);
+            log.error("redis data error 4, check read & write", e);
+            return;
+        }
 
-        this.entity = new InlineEntity(uid, scopeId, hashValues, objectMapper);
+
+        // 异步延长 token
+        this.tokenDAO.expireTokenAsync(uid, scopeId, ttl);
+
+        this.entity = new InlineEntity(uid, scopeId, hashValues).setTtl(ttl);
     }
 
     private void newAnonymous() {
-        this.entity = new InlineEntity(0, 0, Map.of(), objectMapper);
+        this.entity = new InlineEntity(0, 0, Map.of());
     }
 
     private void checkSession(InlineEntity inlineEntity) {
@@ -129,12 +151,19 @@ final class AbstractSessionUser implements SessionUser {
 
         final var hashValues = Maps.<String, String>newHashMap();
         hashValues.put(ATTACH_SLAT_KEY, newToken.getSlat());
-        final var newInline = new InlineEntity(uid, scopeId, hashValues, objectMapper);
+        final var newInline = new InlineEntity(uid, scopeId, hashValues);
 
         return new NewTokenBuilder() {
+
             @Override
             public NewTokenBuilder setAttachString(String key, String val) {
                 newInline.attach.put("_" + key, val);
+                return this;
+            }
+
+            @Override
+            public NewTokenBuilder setTtl(Duration ttl) {
+                newInline.ttl = ttl;
                 return this;
             }
 
@@ -151,10 +180,11 @@ final class AbstractSessionUser implements SessionUser {
 
             @Override
             public String build() {
+                newInline.attach.put(ATTACH_TTL_KEY, String.valueOf(newInline.ttl.toMillis()));
+                // 保存 session 到数据库 里
+                tokenDAO.addAttachSync(uid, scopeId, newInline.ttl, newInline.attach);
                 // 影子 实例更新
                 AbstractSessionUser.this.entity = newInline;
-                // 保存 session 到数据库 里
-                tokenDAO.addAttachSync(uid, scopeId, newInline.attach);
                 return newToken.getTokenBase64();
             }
         };
@@ -195,7 +225,7 @@ final class AbstractSessionUser implements SessionUser {
         stringValues.forEach((K, V) -> {
             entityRef.attach.put(Session.checkAttachKey(K), V);
         });
-        tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, stringValues);
+        tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, entityRef.ttl, stringValues);
         return this;
     }
 
@@ -212,21 +242,27 @@ final class AbstractSessionUser implements SessionUser {
                 throw new RuntimeException(e);
             }
         }
-        tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, strings);
+        tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, entityRef.ttl, strings);
         return this;
     }
 
     private static final class InlineEntity {
         private final long uid;
         private final long scopeId;
+        private Duration ttl = Duration.ofHours(1);
         // 这里面存的都是
         private final Map<String, String> attach;
         private final Map<String, Object> cached = Maps.newHashMap();
 
-        InlineEntity(long uid, long scopeId, Map<String, String> attach, ObjectMapper objectMapper) {
+        InlineEntity(long uid, long scopeId, Map<String, String> attach) {
             this.uid = uid;
             this.scopeId = scopeId;
             this.attach = attach;
+        }
+
+        public InlineEntity setTtl(Duration ttl) {
+            this.ttl = ttl;
+            return this;
         }
 
     }

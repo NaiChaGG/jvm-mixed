@@ -26,6 +26,7 @@ import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +40,6 @@ class TokenDAO {
     private static final Logger log = LoggerFactory.getLogger(TokenDAO.class);
 
     private final StringRedisTemplate stringRedisTemplate;
-    private final long ttl = 60;
 
     public TokenDAO(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -50,9 +50,9 @@ class TokenDAO {
     }
 
     @Async
-    public void expireTokenAsync(long uid, int scopeId) {
+    public void expireTokenAsync(long uid, int scopeId, Duration ttl) {
         // 异步延长 token 过期时间
-        this.stringRedisTemplate.expire(TokenDAO.makeKey(uid, scopeId), ttl, TimeUnit.DAYS);
+        this.stringRedisTemplate.expire(TokenDAO.makeKey(uid, scopeId), ttl.getSeconds(), TimeUnit.SECONDS);
     }
 
     public Map<String, String> getSession(long uid, int scopeId, ImmutableList<String> hashKeys) {
@@ -85,18 +85,18 @@ class TokenDAO {
     }
 
     @Async
-    public void addAttachAsync(long uid, long scopeId, Map<String, String> attach) {
-        this.addAttachSync(uid, scopeId, attach);
+    public void addAttachAsync(long uid, long scopeId, Duration ttl, Map<String, String> attach) {
+        this.addAttachSync(uid, scopeId, ttl, attach);
     }
 
-    public void addAttachSync(long uid, long scopeId, Map<String, String> attach) {
+    public void addAttachSync(long uid, long scopeId, Duration ttl, Map<String, String> attach) {
         final var key = makeKey(uid, scopeId);
         stringRedisTemplate.execute(new SessionCallback<List<Object>>() {
             // https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#tx
             public List<Object> execute(RedisOperations operations) throws DataAccessException {
                 operations.multi();
                 operations.opsForHash().putAll(key, attach);
-                operations.expire(key, ttl, TimeUnit.DAYS);
+                operations.expire(key, ttl.toMillis(), TimeUnit.MILLISECONDS);
                 return operations.exec();
             }
         });

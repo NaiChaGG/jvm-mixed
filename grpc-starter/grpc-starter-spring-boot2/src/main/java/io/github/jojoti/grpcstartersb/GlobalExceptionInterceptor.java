@@ -37,14 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class GlobalExceptionInterceptor implements ServerInterceptor {
 
-    static final Metadata.Key<String> X_ERROR_METADATA_KEY = Metadata.Key.of("x-err", Metadata.ASCII_STRING_MARSHALLER);
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionInterceptor.class);
-    private static final Metadata trailers;
-
-    static {
-        trailers = new Metadata();
-        trailers.put(X_ERROR_METADATA_KEY, "-1");
-    }
 
     GlobalExceptionInterceptor() {
     }
@@ -64,8 +57,8 @@ public final class GlobalExceptionInterceptor implements ServerInterceptor {
                     super.onHalfClose();
                 } catch (Exception e) {
                     // 异常处理项目抛出异常才会走到这里
-                    call.close(Status.INTERNAL, trailers);
-                    log.error("grpc close", e);
+                    call.close(Status.INTERNAL.withDescription("info: " + e.getMessage()), new Metadata());
+                    log.error("grpc close: ", e);
                 }
             }
         };

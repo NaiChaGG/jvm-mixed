@@ -53,16 +53,16 @@ public class GRpcRAMAutoConfiguration {
 
     // 默认注入拒绝访问
     @Bean
-    @ConditionalOnMissingBean(RAMAccess.class)
-    public RAMAccess ramAccess() {
-        return new RAMAccessDeny();
+    @ConditionalOnMissingBean(RAMAccessInterceptor.class)
+    public RAMAccessInterceptor ramAccess() {
+        return new RAMAccessInterceptorDeny();
     }
 
     @Bean
     @GRpcGlobalInterceptor
     @Order(1)
-    public RAMInterceptor ramInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
-        return new RAMInterceptor(ramAccess, gRpcRAMProperties);
+    public RAMInterceptor ramInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
+        return new RAMInterceptor(ramAccessInterceptor, gRpcRAMProperties);
     }
 
     static final class EnableRam implements Condition, ApplicationContextAware {

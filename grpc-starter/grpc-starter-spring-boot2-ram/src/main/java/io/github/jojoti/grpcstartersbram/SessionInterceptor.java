@@ -55,26 +55,29 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
     }
 
     @Override
-    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
-        final var found = metadata.get(TOKEN_METADATA_KEY);
+    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
+        final var found = headers.get(TOKEN_METADATA_KEY);
         // 验证登录会话
         final SessionUser user;
         try {
-            user = this.session.verify(found, this.attaches.getOrDefault(serverCall.getMethodDescriptor(), ImmutableList.of()));
+            user = this.session.verify(found, this.attaches.getOrDefault(call.getMethodDescriptor(), ImmutableList.of()));
         } catch (Exception e) {
             final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
-            serverCall.close(error, new Metadata());
+            call.close(error, new Metadata());
             return new ServerCall.Listener<>() {
             };
         }
 
         final var context = Context.current().withValue(USER_NTS, user);
 
-        return Contexts.interceptCall(context, serverCall, metadata, serverCallHandler);
+        return Contexts.interceptCall(context, call, headers, next);
     }
 
     @Override
     public List<String> getScopes() {
+        // fixme session 暂不支持多个 scope 配置 这样又会涉及到 取 session redis 多数据源问题
+        // 暂未想到应用场景
+//        Preconditions.checkArgument(this.gRpcSessionProperties.enableScopeNames().size() == 1, "Session is not support multi.");
         return this.gRpcSessionProperties.enableScopeNames();
     }
 

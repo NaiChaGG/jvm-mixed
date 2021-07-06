@@ -27,63 +27,60 @@ import java.util.List;
 /**
  * 访问控制和用户会话拦截器
  * 拦截器需要 使用者 自行添加到 grpc server 里面去，多server无法知道用户注入哪里
+ * https://stackoverflow.com/questions/68164315/access-message-request-in-first-grpc-interceptor-before-headers-in-second-grpc-i
  *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
 class RAMInterceptor implements ScopeServerInterceptor {
 
-    private final RAMAccess ramAccess;
+    private final RAMAccessInterceptor ramAccessInterceptor;
     private final GRpcRAMProperties gRpcRAMProperties;
 
     private ImmutableList<MethodDescriptor<?, ?>> allowAnonymous;
     private ImmutableMap<MethodDescriptor<?, ?>, RAM> rams;
     private GRpcScope currentGRpcScope;
 
-    RAMInterceptor(RAMAccess ramAccess, GRpcRAMProperties gRpcRAMProperties) {
-        this.ramAccess = ramAccess;
+    RAMInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
+        this.ramAccessInterceptor = ramAccessInterceptor;
         this.gRpcRAMProperties = gRpcRAMProperties;
     }
 
     @Override
-    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall,
-                                                                 Metadata metadata,
-                                                                 ServerCallHandler<ReqT, RespT> serverCallHandler) {
+    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call,
+                                                                 Metadata headers,
+                                                                 ServerCallHandler<ReqT, RespT> next) {
         // 允许匿名访问的接口不校验 权限
-        if (this.allowAnonymous.contains(serverCall.getMethodDescriptor())) {
-            return serverCallHandler.startCall(serverCall, metadata);
+        if (this.allowAnonymous.contains(call.getMethodDescriptor())) {
+            return next.startCall(call, headers);
         }
 
-        final var foundRam = rams.get(serverCall.getMethodDescriptor());
+        final var foundRam = rams.get(call.getMethodDescriptor());
         if (foundRam != null) {
             try {
                 // 判断用户是否登陆
-                var isLogin = this.ramAccess.checkSession(this.currentGRpcScope, serverCall.getMethodDescriptor(), foundRam, metadata);
+                var isLogin = this.ramAccessInterceptor.checkSession(this.currentGRpcScope, foundRam, call, headers, next);
                 if (isLogin) {
                     // 权限不足
                     final var error = Status.fromCode(Status.UNAUTHENTICATED.getCode()).withDescription("Auth failed, please check session");
-                    serverCall.close(error, new Metadata());
+                    call.close(error, new Metadata());
                     return new ServerCall.Listener<>() {
                     };
                 }
                 // 可以从 metadata 获取 ip 啥的
-                var rs = this.ramAccess.access(this.currentGRpcScope, serverCall.getMethodDescriptor(), foundRam, metadata);
-                if (rs) {
-                    return serverCallHandler.startCall(serverCall, metadata);
+                var rs = this.ramAccessInterceptor.checkAccess(this.currentGRpcScope, foundRam, call, headers, next);
+                if (rs != null) {
+                    return rs;
                 }
             } catch (Exception e) {
                 final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
-                serverCall.close(error, new Metadata());
+                call.close(error, new Metadata());
                 return new ServerCall.Listener<>() {
                 };
             }
         }
 
-        // 权限不足
-        final var error = Status.fromCode(Status.PERMISSION_DENIED.getCode()).withDescription("Auth failed, please check access");
-        serverCall.close(error, new Metadata());
-        return new ServerCall.Listener<>() {
-        };
+        return RAMAccessInterceptor.newDefaultPermissionDenied(call);
     }
 
     @Override
@@ -103,6 +100,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
             builder.put(entry.getKey(), entry.getValue());
         }
         this.rams = builder.build();
+        this.ramAccessInterceptor.onRegister(currentGRpcScope, servicesEvent);
     }
 
     private void addAllowAnonymous(List<BindableService> servicesEvent) {

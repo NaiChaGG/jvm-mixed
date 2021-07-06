@@ -18,16 +18,18 @@ package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.grpc.Metadata;
-import io.grpc.MethodDescriptor;
+import io.grpc.ServerCall;
+import io.grpc.ServerCallHandler;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-class RAMAccessDeny implements RAMAccess {
+class RAMAccessInterceptorDeny implements RAMAccessInterceptor {
 
     @Override
-    public boolean access(GRpcScope gRpcScope, MethodDescriptor<?, ?> methodDescriptor, RAM ramItem, Metadata metadata) {
-        return false;
+    public <ReqT, RespT> ServerCall.Listener<ReqT> checkAccess(GRpcScope gRpcScope, RAM ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
+        return null;
     }
+
 }
