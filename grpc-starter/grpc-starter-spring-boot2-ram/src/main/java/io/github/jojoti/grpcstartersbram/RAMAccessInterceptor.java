@@ -20,8 +20,6 @@ import com.google.common.collect.ImmutableList;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.grpc.*;
 
-import java.util.List;
-
 /**
  * https://stackoverflow.com/questions/68164315/access-message-request-in-first-grpc-interceptor-before-headers-in-second-grpc-i
  * <p>
@@ -32,6 +30,13 @@ import java.util.List;
  * @see io.grpc.ServerInterceptor
  */
 public interface RAMAccessInterceptor {
+
+    static <ReqT, RespT> ServerCall.Listener<ReqT> newDefaultPermissionDenied(ServerCall<ReqT, RespT> call) {
+        final var error = Status.fromCode(Status.PERMISSION_DENIED.getCode()).withDescription("Auth failed, please check access");
+        call.close(error, new Metadata());
+        return new ServerCall.Listener<>() {
+        };
+    }
 
     // 启动注册 ram 列表权限
     // 这个可能会执行多次
@@ -65,12 +70,5 @@ public interface RAMAccessInterceptor {
                                                         ServerCall<ReqT, RespT> call,
                                                         Metadata headers,
                                                         ServerCallHandler<ReqT, RespT> next);
-
-    static  <ReqT, RespT> ServerCall.Listener<ReqT> newDefaultPermissionDenied(ServerCall<ReqT, RespT> call){
-        final var error = Status.fromCode(Status.PERMISSION_DENIED.getCode()).withDescription("Auth failed, please check access");
-        call.close(error, new Metadata());
-        return new ServerCall.Listener<>() {
-        };
-    }
 
 }

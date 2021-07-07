@@ -16,7 +16,7 @@
 
 package io.github.jojoti.grpcstartersb;
 
-import io.github.jojoti.utilguavaext.UniqueKey;
+import io.github.jojoti.utilguavaext.ErrorKey;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.StatusException;
@@ -52,8 +52,8 @@ public interface Trailers {
         return new StatusException(Status.INTERNAL, trailers);
     }
 
-    static StatusException newErrorCode(UniqueKey<Integer> error) {
-        return newErrorCode(error.get());
+    static <T extends Enum<T>> StatusException newErrorCode(ErrorKey<T> error) {
+        return newErrorCode(error.getValue());
     }
 
     static StatusException newErrorTraces(Exception exception) {

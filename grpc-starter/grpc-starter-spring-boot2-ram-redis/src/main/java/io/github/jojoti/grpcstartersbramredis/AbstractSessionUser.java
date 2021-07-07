@@ -249,10 +249,10 @@ final class AbstractSessionUser implements SessionUser {
     private static final class InlineEntity {
         private final long uid;
         private final long scopeId;
-        private Duration ttl = Duration.ofHours(1);
         // 这里面存的都是
         private final Map<String, String> attach;
         private final Map<String, Object> cached = Maps.newHashMap();
+        private Duration ttl = Duration.ofHours(1);
 
         InlineEntity(long uid, long scopeId, Map<String, String> attach) {
             this.uid = uid;
