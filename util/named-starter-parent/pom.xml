@@ -43,6 +43,7 @@
         <module>../util-hashid-token</module>
         <module>../util-jjwt-p8</module>
         <module>../util-guava-ext</module>
+        <module>../util-daemon-threads</module>
     </modules>
 
     <dependencies>

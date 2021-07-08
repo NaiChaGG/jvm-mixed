@@ -67,7 +67,7 @@
             <!--    grpc starter        -->
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2-kotlin</artifactId>
+                <artifactId>grpc-starter-spring-boot2-server-kotlin</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

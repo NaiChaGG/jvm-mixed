@@ -26,7 +26,7 @@
         <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <artifactId>grpc-starter-spring-boot2-client</artifactId>
+    <artifactId>grpc-starter-spring-boot2-server-ram-redis</artifactId>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
@@ -35,13 +35,19 @@
     <dependencies>
 
         <dependency>
-            <groupId>io.github.jojoti.grpc-starter</groupId>
-            <artifactId>grpc-starter-spring-boot2</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <groupId>io.github.jojoti.grpc-starter</groupId>
+            <artifactId>grpc-starter-spring-boot2-server-ram</artifactId>
         </dependency>
 
         <dependency>
@@ -50,20 +56,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.jojoti</groupId>
-            <artifactId>starter-grpc-netty-client</artifactId>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-data-redis-lettuce</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>io.github.jojoti.util</groupId>
-            <artifactId>util-guava-ext</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.jojoti.util</groupId>
-            <artifactId>util-daemon-threads</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>

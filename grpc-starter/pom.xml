@@ -46,7 +46,7 @@
             <!--    grpc starter 模块之间有依赖，使用这里来确保两个分支的模块可以互相依赖       -->
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2</artifactId>
+                <artifactId>grpc-starter-spring-boot2-server</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

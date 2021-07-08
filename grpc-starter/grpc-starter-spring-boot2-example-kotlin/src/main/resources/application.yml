@@ -1,0 +1,127 @@
+# 驱动配置信息
+debug: false # Enable debug logs.
+trace: false # Enable trace logs.
+
+## include other yml config.
+spring.profiles:
+  # Comma-separated list of active profiles. Can be overridden by a command line switch.
+  active:
+    - dev
+#  # Unconditionally activate the specified comma-separated list of profiles (or list of profiles if using YAML).
+#  include:
+#    - dev
+#    - release
+
+# 服务发现配置
+discovery: &discovery
+  # provider: local/dns/etcd/consul/zookeeper
+  # provider 会自动识别
+  # fixme 该模式无法复用配置，因为每次都是变更的，这里只是作为 examples 写在这里
+  vip: 127.0.0.1:3001
+  dns:
+    - 127.0.0.1:5001
+    - 127.0.0.1:5003
+  etcd:
+    endpoints:
+      - 127.0.0.1:6000
+      - 127.0.0.1:6001
+  consul:
+    agent: 127.0.0.1:7001
+  zookeeper:
+    - 127.0.0.1:7100
+
+# grpc server 配置
+grpcs:
+  # server 配置
+  serverConfig: &nettyServer
+    nettyConfig:
+      maxInboundSize: 1024
+
+  servers:
+    # 内置 primary
+    - scopeName: primary
+      address: 127.0.0.1:8101
+      enableHealthStatus: false
+      enableSession: true
+      enableRam: true
+      <<: *nettyServer
+
+    # 内置 private
+    - scopeName: admin
+      address: 0.0.0.0:8102
+      enableHealthStatus: true
+      enableSession: true
+      enableRam: true
+      <<: *nettyServer
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesPrivateService
+        <<: *discovery
+
+    # 自定义地址1
+    - scopeName: mixed1
+      address: 127.0.0.1:8103
+      enableHealthStatus: true
+      enableSession: true
+      enableRam: true
+      <<: *nettyServer
+      # 注册发现配置
+      discovery:
+        # 该值如果不设置 则 使用 默认配置
+        serviceName: examplesMixed1Service
+        <<: *discovery
+
+grpc:
+
+  # grpc client 配置
+  clientConfig: &nettyClient
+    nettyConfig:
+      maxInboundSize: 1024
+    nettySharedConfig:
+
+  client: &client
+    <<: *nettyClient
+    # 从远程 注册发现中心 发现配置
+    discovery:
+      <<: *discovery
+
+  clients:
+    # 以下配置写法会从远程 service 读取到 远程注册到 注册发现 组件的 service address
+    # 该 scopeName 则是使用本地的 scopeName 对应的 拦截器等等
+    # scopeName 保持唯一
+    - serviceName: examplesServiceRpc
+      <<: *nettyClient
+      # 从远程 注册发现中心 发现配置
+      discovery:
+        vip: 127.0.0.1:3001
+
+    # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
+    - serviceName: examplesService1Rpc
+      <<: *client
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 300000
+      idle-timeout: 60000
+      validation-timeout: 4000
+      max-lifetime: 200000
+      login-timeout: 50
+      maximum-pool-size: 15
+      minimum-idle: 5
+      #      auto-commit: true
+      pool-name: UcHikariCP
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+  redis:
+    lettuce:
+      shutdown-timeout: 100ms
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 3
+        time-between-eviction-runs:

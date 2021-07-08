@@ -84,7 +84,7 @@
             <!--    grpc starter        -->
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2</artifactId>
+                <artifactId>grpc-starter-spring-boot2-server</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -96,13 +96,13 @@
 
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2-ram</artifactId>
+                <artifactId>grpc-starter-spring-boot2-server-ram</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2-ram-redis</artifactId>
+                <artifactId>grpc-starter-spring-boot2-server-ram-redis</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -141,6 +141,12 @@
             <dependency>
                 <groupId>io.github.jojoti.util</groupId>
                 <artifactId>util-guava-ext</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.util</groupId>
+                <artifactId>util-daemon-threads</artifactId>
                 <version>${revision}</version>
             </dependency>
 

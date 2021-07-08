@@ -16,16 +16,12 @@
 
 package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
+import io.github.jojoti.grpcstartersbcli.GrpcClientFilter;
 import io.github.jojoti.grpcstartersbcli.GrpcClients;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
-import org.springframework.core.type.AnnotatedTypeMetadata;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Map;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * rfs:
@@ -37,34 +33,20 @@ import java.util.Map;
  */
 @Configuration(proxyBeanMethods = false)
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
-@GRpcClientAutoConfiguration.ConditionalOnPropertyNotEmpty(value = "grpc")
 @EnableConfigurationProperties(GRpcClientProperties.class)
 public class GRpcClientAutoConfiguration {
 
     @Bean
-    public GrpcClients grpcServerRunner(GRpcClientProperties gRpcClientProperties) {
-        return new GrpcClients(gRpcClientProperties);
+    @ConditionalOnBean(GrpcClientFilter.class)
+    public GrpcClientFilter noneFilter() {
+        return (serviceName, nettyChannelBuilder) -> {
+            // nothing to do
+        };
     }
 
-    /**
-     * https://stackoverflow.com/questions/46118782/spel-conditionalonproperty-string-property-empty-or-nulll
-     */
-    @Target({ElementType.TYPE, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Conditional(ConditionalOnPropertyNotEmpty.OnPropertyNotEmptyCondition.class)
-    public @interface ConditionalOnPropertyNotEmpty {
-        String value();
-
-        class OnPropertyNotEmptyCondition implements Condition {
-
-            @Override
-            public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-                Map<String, Object> attrs = metadata.getAnnotationAttributes(ConditionalOnPropertyNotEmpty.class.getName());
-                String propertyName = (String) attrs.get("value");
-                String val = context.getEnvironment().getProperty(propertyName);
-                return val != null && !val.trim().isEmpty();
-            }
-        }
+    @Bean
+    public GrpcClients grpcClients(GRpcClientProperties gRpcClientProperties, GrpcClientFilter grpcClientFilter) {
+        return new GrpcClients(gRpcClientProperties, grpcClientFilter);
     }
 
 }

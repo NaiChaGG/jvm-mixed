@@ -45,7 +45,7 @@ public interface HashIdToken {
         public final long uid;
         public final long scopeId;
 
-        public DecodeToken(String salt, long uid, long scopeId) {
+        DecodeToken(String salt, long uid, long scopeId) {
             this.salt = salt;
             this.uid = uid;
             this.scopeId = scopeId;
@@ -57,7 +57,7 @@ public interface HashIdToken {
         private final String slat;
         private final String tokenBase64;
 
-        public NewToken(String slat, String tokenBase64) {
+        NewToken(String slat, String tokenBase64) {
             this.slat = slat;
             this.tokenBase64 = tokenBase64;
         }

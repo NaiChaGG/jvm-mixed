@@ -1,0 +1,87 @@
+<!--
+  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.jojoti.grpc-starter</groupId>
+        <artifactId>grpc-starter-named-starter-parent-kotlin</artifactId>
+        <version>${revision}</version>
+        <relativePath>../named-starter-parent-kotlin</relativePath>
+    </parent>
+
+    <artifactId>grpc-starter-spring-boot2-example-kotlin</artifactId>
+
+    <properties>
+        <main.basedir>${basedir}/../..</main.basedir>
+    </properties>
+
+    <dependencies>
+        <!--    grpc server    -->
+        <dependency>
+            <groupId>io.github.jojoti.grpc-starter</groupId>
+            <artifactId>grpc-starter-spring-boot2-server-kotlin</artifactId>
+        </dependency>
+
+        <!--        grpc server ram-->
+        <dependency>
+            <groupId>io.github.jojoti.grpc-starter</groupId>
+            <artifactId>grpc-starter-spring-boot2-server-ram-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-jpa-auto-ddl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-data-jdbc-mysql</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!--      编译 protobuf 插件      -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+            </plugin>
+
+            <!--      打包工具      -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!--      不发布到 maven 仓库      -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

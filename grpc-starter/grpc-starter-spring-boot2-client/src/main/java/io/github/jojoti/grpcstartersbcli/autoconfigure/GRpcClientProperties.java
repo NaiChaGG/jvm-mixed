@@ -18,6 +18,7 @@ package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import io.github.jojoti.grpcstartersb.DiscoveryConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
@@ -61,9 +62,11 @@ public class GRpcClientProperties {
 
     public static final class ClientItem {
         private String serviceName;
+        // 默认 5s
+        private int shutdownGracefullyMills = 5000;
         private NettyConfig nettyConfig = null;
         private NettySharedConfig nettySharedConfig = null;
-        private Discovery discovery;
+        private DiscoveryConfig discovery;
 
         public String getServiceName() {
             return serviceName;
@@ -89,11 +92,11 @@ public class GRpcClientProperties {
             this.nettySharedConfig = nettySharedConfig;
         }
 
-        public Discovery getDiscovery() {
+        public DiscoveryConfig getDiscovery() {
             return discovery;
         }
 
-        public void setDiscovery(Discovery discovery) {
+        public void setDiscovery(DiscoveryConfig discovery) {
             this.discovery = discovery;
         }
 
@@ -109,6 +112,13 @@ public class GRpcClientProperties {
             return null;
         }
 
+        public int getShutdownGracefullyMills() {
+            return shutdownGracefullyMills;
+        }
+
+        public void setShutdownGracefullyMills(int shutdownGracefullyMills) {
+            this.shutdownGracefullyMills = shutdownGracefullyMills;
+        }
     }
 
     public static final class NettyConfig {
@@ -132,27 +142,6 @@ public class GRpcClientProperties {
 
         public void setMaxInboundSize(int maxInboundSize) {
             this.maxInboundSize = maxInboundSize;
-        }
-    }
-
-    public static final class Discovery {
-        private List<String> local = null;
-        private List<String> dns = null;
-
-        public List<String> getLocal() {
-            return local;
-        }
-
-        public void setLocal(List<String> local) {
-            this.local = local;
-        }
-
-        public List<String> getDns() {
-            return dns;
-        }
-
-        public void setDns(List<String> dns) {
-            this.dns = dns;
         }
     }
 

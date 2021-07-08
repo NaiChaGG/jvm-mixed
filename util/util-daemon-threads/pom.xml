@@ -19,36 +19,18 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!--  项目根目录禁止继承 starter  -->
     <parent>
-        <groupId>io.github.jojoti</groupId>
-        <artifactId>starter-parent-kotlin</artifactId>
+        <groupId>io.github.jojoti.util</groupId>
+        <artifactId>util-named-starter-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../starter-parent-kotlin</relativePath>
+        <relativePath>../named-starter-parent</relativePath>
     </parent>
 
-    <groupId>io.github.jojoti.grpc-starter</groupId>
-    <artifactId>grpc-starter-named-starter-parent-kotlin</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>util-daemon-threads</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <main.basedir>${basedir}/../..</main.basedir>
     </properties>
-
-    <modules>
-        <module>../grpc-starter-spring-boot2-server-kotlin</module>
-        <module>../grpc-starter-spring-boot2-client-kotlin</module>
-        <module>../grpc-starter-spring-boot2-example-kotlin</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.github.jojoti.grpc-starter</groupId>
-                <artifactId>grpc-starter-spring-boot2-server</artifactId>
-                <version>${revision}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>
