@@ -16,12 +16,11 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.*;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import java.util.List;
@@ -44,11 +43,13 @@ import java.util.List;
 @EnableConfigurationProperties(GRpcSessionProperties.class)
 public class GRpcSessionAutoConfiguration {
 
+    /**
+     * SessionInterceptor 支持重写
+     */
+    @ConditionalOnBean(SessionInterceptor.class)
     @Bean
-    @GRpcGlobalInterceptor
-    @Order(0)
-    public SessionInterceptor sessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
-        return new SessionInterceptor(session, gRpcSessionProperties);
+    public SessionInterceptor sessionInterceptor() {
+        return new SessionInterceptor();
     }
 
     static final class EnableSession implements Condition {

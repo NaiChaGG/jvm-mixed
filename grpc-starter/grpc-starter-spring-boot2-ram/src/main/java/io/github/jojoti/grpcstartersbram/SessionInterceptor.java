@@ -17,16 +17,21 @@
 package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
+import io.github.jojoti.utilhashidtoken.HashIdToken;
 import io.grpc.*;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
@@ -36,31 +41,34 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
+@GRpcGlobalInterceptor
+@Order(0)
 public class SessionInterceptor implements ScopeServerInterceptor, ApplicationContextAware {
 
     public static final Context.Key<SessionUser> USER_NTS = Context.key("user");
 
-    // 用户头信息使用这个来获取
-    private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
-
-    private final Session session;
-    private final GRpcSessionProperties gRpcSessionProperties;
+    @Autowired
+    Session session;
+    @Autowired
+    GRpcSessionProperties gRpcSessionProperties;
 
     private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches;
     private List<String> globalAttach;
 
-    SessionInterceptor(Session session, GRpcSessionProperties gRpcSessionProperties) {
-        this.session = session;
-        this.gRpcSessionProperties = gRpcSessionProperties;
+    private static final class Holder {
+        // 用户头信息使用这个来获取
+        private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
     }
+
+    private static final Session.ParseToken anonymous = new Session.ParseToken(null);
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-        final var found = headers.get(TOKEN_METADATA_KEY);
         // 验证登录会话
         final SessionUser user;
         try {
-            user = this.session.verify(found, this.attaches.getOrDefault(call.getMethodDescriptor(), ImmutableList.of()));
+            user = this.session.verify(this.parseToken(headers),
+                    this.attaches.getOrDefault(call.getMethodDescriptor(), ImmutableList.of()));
         } catch (Exception e) {
             final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
             call.close(error, new Metadata());
@@ -71,6 +79,17 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         final var context = Context.current().withValue(USER_NTS, user);
 
         return Contexts.interceptCall(context, call, headers, next);
+    }
+
+    /**
+     * 允许 用户 自定义扩展 header 头的处理
+     *
+     * @param headers
+     * @return
+     */
+    protected Session.ParseToken parseToken(Metadata headers) {
+        final var found = headers.get(Holder.TOKEN_METADATA_KEY);
+        return Strings.isNullOrEmpty(found) ? anonymous : new Session.ParseToken(HashIdToken.parseToken(found));
     }
 
     @Override

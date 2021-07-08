@@ -25,7 +25,7 @@ public interface HashIdToken {
         if (ids == null || ids.length < 1) {
             throw new IllegalArgumentException("Token format error.");
         }
-        return new DecodeToken(slat, ids);
+        return new DecodeToken(slat, ids[0], ids[1]);
     }
 
     static NewToken createToken(long uid, long scopeId) {
@@ -42,19 +42,13 @@ public interface HashIdToken {
          */
         private static final int TOKEN_SIZE = 2;
         public final String salt;
-        private final long[] ids;
+        public final long uid;
+        public final long scopeId;
 
-        DecodeToken(String salt, long[] ids) {
+        public DecodeToken(String salt, long uid, long scopeId) {
             this.salt = salt;
-            this.ids = ids;
-        }
-
-        public long getUid() {
-            return ids[0];
-        }
-
-        public int getScopeId() {
-            return (int) ids[1];
+            this.uid = uid;
+            this.scopeId = scopeId;
         }
 
     }
@@ -63,7 +57,7 @@ public interface HashIdToken {
         private final String slat;
         private final String tokenBase64;
 
-        NewToken(String slat, String tokenBase64) {
+        public NewToken(String slat, String tokenBase64) {
             this.slat = slat;
             this.tokenBase64 = tokenBase64;
         }

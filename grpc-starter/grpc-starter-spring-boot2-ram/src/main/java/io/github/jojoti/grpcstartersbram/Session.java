@@ -18,6 +18,7 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import io.github.jojoti.utilhashidtoken.HashIdToken;
 
 /**
  * 用户会话实现
@@ -49,9 +50,9 @@ public interface Session {
      * @param tokenVal
      * @return
      */
-    SessionUser verify(String tokenVal, ImmutableList<String> attachInline);
+    SessionUser verify(ParseToken tokenVal, ImmutableList<String> attachInline);
 
-    default SessionUser verify(String tokenVal) {
+    default SessionUser verify(ParseToken tokenVal) {
         return verify(tokenVal, ImmutableList.of());
     }
 
@@ -68,5 +69,18 @@ public interface Session {
      * @param scopeId
      */
     void logout(long uid, int scopeId);
+
+    final class ParseToken {
+        private final HashIdToken.DecodeToken decodeToken;
+
+        public ParseToken(HashIdToken.DecodeToken decodeToken) {
+            this.decodeToken = decodeToken;
+        }
+
+        public HashIdToken.DecodeToken getDecodeToken() {
+            return decodeToken;
+        }
+
+    }
 
 }

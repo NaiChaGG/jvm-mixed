@@ -36,7 +36,7 @@ class SessionRedis implements Session {
     }
 
     @Override
-    public SessionUser verify(String tokenVal, ImmutableList<String> attachInline) {
+    public SessionUser verify(ParseToken tokenVal, ImmutableList<String> attachInline) {
         return new AbstractSessionUser(tokenDAO, objectMapper, tokenVal, Session.checkAttachKey(attachInline));
     }
 

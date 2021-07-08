@@ -13,7 +13,7 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-interface ServiceDescriptorAnnotations {
+public interface ServiceDescriptorAnnotations {
 
     static <T extends Annotation> ImmutableMap<MethodDescriptor<?, ?>, T> getAnnotationMaps(
             List<BindableService> serviceObjects, Class<T> t, boolean forced) {

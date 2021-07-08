@@ -23,10 +23,11 @@ import io.grpc.StatusException;
 
 /**
  * https://juejin.cn/post/6943618407393099807
+ * <p>
  * grpc Trailers Vs Header
+ * <p>
  * Trailers 表示请求结束时发送的 头信息，Header 是建立连接时发送的头信息
  * <p>
- * 1000 以内使用 约定
  *
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -36,7 +37,6 @@ public interface Trailers {
     // onError 调用此方法 不必抛出异常
     // kotlin 下直接 throw 参考 grpc + kotlin 生成的 代码实现如何返回错误
     // 使用 此方法可以传递更多的 头信息给客户端
-
     Metadata.Key<String> X_ERROR_METADATA_KEY = Metadata.Key.of("x-err", Metadata.ASCII_STRING_MARSHALLER);
 
     static StatusException newErrorCode(int error) {
@@ -45,9 +45,9 @@ public interface Trailers {
         return new StatusException(Status.INTERNAL, trailers);
     }
 
-    static StatusException newErrorCode(int error, Metadata mergerTrailers) {
+    static StatusException newErrorCode(int error, Metadata mergeTrailers) {
         var trailers = new Metadata();
-        trailers.merge(mergerTrailers);
+        trailers.merge(mergeTrailers);
         trailers.put(X_ERROR_METADATA_KEY, String.valueOf(error));
         return new StatusException(Status.INTERNAL, trailers);
     }
@@ -56,10 +56,15 @@ public interface Trailers {
         return newErrorCode(error.getValue());
     }
 
+    static <T extends Enum<T>> StatusException newErrorCode(ErrorKey<T> error, Metadata mergeTrailers) {
+        return newErrorCode(error.getValue(), mergeTrailers);
+    }
+
     static StatusException newErrorTraces(Exception exception) {
         return Status.fromCode(Status.INTERNAL.getCode())
                 .withDescription(exception.getMessage())
-                .withCause(exception).asException();
+                .withCause(exception)
+                .asException();
     }
 
     static StatusException newArgsError() {
