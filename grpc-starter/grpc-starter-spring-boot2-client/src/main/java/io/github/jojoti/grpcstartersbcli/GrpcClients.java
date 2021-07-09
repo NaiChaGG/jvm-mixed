@@ -29,9 +29,6 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.netty.NettyChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
 
 import java.util.Map;
@@ -41,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class GrpcClients implements SmartLifecycle, ApplicationContextAware, GrpcClientContext {
+public class GrpcClients implements SmartLifecycle, GrpcClientContext {
 
     private static final Logger log = LoggerFactory.getLogger(GrpcClients.class);
 
@@ -56,21 +53,17 @@ public class GrpcClients implements SmartLifecycle, ApplicationContextAware, Grp
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    }
-
-    @Override
     public void start() {
         Preconditions.checkArgument(this.gRpcClientProperties.getClients() != null && this.gRpcClientProperties.getClients().size() > 0, "Servers is not allow empty");
         log.info("Starting gRPC client ...");
 
-        final var clients = Maps.<GRpcClientProperties.ClientItem, ManagedChannelBuilder<?>>newHashMap();
+        final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
 
-        for (GRpcClientProperties.ClientItem client : this.gRpcClientProperties.getClients()) {
-            if (!Strings.isNullOrEmpty(client.getDiscovery().getVip())) {
-                final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(client.getDiscovery().getVip()));
+        for (var client : this.gRpcClientProperties.getClients().entrySet()) {
+            if (!Strings.isNullOrEmpty(client.getValue().getDiscovery().getVip())) {
+                final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(client.getValue().getDiscovery().getVip()));
                 // 通知 自定义 配置
-                this.grpcClientFilter.onFilter(client.getServiceName(), builder);
+                this.grpcClientFilter.onFilter(client.getKey(), builder);
                 clients.put(client, builder);
             } else {
                 // 目前只支持 vip 网络这种模式发现
@@ -83,11 +76,11 @@ public class GrpcClients implements SmartLifecycle, ApplicationContextAware, Grp
                     log.error("E: {}", handler, e);
                 });
 
-        final var clientChannels = ImmutableMap.<GRpcClientProperties.ClientItem, ManagedChannel>builder();
+        final var clientChannels = ImmutableMap.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel>builder();
 
         for (final var entry : clients.entrySet()) {
             try {
-                daemon.startThreads(entry.getKey().getServiceName(), () -> {
+                daemon.startThreads(entry.getKey().getKey(), () -> {
                     final var channel = entry.getValue().build();
                     clientChannels.put(entry.getKey(), channel);
                 });
@@ -103,10 +96,10 @@ public class GrpcClients implements SmartLifecycle, ApplicationContextAware, Grp
     public void stop() {
         if (this.channels != null) {
             for (var value : this.channels.entrySet()) {
-                this.daemonThreads.downThreads(value.getKey().getServiceName(), () -> {
+                this.daemonThreads.downThreads(value.getKey().getKey(), () -> {
                     log.info("gRPC {} client stop", value.getKey());
                     value.getValue().shutdown();
-                    value.getValue().awaitTermination(value.getKey().getShutdownGracefullyMills(), TimeUnit.MILLISECONDS);
+                    value.getValue().awaitTermination(value.getKey().getValue().getShutdownGracefullyMills(), TimeUnit.MILLISECONDS);
                 });
             }
             this.channels = null;
@@ -119,12 +112,12 @@ public class GrpcClients implements SmartLifecycle, ApplicationContextAware, Grp
         return this.daemonThreads != null && this.daemonThreads.isRunning();
     }
 
-    private ImmutableMap<GRpcClientProperties.ClientItem, ManagedChannel> channels;
+    private ImmutableMap<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel> channels;
 
     @Override
     public <T extends Enum<T>> Channel getChannel(ServiceName<T> serviceName) {
-        for (Map.Entry<GRpcClientProperties.ClientItem, ManagedChannel> entry : channels.entrySet()) {
-            if (entry.getKey().getServiceName().equals(serviceName.getServiceName())) {
+        for (var entry : channels.entrySet()) {
+            if (entry.getKey().getKey().equals(serviceName.getServiceName())) {
                 return entry.getValue();
             }
         }

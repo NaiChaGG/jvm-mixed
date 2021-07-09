@@ -95,8 +95,6 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             // 肯定能找到
             final var foundScope = AnnotationUtils.findAnnotation(value.getClass(), GRpcScopeService.class).scope();
 
-            this.gRpcServerProperties.validScopeName(foundScope.value());
-
             scopeHandlers.put(foundScope, (BindableService) value);
         }
 
@@ -106,11 +104,8 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         final var allScopeInterceptors = applicationContext.getBeansWithAnnotation(GRpcScopeGlobalInterceptor.class);
         for (Object value : allScopeInterceptors.values()) {
             Preconditions.checkArgument(value instanceof ServerInterceptor, "Annotation @GRpcScopeService class must be instance of io.grpc.ServerInterceptor");
-
             // 肯定能找到
             final var foundScope = AnnotationUtils.findAnnotation(value.getClass(), GRpcScopeGlobalInterceptor.class).scope();
-
-            this.gRpcServerProperties.validScopeName(foundScope.value());
             scopeInterceptors.put(foundScope, (ServerInterceptor) value);
         }
 
@@ -202,20 +197,20 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 services.put(entry.getKey(), bindableService);
             }
 
-            serverBuilders.add(new ServerBuilders(newServerBuilder, health, config));
+            serverBuilders.add(new ServerBuilders(newServerBuilder, health, entry.getKey().value(), config));
             log.info("GRPC scopeName {} add new builder", entry.getKey().value());
         }
 
-        for (GRpcServerProperties.ServerItem server : this.gRpcServerProperties.getServers()) {
+        for (var server : this.gRpcServerProperties.getServers().entrySet()) {
             var exists = false;
             for (ServerBuilders serverBuilder : serverBuilders) {
-                if (server.getScopeName().equals(serverBuilder.config.getScopeName())) {
+                if (server.getKey().equals(serverBuilder.scopeName)) {
                     exists = true;
                     break;
                 }
             }
             if (!exists) {
-                throw new IllegalArgumentException("Scope " + server.getScopeName() + " exists, but no handler is configured");
+                throw new IllegalArgumentException("Scope " + server.getKey() + " exists, but no handler is configured");
             }
         }
 
@@ -240,11 +235,11 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
         for (var serverBuilder : serverBuilders) {
             try {
-                daemon.startThreads(serverBuilder.config.getScopeName(), () -> {
+                daemon.startThreads(serverBuilder.scopeName, () -> {
                     final var server = serverBuilder.serverBuilder.build().start();
                     // 如需要注册的 consul 等 在这里发布 event
-                    log.info("GRPC Server {} started, listening on port {}", serverBuilder.config.getScopeName(), server.getPort());
-                    serversBuilder.add(new MultiServer(server, serverBuilder.healthStatusManager, serverBuilder.config));
+                    log.info("GRPC Server {} started, listening on port {}", serverBuilder.scopeName, server.getPort());
+                    serversBuilder.add(new MultiServer(server, serverBuilder.healthStatusManager, serverBuilder.scopeName, serverBuilder.config));
                 });
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -263,7 +258,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         log.info("grpc server stopping...");
         if (this.servers != null) {
             for (var server : this.servers) {
-                this.daemonThreads.downThreads(server.config.getScopeName(), () -> {
+                this.daemonThreads.downThreads(server.scopeName, () -> {
                     if (server.healthStatusManager != null) {
                         for (ServerServiceDefinition service : server.server.getServices()) {
                             server.healthStatusManager.clearStatus(service.getServiceDescriptor().getName());
@@ -271,7 +266,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     }
                     server.server.shutdown();
                     server.server.awaitTermination(server.config.getShutdownGracefullyMills(), TimeUnit.MILLISECONDS);
-                    log.info("gRPC server {} stopped", server.config.getScopeName());
+                    log.info("gRPC server {} stopped", server.scopeName);
                 });
             }
             this.servers = null;
@@ -285,9 +280,9 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
     }
 
     private GRpcServerProperties.ServerItem getServerConfigByScopeName(String scopeName) {
-        for (GRpcServerProperties.ServerItem gRpcServerPropertiesServer : this.gRpcServerProperties.getServers()) {
-            if (gRpcServerPropertiesServer.getScopeName().equals(scopeName)) {
-                return gRpcServerPropertiesServer;
+        for (var gRpcServerPropertiesServer : this.gRpcServerProperties.getServers().entrySet()) {
+            if (gRpcServerPropertiesServer.getKey().equals(scopeName)) {
+                return gRpcServerPropertiesServer.getValue();
             }
         }
         throw new IllegalArgumentException("ScopeName " + scopeName + " not found, please you check config or annotation");
@@ -306,11 +301,13 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
     private static final class MultiServer {
         final Server server;
         final HealthStatusManager healthStatusManager;
+        final String scopeName;
         final GRpcServerProperties.ServerItem config;
 
-        MultiServer(Server server, HealthStatusManager healthStatusManager, GRpcServerProperties.ServerItem config) {
+        MultiServer(Server server, HealthStatusManager healthStatusManager, String scopeName, GRpcServerProperties.ServerItem config) {
             this.server = server;
             this.healthStatusManager = healthStatusManager;
+            this.scopeName = scopeName;
             this.config = config;
         }
     }
@@ -318,11 +315,13 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
     private static final class ServerBuilders {
         final ServerBuilder<?> serverBuilder;
         final HealthStatusManager healthStatusManager;
+        final String scopeName;
         final GRpcServerProperties.ServerItem config;
 
-        ServerBuilders(ServerBuilder<?> serverBuilder, HealthStatusManager healthStatusManager, GRpcServerProperties.ServerItem config) {
+        ServerBuilders(ServerBuilder<?> serverBuilder, HealthStatusManager healthStatusManager, String scopeName, GRpcServerProperties.ServerItem config) {
             this.serverBuilder = serverBuilder;
             this.healthStatusManager = healthStatusManager;
+            this.scopeName = scopeName;
             this.config = config;
         }
     }

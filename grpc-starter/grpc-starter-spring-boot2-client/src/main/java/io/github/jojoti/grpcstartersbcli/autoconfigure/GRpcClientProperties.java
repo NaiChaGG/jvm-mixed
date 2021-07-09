@@ -22,6 +22,7 @@ import io.github.jojoti.grpcstartersb.DiscoveryConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -31,50 +32,22 @@ import java.util.stream.Collectors;
 @ConfigurationProperties(prefix = "grpc")
 public class GRpcClientProperties {
 
-    private List<ClientItem> clients;
+    private Map<String, ClientItem> clients;
 
-    private static void checkServiceName(String serviceName) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(serviceName), "ServiceName is not empty");
-    }
-
-    public void validServiceName(String serviceName) {
-        for (ClientItem server : this.getClients()) {
-            if (server.getServiceName().equals(serviceName)) {
-                return;
-            }
-        }
-        throw new IllegalArgumentException("ServiceName " + serviceName + " config key not found");
-    }
-
-    public List<ClientItem> getClients() {
+    public Map<String, ClientItem> getClients() {
         return clients;
     }
 
-    public void setClients(List<ClientItem> clients) {
-        final var setSize = clients.stream().map(c -> {
-            checkServiceName(c.serviceName);
-            return c.serviceName;
-        }).collect(Collectors.toSet()).size();
-
-        Preconditions.checkArgument(setSize == clients.size(), "Duplicate serviceName");
+    public void setClients(Map<String, ClientItem> clients) {
         this.clients = clients;
     }
 
     public static final class ClientItem {
-        private String serviceName;
         // 默认 5s
         private int shutdownGracefullyMills = 5000;
         private NettyConfig nettyConfig = null;
         private NettySharedConfig nettySharedConfig = null;
         private DiscoveryConfig discovery;
-
-        public String getServiceName() {
-            return serviceName;
-        }
-
-        public void setServiceName(String serviceName) {
-            this.serviceName = serviceName;
-        }
 
         public NettyConfig getNettyConfig() {
             return nettyConfig;

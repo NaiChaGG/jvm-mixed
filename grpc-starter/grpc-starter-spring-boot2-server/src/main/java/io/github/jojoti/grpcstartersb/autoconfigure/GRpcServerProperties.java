@@ -17,11 +17,9 @@
 package io.github.jojoti.grpcstartersb.autoconfigure;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * @author JoJo Wang
@@ -30,40 +28,21 @@ import java.util.stream.Collectors;
 @ConfigurationProperties(prefix = "grpcs")
 public class GRpcServerProperties {
 
-    private List<ServerItem> servers;
+    private Map<String, ServerItem> servers;
 
-    private static void checkScopeName(String scopeName) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(scopeName), "ScopeName is not empty");
-    }
-
-    public void validScopeName(String scopeName) {
-        for (ServerItem server : this.getServers()) {
-            if (server.getScopeName().equals(scopeName)) {
-                return;
-            }
-        }
-        throw new IllegalArgumentException("ScopeName " + scopeName + " config key not found");
-    }
-
-    public List<ServerItem> getServers() {
+    public Map<String, ServerItem> getServers() {
         return servers;
     }
 
-    public void setServers(List<ServerItem> servers) {
-        final var setSize = servers.stream().map(c -> {
-            checkScopeName(c.scopeName);
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(c.address), "ScopeName " + c.getScopeName() + ", address is not allow empty");
+    public void setServers(Map<String, ServerItem> servers) {
+        servers.values().forEach(c -> {
             // 至少设置为 1s
             Preconditions.checkArgument(c.shutdownGracefullyMills >= 1000);
-            return c.scopeName;
-        }).collect(Collectors.toSet()).size();
-
-        Preconditions.checkArgument(setSize == servers.size(), "Duplicate scopeName");
+        });
         this.servers = servers;
     }
 
     public static final class ServerItem {
-        private String scopeName;
         private String address;
         // 默认 5s
         private int shutdownGracefullyMills = 5000;
@@ -72,14 +51,6 @@ public class GRpcServerProperties {
         private boolean enableHealthStatus = false;
         private NettyConfig nettyConfig = null;
         private NettySharedConfig nettySharedConfig = null;
-
-        public String getScopeName() {
-            return scopeName;
-        }
-
-        public void setScopeName(String scopeName) {
-            this.scopeName = scopeName;
-        }
 
         public String getAddress() {
             return address;

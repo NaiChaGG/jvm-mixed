@@ -39,38 +39,28 @@ grpcs:
 
   servers:
     # 内置 primary
-    - scopeName: primary
+    primary:
       address: 127.0.0.1:8101
       enableHealthStatus: false
       enableSession: true
-      enableRam: true
+      enableRam: false
       <<: *nettyServer
 
     # 内置 private
-    - scopeName: admin
+    admin:
       address: 0.0.0.0:8102
       enableHealthStatus: true
       enableSession: true
-      enableRam: true
+      enableRam: false
       <<: *nettyServer
-      # 注册发现配置
-      discovery:
-        # 该值如果不设置 则 使用 默认配置
-        serviceName: examplesPrivateService
-        <<: *discovery
 
     # 自定义地址1
-    - scopeName: mixed1
+    mixed1:
       address: 127.0.0.1:8103
       enableHealthStatus: true
       enableSession: true
-      enableRam: true
+      enableRam: false
       <<: *nettyServer
-      # 注册发现配置
-      discovery:
-        # 该值如果不设置 则 使用 默认配置
-        serviceName: examplesMixed1Service
-        <<: *discovery
 
 grpc:
 
@@ -90,14 +80,14 @@ grpc:
     # 以下配置写法会从远程 service 读取到 远程注册到 注册发现 组件的 service address
     # 该 scopeName 则是使用本地的 scopeName 对应的 拦截器等等
     # scopeName 保持唯一
-    - serviceName: examplesServiceRpc
+    examplesServiceRpc:
       <<: *nettyClient
       # 从远程 注册发现中心 发现配置
       discovery:
         vip: 127.0.0.1:3001
 
     # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
-    - serviceName: examplesService1Rpc
+    examplesService1Rpc:
       <<: *client
 
 spring:
