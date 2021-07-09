@@ -39,7 +39,7 @@ public interface Session {
     static ImmutableList<String> checkAttachKey(ImmutableList<String> attachInline) {
         if (attachInline.size() > 0) {
             for (String s : attachInline) {
-                checkAttachKey(attachInline);
+                checkAttachKey(s);
             }
         }
         return attachInline;

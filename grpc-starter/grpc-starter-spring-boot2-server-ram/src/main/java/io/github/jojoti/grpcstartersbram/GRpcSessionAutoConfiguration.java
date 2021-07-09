@@ -16,14 +16,14 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * rfs:
@@ -46,7 +46,7 @@ public class GRpcSessionAutoConfiguration {
     /**
      * SessionInterceptor 支持重写
      */
-    @ConditionalOnBean(SessionInterceptor.class)
+    @ConditionalOnMissingBean(SessionInterceptor.class)
     @Bean
     public SessionInterceptor sessionInterceptor() {
         return new SessionInterceptor();
@@ -54,14 +54,14 @@ public class GRpcSessionAutoConfiguration {
 
     static final class EnableSession implements Condition {
 
-        private static final Bindable<List<GRpcSessionProperties.SessionItem>> STRING_LIST = Bindable.listOf(GRpcSessionProperties.SessionItem.class);
+        private static final Bindable<Map<String, GRpcSessionProperties.SessionItem>> STRING_LIST = Bindable.mapOf(String.class, GRpcSessionProperties.SessionItem.class);
 
         // rf: org.springframework.boot.autoconfigure.condition.OnPropertyListCondition
         @Override
         public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
             var found = Binder.get(conditionContext.getEnvironment()).bind("grpcs.servers", STRING_LIST);
             if (found.isBound()) {
-                for (var ramItem : found.get()) {
+                for (var ramItem : found.get().values()) {
                     if (ramItem.isEnableSession()) {
                         return true;
                     }

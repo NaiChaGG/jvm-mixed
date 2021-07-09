@@ -17,10 +17,7 @@
 package io.github.jojoti.grpcstartersb;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
+import com.google.common.collect.*;
 import io.github.jojoti.grpcstartersb.autoconfigure.GRpcServerProperties;
 import io.github.jojoti.utildaemonthreads.DaemonThreads;
 import io.github.jojoti.utilguavaext.GetAddress;
@@ -172,13 +169,12 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                         if (allGlobalInterceptor instanceof ScopeServerInterceptor) {
                             // 比较两个注解的 scope 是否是同一个里面
                             // 只有超全局拦截器才会用到 动态 tag
-                            if (((ScopeServerInterceptor) allGlobalInterceptor).getScopes() != null) {
-                                for (String scope : ((ScopeServerInterceptor) allGlobalInterceptor).getScopes()) {
-                                    if (entry.getKey().value().equals(scope)) {
-                                        scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor);
-                                        newServerBuilder.intercept(allGlobalInterceptor);
-                                        break;
-                                    }
+                            Preconditions.checkNotNull(((ScopeServerInterceptor) allGlobalInterceptor).getScopes());
+                            for (String scope : ((ScopeServerInterceptor) allGlobalInterceptor).getScopes()) {
+                                if (entry.getKey().value().equals(scope)) {
+                                    scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor);
+                                    newServerBuilder.intercept(allGlobalInterceptor);
+                                    break;
                                 }
                             }
                         } else {
@@ -220,10 +216,12 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         }
 
         // 发送 message 到 对应的 拦截器 通知到 bean 注册成功的消息
-        for (Map.Entry<GRpcScope, ScopeServerInterceptor> entry : scopeInterceptorUtils.ref.entrySet()) {
+        for (var entry : scopeInterceptorUtils.ref.asMap().entrySet()) {
             var found = services.get(entry.getKey());
             Preconditions.checkNotNull(found);
-            entry.getValue().aware(entry.getKey(), ImmutableList.copyOf(found));
+            for (ScopeServerInterceptor scopeServerInterceptor : entry.getValue()) {
+                scopeServerInterceptor.aware(entry.getKey(), ImmutableList.copyOf(found));
+            }
         }
 
         final var daemon = DaemonThreads.newDaemonThreads(this.gRpcServerProperties.getServers().size(),
@@ -328,7 +326,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
     private static final class DynamicScopeFilterUtils {
         private final List<ScopeServerInterceptor> firsts = Lists.newArrayList();
-        private final Map<GRpcScope, ScopeServerInterceptor> ref = Maps.newHashMap();
+        private final Multimap<GRpcScope, ScopeServerInterceptor> ref = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
 
         public void addCheck(GRpcScope scope, Object object) {
             if (object instanceof ScopeServerInterceptor) {

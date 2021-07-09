@@ -17,18 +17,15 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * rfs:
@@ -65,17 +62,21 @@ public class GRpcRAMAutoConfiguration {
         return new RAMInterceptor(ramAccessInterceptor, gRpcRAMProperties);
     }
 
-    static final class EnableRam implements Condition, ApplicationContextAware {
+    static final class EnableRam implements Condition {
 
-        private static final Bindable<List<GRpcRAMProperties.RAMItem>> STRING_LIST = Bindable.listOf(GRpcRAMProperties.RAMItem.class);
+        private static final Bindable<Map<String, GRpcRAMProperties.RAMItem>> STRING_LIST = Bindable.mapOf(String.class, GRpcRAMProperties.RAMItem.class);
 
-        // rf: org.springframework.boot.autoconfigure.condition.OnPropertyListCondition
+        /**
+         * rf:
+         *
+         * @see org.springframework.boot.autoconfigure.condition.OnPropertyListCondition
+         */
         @Override
         public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
             var found = Binder.get(conditionContext.getEnvironment()).bind("grpcs.servers", STRING_LIST);
             if (found.isBound()) {
 //                var foundRam = false;
-                for (GRpcRAMProperties.RAMItem ramItem : found.get()) {
+                for (GRpcRAMProperties.RAMItem ramItem : found.get().values()) {
                     if (ramItem.isEnableRam()) {
 //                        foundRam = true;
                         // 动态 注入 bean
@@ -91,11 +92,6 @@ public class GRpcRAMAutoConfiguration {
 //                return foundRam;
             }
             return false;
-        }
-
-        @Override
-        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
         }
 
     }

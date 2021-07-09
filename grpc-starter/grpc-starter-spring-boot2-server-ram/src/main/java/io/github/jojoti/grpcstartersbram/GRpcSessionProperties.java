@@ -16,10 +16,11 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.collect.Lists;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * @author JoJo Wang
@@ -29,35 +30,31 @@ import java.util.stream.Collectors;
 public class GRpcSessionProperties {
 
     // 那些 scope 需要启用 ram 拦截
-    private List<SessionItem> servers;
+    private Map<String, SessionItem> servers;
 
     List<String> enableScopeNames() {
-        var scopes = servers.stream().filter(SessionItem::isEnableSession).map(c -> c.scopeName).collect(Collectors.toUnmodifiableList());
-        if (scopes.size() <= 0) {
+        var found = Lists.<String>newArrayList();
+        for (Map.Entry<String, SessionItem> entry : servers.entrySet()) {
+            if (entry.getValue().isEnableSession()) {
+                found.add(entry.getKey());
+            }
+        }
+        if (found.size() <= 0) {
             throw new IllegalArgumentException("Bug fix session scope conditional error");
         }
-        return scopes;
+        return found;
     }
 
-    public List<SessionItem> getServers() {
+    public Map<String, SessionItem> getServers() {
         return servers;
     }
 
-    public void setServers(List<SessionItem> servers) {
+    public void setServers(Map<String, SessionItem> servers) {
         this.servers = servers;
     }
 
     static final class SessionItem {
-        private String scopeName;
         private boolean enableSession = false;
-
-        public String getScopeName() {
-            return scopeName;
-        }
-
-        public void setScopeName(String scopeName) {
-            this.scopeName = scopeName;
-        }
 
         public boolean isEnableSession() {
             return enableSession;
