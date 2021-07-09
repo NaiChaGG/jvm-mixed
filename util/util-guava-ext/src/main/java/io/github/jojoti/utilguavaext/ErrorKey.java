@@ -8,6 +8,7 @@ import java.util.Set;
 /**
  * 返回唯一 Key
  * 1.此 interface 用于定义项目的唯一错误码使用枚举实现该接口
+ * 迂回扩展 java enum 类 ...
  *
  * @author JoJo Wang
  * @link github.com/jojoti
