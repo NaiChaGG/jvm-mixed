@@ -94,12 +94,29 @@ class RAMInterceptor implements ScopeServerInterceptor {
 
         this.addAllowAnonymous(servicesEvent);
 
-        var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAM.class, true);
+        var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAM.class, false);
         var builder = ImmutableMap.<MethodDescriptor<?, ?>, RAM>builder();
         for (var entry : found.entrySet()) {
             builder.put(entry.getKey(), entry.getValue());
         }
         this.rams = builder.build();
+
+        // check not use ram or ram anonymous
+        // @RAM 和 @RAMAllowAnonymous 存在一个即可
+        for (BindableService bindableService : servicesEvent) {
+            for (ServerMethodDefinition<?, ?> method : bindableService.bindService().getMethods()) {
+                if (this.allowAnonymous.contains(method.getMethodDescriptor())) {
+                    continue;
+                }
+                if (this.rams.containsKey(method.getMethodDescriptor())) {
+                    continue;
+                }
+                throw new IllegalArgumentException("Annotation: @" + RAM.class.getPackageName() + "." + RAM.class.getSimpleName()
+                        + " or @" + RAMAllowAnonymous.class.getPackageName() + "." + RAMAllowAnonymous.class.getSimpleName() +
+                        " must be used, method : " + method.getMethodDescriptor());
+            }
+        }
+
         this.ramAccessInterceptor.onRegister(currentGRpcScope, servicesEvent);
     }
 

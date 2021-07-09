@@ -15,8 +15,7 @@ import java.util.List;
  */
 public interface ServiceDescriptorAnnotations {
 
-    static <T extends Annotation> ImmutableMap<MethodDescriptor<?, ?>, T> getAnnotationMaps(
-            List<BindableService> serviceObjects, Class<T> t, boolean forced) {
+    static <T extends Annotation> ImmutableMap<MethodDescriptor<?, ?>, T> getAnnotationMaps(List<BindableService> serviceObjects, Class<T> t, boolean forced) {
         final var builder = ImmutableMap.<MethodDescriptor<?, ?>, T>builder();
         for (var serviceObject : serviceObjects) {
             for (var methodObject : serviceObject.bindService().getMethods()) {

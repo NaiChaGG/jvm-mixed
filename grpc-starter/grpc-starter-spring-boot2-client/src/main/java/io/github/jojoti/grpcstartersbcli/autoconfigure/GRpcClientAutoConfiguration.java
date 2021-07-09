@@ -18,7 +18,7 @@ package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
 import io.github.jojoti.grpcstartersbcli.GrpcClientFilter;
 import io.github.jojoti.grpcstartersbcli.GrpcClients;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
 public class GRpcClientAutoConfiguration {
 
     @Bean
-    @ConditionalOnBean(GrpcClientFilter.class)
+    @ConditionalOnMissingBean(GrpcClientFilter.class)
     public GrpcClientFilter noneFilter() {
         return (serviceName, nettyChannelBuilder) -> {
             // nothing to do

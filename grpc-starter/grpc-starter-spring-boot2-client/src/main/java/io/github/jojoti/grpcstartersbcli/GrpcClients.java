@@ -116,7 +116,7 @@ public class GrpcClients implements SmartLifecycle, ApplicationContextAware, Grp
 
     @Override
     public boolean isRunning() {
-        return this.daemonThreads != null;
+        return this.daemonThreads != null && this.daemonThreads.isRunning();
     }
 
     private ImmutableMap<GRpcClientProperties.ClientItem, ManagedChannel> channels;

@@ -35,15 +35,16 @@ public abstract class DaemonThreads {
     public DaemonThreads startThreads(String eventName, Handler runnable) throws Exception {
         try {
             runnable.handle();
-        } finally {
-            // 关闭所有 countDown
+        } catch (Exception e) {
+            // 启动 任务失败 则关闭所有的 latch 关闭所有 countDown
             for (long i = 0; i < this.latch.getCount(); i++) {
                 try {
                     this.latch.countDown();
-                } catch (Exception e) {
-                    this.errors.onError(eventName, e);
+                } catch (Exception ex) {
+                    this.errors.onError(eventName, ex);
                 }
             }
+            throw e;
         }
         return this;
     }
@@ -69,6 +70,10 @@ public abstract class DaemonThreads {
 
     public DaemonThreads downThreads(Handler handler) {
         return downThreads("Down", handler);
+    }
+
+    public boolean isRunning() {
+        return this.latch.getCount() > 0;
     }
 
 }

@@ -281,7 +281,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
     @Override
     public boolean isRunning() {
-        return this.daemonThreads != null;
+        return this.daemonThreads != null && this.daemonThreads.isRunning();
     }
 
     private GRpcServerProperties.ServerItem getServerConfigByScopeName(String scopeName) {
