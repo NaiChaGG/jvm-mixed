@@ -37,7 +37,7 @@ public @interface RAM {
     /**
      * 组名
      */
-    String groupName() default "";
+    String name() default "";
 
     /**
      * 是否禁用
@@ -47,10 +47,10 @@ public @interface RAM {
     /**
      * 附加属性
      */
-    RAMAttr[] attrs() default {};
+    Attr[] attrs() default {};
 
     @Target({ElementType.ANNOTATION_TYPE})
-    @interface RAMAttr {
+    @interface Attr {
 
         @NonNull
         String key();

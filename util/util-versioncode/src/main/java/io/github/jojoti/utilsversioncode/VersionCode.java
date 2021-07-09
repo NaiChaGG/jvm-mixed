@@ -23,6 +23,7 @@ import java.util.List;
 
 /**
  * @author JoJo Wang
+ * @link github.com/jojoti
  * @date 2017/11/23
  */
 public class VersionCode {

@@ -23,6 +23,7 @@ import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 访问控制和用户会话拦截器
@@ -117,7 +118,15 @@ class RAMInterceptor implements ScopeServerInterceptor {
             }
         }
 
-        this.ramAccessInterceptor.onRegister(currentGRpcScope, servicesEvent);
+        final var register = ImmutableMap.<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRam>builder();
+        for (Map.Entry<MethodDescriptor<?, ?>, RAM> entry : this.rams.entrySet()) {
+            register.put(entry.getKey(), new RAMAccessInterceptor.RegisterRam(entry.getValue(), this.allowAnonymous.contains(entry.getKey())));
+        }
+
+        var registerRams = register.build();
+        if (registerRams.size() > 0) {
+            this.ramAccessInterceptor.onRegister(currentGRpcScope, registerRams);
+        }
     }
 
     private void addAllowAnonymous(List<BindableService> servicesEvent) {

@@ -34,7 +34,6 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -216,7 +215,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         }
 
         // 发送 message 到 对应的 拦截器 通知到 bean 注册成功的消息
-        for (var entry : scopeInterceptorUtils.ref.asMap().entrySet()) {
+        for (var entry : scopeInterceptorUtils.getRef().asMap().entrySet()) {
             var found = services.get(entry.getKey());
             Preconditions.checkNotNull(found);
             for (ScopeServerInterceptor scopeServerInterceptor : entry.getValue()) {
@@ -274,7 +273,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
     @Override
     public boolean isRunning() {
-        return this.daemonThreads != null && this.daemonThreads.isRunning();
+        return this.daemonThreads != null && this.daemonThreads.isHealth();
     }
 
     private GRpcServerProperties.ServerItem getServerConfigByScopeName(String scopeName) {
@@ -324,21 +323,36 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         }
     }
 
+    /**
+     * 动态 scope 会 clone 对象
+     */
     private static final class DynamicScopeFilterUtils {
-        private final List<ScopeServerInterceptor> firsts = Lists.newArrayList();
-        private final Multimap<GRpcScope, ScopeServerInterceptor> ref = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
+
+        private final Multimap<ScopeServerInterceptor, GRpcScope> ref = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
 
         public void addCheck(GRpcScope scope, Object object) {
             if (object instanceof ScopeServerInterceptor) {
                 var serverInterceptor = (ScopeServerInterceptor) object;
-                if (firsts.contains(serverInterceptor)) {
-                    ScopeServerInterceptor cloneObject = serverInterceptor.cloneThis();
-                    ref.put(scope, cloneObject);
-                } else {
-                    firsts.add(serverInterceptor);
-                    ref.put(scope, serverInterceptor);
+                if (serverInterceptor.getScopes().contains(scope.value())) {
+                    // 这个作用域下 同一个 拦截器实例
+                    ref.put(serverInterceptor, scope);
                 }
             }
+        }
+
+        public Multimap<GRpcScope, ScopeServerInterceptor> getRef() {
+            Multimap<GRpcScope, ScopeServerInterceptor> newRef = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
+            for (var entry : this.ref.asMap().entrySet()) {
+                for (GRpcScope gRpcScope : entry.getValue()) {
+                    var found = newRef.get(gRpcScope);
+                    if (found == null || found.size() <= 0) {
+                        newRef.put(gRpcScope, entry.getKey());
+                    } else {
+                        newRef.put(gRpcScope, entry.getKey().cloneThis());
+                    }
+                }
+            }
+            return newRef;
         }
 
     }

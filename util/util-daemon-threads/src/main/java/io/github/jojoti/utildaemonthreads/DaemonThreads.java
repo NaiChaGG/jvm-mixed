@@ -10,8 +10,10 @@ public abstract class DaemonThreads {
 
     private final CountDownLatch latch;
     private final Errors errors;
+    private final int size;
 
     private DaemonThreads(int size, String daemonName, Errors errors) {
+        this.size = size;
         this.latch = new CountDownLatch(size);
         this.errors = errors;
         // 添加守护线程
@@ -74,6 +76,10 @@ public abstract class DaemonThreads {
 
     public boolean isRunning() {
         return this.latch.getCount() > 0;
+    }
+
+    public boolean isHealth() {
+        return this.latch.getCount() == size;
     }
 
 }

@@ -109,7 +109,7 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
 
     @Override
     public boolean isRunning() {
-        return this.daemonThreads != null && this.daemonThreads.isRunning();
+        return this.daemonThreads != null && this.daemonThreads.isHealth();
     }
 
     private ImmutableMap<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel> channels;
