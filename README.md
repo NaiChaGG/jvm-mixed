@@ -32,5 +32,5 @@
 
 ## 3. examples 一些学习笔记
 
-+ [`dagger` 学习笔记](./examples/dagger-project-server-with-server/src/main/java/io/github/jojoti/examples/dagger)
++ [`dagger` 学习笔记](examples/dagger-project-server/src/main/java/io/github/jojoti/examples/dagger)
 + [更多笔记](./examples)

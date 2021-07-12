@@ -43,7 +43,7 @@ grpcs:
       address: 127.0.0.1:8101
       enableHealthStatus: false
       enableSession: true
-      enableRam: false
+      enableRam: true
       <<: *nettyServer
 
     # 内置 private
@@ -51,7 +51,7 @@ grpcs:
       address: 0.0.0.0:8102
       enableHealthStatus: true
       enableSession: true
-      enableRam: false
+      enableRam: true
       <<: *nettyServer
 
     # 自定义地址1

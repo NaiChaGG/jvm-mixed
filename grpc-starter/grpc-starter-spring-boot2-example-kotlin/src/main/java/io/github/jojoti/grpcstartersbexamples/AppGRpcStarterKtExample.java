@@ -5,14 +5,14 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+//import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
 @SpringBootApplication
-@EnableJdbcRepositories
+//@EnableJdbcRepositories
 @Configuration
 @AutoConfigureAfter({HibernateJpaAutoConfiguration.class})
 public class AppGRpcStarterKtExample {

@@ -143,10 +143,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                         final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
                         // 拦截器定义的 bean 没有找到
                         Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found");
-
-                        scopeInterceptorUtils.addCheck(entry.getKey(), findDefinedInterceptorBean);
-
-                        foundInterceptors.add(findDefinedInterceptorBean);
+                        foundInterceptors.add(scopeInterceptorUtils.addCheck(entry.getKey(), findDefinedInterceptorBean));
                     }
                     ServerInterceptors.intercept(bindableService, foundInterceptors);
                 }
@@ -156,9 +153,8 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                     final var foundScopeInterceptors = scopeInterceptors.get(entry.getKey());
                     if (foundScopeInterceptors != null && foundScopeInterceptors.size() > 0) {
                         for (ServerInterceptor foundScopeInterceptor : foundScopeInterceptors) {
-                            scopeInterceptorUtils.addCheck(entry.getKey(), foundScopeInterceptor);
                             // grpc 拦截器是先添加的后执行
-                            newServerBuilder.intercept(foundScopeInterceptor);
+                            newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), foundScopeInterceptor));
                         }
                     }
                 }
@@ -171,16 +167,14 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                             Preconditions.checkNotNull(((ScopeServerInterceptor) allGlobalInterceptor).getScopes());
                             for (String scope : ((ScopeServerInterceptor) allGlobalInterceptor).getScopes()) {
                                 if (entry.getKey().value().equals(scope)) {
-                                    scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor);
-                                    newServerBuilder.intercept(allGlobalInterceptor);
+                                    newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor));
                                     break;
                                 }
                             }
                         } else {
                             // 先添加全局拦截器
                             // grpc 拦截器是先添加的后执行
-                            scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor);
-                            newServerBuilder.intercept(allGlobalInterceptor);
+                            newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor));
                         }
                     }
                 }
@@ -328,30 +322,40 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
      */
     private static final class DynamicScopeFilterUtils {
 
+        // 拦截器对应了 多个 scope
         private final Multimap<ScopeServerInterceptor, GRpcScope> ref = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
+        private final Multimap<GRpcScope, ScopeServerInterceptor> newRef = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
 
-        public void addCheck(GRpcScope scope, Object object) {
+        // a -> B inter
+        // b -> B inter
+        // c -> B inter
+        // d -> C inter
+        // f -> C inter
+
+        // =>
+        //
+        public ServerInterceptor addCheck(GRpcScope scope, ServerInterceptor object) {
             if (object instanceof ScopeServerInterceptor) {
                 var serverInterceptor = (ScopeServerInterceptor) object;
+                // 该 scope 被启用
                 if (serverInterceptor.getScopes().contains(scope.value())) {
                     // 这个作用域下 同一个 拦截器实例
-                    ref.put(serverInterceptor, scope);
-                }
-            }
-        }
-
-        public Multimap<GRpcScope, ScopeServerInterceptor> getRef() {
-            Multimap<GRpcScope, ScopeServerInterceptor> newRef = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
-            for (var entry : this.ref.asMap().entrySet()) {
-                for (GRpcScope gRpcScope : entry.getValue()) {
-                    var found = newRef.get(gRpcScope);
-                    if (found == null || found.size() <= 0) {
-                        newRef.put(gRpcScope, entry.getKey());
-                    } else {
-                        newRef.put(gRpcScope, entry.getKey().cloneThis());
+                    var founds = ref.get(serverInterceptor);
+                    if (founds == null || founds.size() == 0) {
+                        newRef.put(scope, serverInterceptor);
+                        ref.put(serverInterceptor, scope);
+                    } else if (!founds.contains(scope)) {
+                        var newObject = serverInterceptor.cloneThis();
+                        newRef.put(scope, newObject);
+                        ref.put(serverInterceptor, scope);
+                        return newObject;
                     }
                 }
             }
+            return object;
+        }
+
+        public Multimap<GRpcScope, ScopeServerInterceptor> getRef() {
             return newRef;
         }
 

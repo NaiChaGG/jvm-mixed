@@ -36,7 +36,7 @@
     </properties>
 
     <modules>
-        <module>../dagger-project-server-with-server</module>
+        <module>../dagger-project-server</module>
     </modules>
 
     <build>
