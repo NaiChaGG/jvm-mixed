@@ -27,7 +27,11 @@ public class AutoTimeEvent implements BeforeSaveCallback<TrapBaseTimeEntity> {
 
     @Override
     public TrapBaseTimeEntity onBeforeSave(TrapBaseTimeEntity aggregate, MutableAggregateChange<TrapBaseTimeEntity> aggregateChange) {
-        aggregate.setCreateAt(System.currentTimeMillis());
+        if (aggregate.isNew()) {
+            aggregate.setCreateAt(System.currentTimeMillis());
+        } else {
+            aggregate.setUpdateAt(System.currentTimeMillis());
+        }
         return aggregate;
     }
 

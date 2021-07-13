@@ -38,6 +38,7 @@ public interface ErrorKey<T extends Enum<T>> {
         for (ErrorKey<T> tUniqueKey : val) {
             // 必须 return this
             Preconditions.checkNotNull(tUniqueKey.getEnumValue());
+            Preconditions.checkArgument(tUniqueKey.getEnumValue().equals(tUniqueKey));
             if (!unique.add(tUniqueKey.getValue())) {
                 throw new UnsupportedOperationException("Class " + tUniqueKey.getEnumValue().getClass() + " value " + tUniqueKey.getValue() + " repeat.");
             }
