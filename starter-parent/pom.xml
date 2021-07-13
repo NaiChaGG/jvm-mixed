@@ -131,6 +131,12 @@
                 <version>${revision}</version>
             </dependency>
 
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-boot-json</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!--      util      -->
             <dependency>
                 <groupId>io.github.jojoti.util</groupId>
@@ -172,6 +178,7 @@
                     <include>**/application*.conf</include>
                     <include>**/reference*.conf</include>
                     <include>**/*.xml</include>
+                    <include>**/*.proto</include>
                 </includes>
             </resource>
             <resource>
@@ -183,6 +190,7 @@
                     <exclude>**/application*.conf</exclude>
                     <exclude>**/reference*.conf</exclude>
                     <exclude>**/*.xml</exclude>
+                    <include>**/*.proto</include>
                 </excludes>
             </resource>
         </resources>

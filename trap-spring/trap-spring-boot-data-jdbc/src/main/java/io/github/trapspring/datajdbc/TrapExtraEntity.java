@@ -9,7 +9,8 @@ import javax.persistence.MappedSuperclass;
  * 关于 extra entity 这样设计的初衷在于对于一些 扩展信息 需求不太确定，同时这些信息又不是经常需要查询，可以优化 主 table 数据排列
  * 这样设计要新增字段 无需修改表结构
  *
- * @author Wang Yue
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 @MappedSuperclass
 @Table

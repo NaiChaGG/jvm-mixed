@@ -41,6 +41,7 @@
         <module>trap-spring-boot-data-jdbc-mysql</module>
         <module>trap-spring-boot-data-redis-lettuce</module>
         <module>trap-spring-boot-jpa-auto-ddl</module>
+        <module>trap-spring-boot-json</module>
     </modules>
 
     <dependencyManagement>
@@ -49,6 +50,11 @@
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
                 <artifactId>trap-spring-boot-data-jdbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-boot-json</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>
