@@ -3,9 +3,6 @@ package io.github.trapspring.datajdbcpostgres;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import io.github.trapspring.datajdbc.JSON_TYPE;
-import io.github.trapspring.datajdbc.JsonArray;
-import io.github.trapspring.datajdbc.JsonMap;
 import org.postgresql.util.PGobject;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +21,8 @@ import java.util.Map;
  * https://stackoverflow.com/questions/64521056/how-to-read-write-postgres-jsonb-type-with-spring-data-jdbc
  * https://stackoverflow.com/questions/25738569/how-to-map-a-map-json-column-to-java-object-with-jpa
  * https://github.com/nkonev/jdbc-repository-jsonb/blob/repro/src/main/kotlin/name/nkonev/jdbc/repository/JsonJdbcConfig.kt
+ * use https://www.baeldung.com/hibernate-types-library
+ * https://vladmihalcea.com/how-to-map-json-objects-using-generic-hibernate-types/
  *
  * @author JoJo Wang
  * @link github.com/jojoti

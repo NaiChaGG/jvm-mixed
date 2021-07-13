@@ -1,4 +1,4 @@
-package io.github.trapspring.datajdbc;
+package io.github.trapspring.datajdbcpostgres;
 
 /**
  * @author JoJo Wang

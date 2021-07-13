@@ -1,4 +1,4 @@
-package io.github.trapspring.datajdbc;
+package io.github.trapspring.datajdbcpostgres;
 
 import java.util.Map;
 
