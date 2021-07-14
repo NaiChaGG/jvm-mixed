@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
+import io.github.jojoti.utilguavaext.GuavaCollects;
 import io.grpc.*;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,6 +56,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
     private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches;
 
     private List<String> globalAttach;
+    private ApplicationContext applicationContext;
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
@@ -94,6 +97,9 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     @Override
     public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
+
+        this.addGlobalScopeAttach(currentGRpcScope);
+
         var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, SessionAttach.class, false);
         var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
         for (var entry : found.entrySet()) {
@@ -120,26 +126,39 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         this.globalAttach = null;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    private void addGlobalScopeAttach(GRpcScope currentGRpcScope) {
         final var fundGroup = applicationContext.getBeansWithAnnotation(SessionGlobalAttach.class);
         if (fundGroup.size() > 0) {
             final var foundValues = Lists.<String>newArrayList();
             for (Object value : fundGroup.values()) {
                 var found = AnnotationUtils.findAnnotation(value.getClass(), SessionGlobalAttach.class);
                 if (found != null) {
-                    Preconditions.checkArgument(found.value().length > 0, "@SessionGlobalAttach value is not allow empty");
-                    for (String s : found.value()) {
-                        if (foundValues.contains(s)) {
-                            throw new IllegalArgumentException("Session global attach duplicated key: " + s);
+                    // scope name 不唯一
+                    var groups = GuavaCollects.listGroupMultimap(Arrays.asList(found.scopes()), c -> c.scopeName());
+                    Preconditions.checkArgument(groups.size() != found.scopes().length, "Scope name duplicated");
+                    for (SessionGlobalAttach.ScopeAttach scope : found.scopes()) {
+                        // 需要和当前的 scope 匹配 不匹配直接忽略
+                        if (!currentGRpcScope.value().equals(scope.scopeName())) {
+                            continue;
                         }
-                        foundValues.add(s);
+                        Preconditions.checkArgument(scope.value().length > 0, "@SessionGlobalAttach " + scope.scopeName() + " value is not allow empty");
+                        for (String s : scope.value()) {
+                            if (foundValues.contains(s)) {
+                                throw new IllegalArgumentException("Session scope " + scope.scopeName() + " global attach duplicated key: " + s);
+                            }
+                            foundValues.add(s);
+                        }
                     }
                 }
             }
             Session.checkAttachKey(ImmutableList.copyOf(foundValues));
             this.globalAttach = foundValues;
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     @Override
