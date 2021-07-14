@@ -41,8 +41,6 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@GRpcGlobalInterceptor
-@Order(0)
 public class SessionInterceptor implements ScopeServerInterceptor, ApplicationContextAware {
 
     public static final Context.Key<SessionUser> USER_NTS = Context.key("user");

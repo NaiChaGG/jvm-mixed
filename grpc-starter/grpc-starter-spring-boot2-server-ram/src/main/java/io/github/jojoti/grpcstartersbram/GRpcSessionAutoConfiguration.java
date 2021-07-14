@@ -16,11 +16,13 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import java.util.Map;
@@ -48,6 +50,8 @@ public class GRpcSessionAutoConfiguration {
      */
     @ConditionalOnMissingBean(SessionInterceptor.class)
     @Bean
+    @GRpcGlobalInterceptor
+    @Order(33)
     public SessionInterceptor sessionInterceptor() {
         return new SessionInterceptor();
     }

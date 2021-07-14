@@ -57,7 +57,7 @@ public class GRpcRAMAutoConfiguration {
 
     @Bean
     @GRpcGlobalInterceptor
-    @Order(1)
+    @Order(44)
     public RAMInterceptor ramInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
         return new RAMInterceptor(ramAccessInterceptor, gRpcRAMProperties);
     }

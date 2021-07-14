@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 /**
  * rfs:
@@ -48,12 +49,14 @@ public class GRpcAutoConfiguration {
 
     @Bean
     @GRpcGlobalInterceptor
+    @Order(22)
     public ServerInterceptor transmitStatusRuntimeExceptionInterceptor() {
         return TransmitStatusRuntimeExceptionInterceptor.instance();
     }
 
     @Bean
     @GRpcGlobalInterceptor
+    @Order(11)
     public ServerInterceptor globalExceptionInterceptor() {
         return GlobalExceptionInterceptor.newGlobalExceptionInterceptor();
     }
