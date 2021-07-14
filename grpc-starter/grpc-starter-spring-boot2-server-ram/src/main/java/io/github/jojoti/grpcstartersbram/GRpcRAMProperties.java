@@ -43,7 +43,7 @@ public class GRpcRAMProperties {
     List<String> enableScopeNames() {
         var found = Lists.<String>newArrayList();
         for (Map.Entry<String, RAMItem> entry : servers.entrySet()) {
-            if (entry.getValue().enableRam) {
+            if (entry.getValue().getRam().enabled) {
                 found.add(entry.getKey());
             }
         }
@@ -54,17 +54,42 @@ public class GRpcRAMProperties {
     }
 
     static final class RAMItem {
-        // 访问控制默认打开
-        private boolean enableRam = true;
-
-        public boolean isEnableRam() {
-            return enableRam;
+        public RAMConfig getRam() {
+            return ram;
         }
 
-        public void setEnableRam(boolean enableRam) {
-            this.enableRam = enableRam;
+        // 访问控制默认打开
+        private RAMConfig ram = new RAMConfig();
+
+//        public RAMConfig getRam() {
+//            return ram == null ? new RAMConfig() : ram;
+//        }
+
+        public void setRam(RAMConfig ram) {
+            this.ram = ram;
         }
     }
 
+    static final class RAMConfig {
+        private boolean enabled = false;
+        // 如果 配置为 true 所在的 scope 如果没有 标注 ram 则会启动报错
+        private boolean forceRAMAnnotation = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isForceRAMAnnotation() {
+            return forceRAMAnnotation;
+        }
+
+        public void setForceRAMAnnotation(boolean forceRAMAnnotation) {
+            this.forceRAMAnnotation = forceRAMAnnotation;
+        }
+    }
 
 }

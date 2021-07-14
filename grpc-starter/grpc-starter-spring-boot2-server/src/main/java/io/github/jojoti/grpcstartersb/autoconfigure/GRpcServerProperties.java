@@ -42,13 +42,25 @@ public class GRpcServerProperties {
         this.servers = servers;
     }
 
+    public static final class HealthStatus {
+        private boolean enabled = false;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
     public static final class ServerItem {
         private String address;
         // 默认 5s
         private int shutdownGracefullyMills = 5000;
         // 是否启用健康检查，默认不启用，对终端的api不启动这个，没什么用
         // 但是如果前端有 grpc proxy 则有用 所有使用开关，配置自己决定是否使用
-        private boolean enableHealthStatus = false;
+        private HealthStatus healthStatus = new HealthStatus();
         private NettyConfig nettyConfig = null;
         private NettySharedConfig nettySharedConfig = null;
 
@@ -68,12 +80,12 @@ public class GRpcServerProperties {
             this.shutdownGracefullyMills = shutdownGracefullyMills;
         }
 
-        public boolean isEnableHealthStatus() {
-            return enableHealthStatus;
+        public HealthStatus getHealthStatus() {
+            return healthStatus;
         }
 
-        public void setEnableHealthStatus(boolean enableHealthStatus) {
-            this.enableHealthStatus = enableHealthStatus;
+        public void setHealthStatus(HealthStatus healthStatus) {
+            this.healthStatus = healthStatus;
         }
 
         public NettyConfig getServerConfig() {

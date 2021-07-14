@@ -112,9 +112,13 @@ class RAMInterceptor implements ScopeServerInterceptor {
                 if (this.rams.containsKey(method.getMethodDescriptor())) {
                     continue;
                 }
-                throw new IllegalArgumentException("Annotation: @" + RAM.class.getPackageName() + "." + RAM.class.getSimpleName()
-                        + " or @" + RAMAllowAnonymous.class.getPackageName() + "." + RAMAllowAnonymous.class.getSimpleName() +
-                        " must be used, method : " + method.getMethodDescriptor());
+
+                final var foundRAMConfig = this.gRpcRAMProperties.getServers().get(currentGRpcScope.value());
+                if (foundRAMConfig.getRam().isForceRAMAnnotation()) {
+                    throw new IllegalArgumentException("Annotation: @" + RAM.class.getPackageName() + "." + RAM.class.getSimpleName()
+                            + " or @" + RAMAllowAnonymous.class.getPackageName() + "." + RAMAllowAnonymous.class.getSimpleName() +
+                            " must be used, method : " + method.getMethodDescriptor());
+                }
             }
         }
 

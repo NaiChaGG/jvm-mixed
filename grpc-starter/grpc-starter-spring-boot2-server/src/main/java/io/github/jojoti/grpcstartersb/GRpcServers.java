@@ -122,7 +122,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             this.applicationContext.publishEvent(new GrpcServerBuilderCreateEvent(new GrpcServerBuilderCreate(entry.getKey(), newServerBuilder)));
             // newServerBuilder
 
-            final HealthStatusManager health = config.isEnableHealthStatus() ? new HealthStatusManager() : null;
+            final HealthStatusManager health = config.getHealthStatus().isEnabled() ? new HealthStatusManager() : null;
 
             if (health != null) {
                 log.info("GRPC scopeName {} add health service", entry.getKey().value());

@@ -41,25 +41,49 @@ grpcs:
     # 内置 primary
     primary:
       address: 127.0.0.1:8101
-      enableHealthStatus: false
-      enableSession: true
-      enableRam: true
+      healthStatus:
+        # 启用健康状态检查
+        enabled: false
+      session:
+        # 启用 session
+        enabled: true
+      ram:
+        # 启用 ram 访问控制
+        enabled: true
+        # 默认 true
+        forceRAMAnnotation: false
       <<: *nettyServer
 
     # 内置 private
     admin:
       address: 0.0.0.0:8102
-      enableHealthStatus: true
-      enableSession: true
-      enableRam: true
+      healthStatus:
+        # 启用健康状态检查
+        enabled: true
+      session:
+        # 启用 session
+        enabled: true
+      ram:
+        # 启用 ram 访问控制
+        enabled: true
+        # 默认 true
+        forceRAMAnnotation: false
       <<: *nettyServer
 
     # 自定义地址1
     mixed1:
       address: 127.0.0.1:8103
-      enableHealthStatus: true
-      enableSession: true
-      enableRam: false
+      healthStatus:
+        # 启用健康状态检查
+        enabled: true
+      session:
+        # 启用 session
+        enabled: true
+      ram:
+        # 启用 ram 访问控制
+        enabled: false
+        # 默认 true
+        forceRAMAnnotation: true
       <<: *nettyServer
 
 grpc:

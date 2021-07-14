@@ -77,7 +77,7 @@ public class GRpcRAMAutoConfiguration {
             if (found.isBound()) {
 //                var foundRam = false;
                 for (GRpcRAMProperties.RAMItem ramItem : found.get().values()) {
-                    if (ramItem.isEnableRam()) {
+                    if (ramItem.getRam().isEnabled()) {
 //                        foundRam = true;
                         // 动态 注入 bean
 //                        conditionContext.getRegistry().registerBeanDefinition(RAMInterceptor.class.getName() + "-" + ramItem.getScopeName(),

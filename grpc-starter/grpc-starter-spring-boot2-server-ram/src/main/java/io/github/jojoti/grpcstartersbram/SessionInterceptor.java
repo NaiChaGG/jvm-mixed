@@ -47,10 +47,12 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     @Autowired
     Session session;
+
     @Autowired
     GRpcSessionProperties gRpcSessionProperties;
 
     private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches;
+
     private List<String> globalAttach;
 
     private static final class Holder {

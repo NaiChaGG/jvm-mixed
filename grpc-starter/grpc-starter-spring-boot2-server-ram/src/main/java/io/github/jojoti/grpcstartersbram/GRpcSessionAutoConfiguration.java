@@ -62,7 +62,7 @@ public class GRpcSessionAutoConfiguration {
             var found = Binder.get(conditionContext.getEnvironment()).bind("grpcs.servers", STRING_LIST);
             if (found.isBound()) {
                 for (var ramItem : found.get().values()) {
-                    if (ramItem.isEnableSession()) {
+                    if (ramItem.getEnableSession().isEnabled()) {
                         return true;
                     }
                 }
