@@ -55,11 +55,6 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     private List<String> globalAttach;
 
-    private static final class Holder {
-        // 用户头信息使用这个来获取
-        private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
-    }
-
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
         // 验证登录会话
@@ -154,6 +149,11 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static final class Holder {
+        // 用户头信息使用这个来获取
+        private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
     }
 
 }

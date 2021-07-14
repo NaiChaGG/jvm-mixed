@@ -4,7 +4,7 @@ package io.github.jojoti.utilguavaext;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public enum ErrorKeyFooFailure implements ErrorKey<ErrorKeyFooFailure>{
+public enum ErrorKeyFooFailure implements ErrorKey<ErrorKeyFooFailure> {
     ;
 
     static {

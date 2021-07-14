@@ -85,12 +85,12 @@ public interface Session {
 
         private final HashIdToken.DecodeToken decodeToken;
 
-        public static ParseToken newParseToken(String token) {
-            return Strings.isNullOrEmpty(token) ? anonymous : new Session.ParseToken(HashIdToken.parseToken(token));
-        }
-
         ParseToken(HashIdToken.DecodeToken decodeToken) {
             this.decodeToken = decodeToken;
+        }
+
+        public static ParseToken newParseToken(String token) {
+            return Strings.isNullOrEmpty(token) ? anonymous : new Session.ParseToken(HashIdToken.parseToken(token));
         }
 
         public HashIdToken.DecodeToken getDecodeToken() {

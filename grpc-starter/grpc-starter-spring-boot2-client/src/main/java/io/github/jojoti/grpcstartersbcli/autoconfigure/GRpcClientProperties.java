@@ -16,14 +16,10 @@
 
 package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import io.github.jojoti.grpcstartersb.DiscoveryConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author JoJo Wang

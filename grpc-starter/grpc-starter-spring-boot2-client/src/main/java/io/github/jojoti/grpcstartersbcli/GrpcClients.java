@@ -46,6 +46,7 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
     private final GrpcClientFilter grpcClientFilter;
 
     private volatile DaemonThreads daemonThreads;
+    private ImmutableMap<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel> channels;
 
     public GrpcClients(GRpcClientProperties gRpcClientProperties, GrpcClientFilter grpcClientFilter) {
         this.gRpcClientProperties = gRpcClientProperties;
@@ -111,8 +112,6 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
     public boolean isRunning() {
         return this.daemonThreads != null && this.daemonThreads.isHealth();
     }
-
-    private ImmutableMap<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel> channels;
 
     @Override
     public <T extends Enum<T>> Channel getChannel(ServiceName<T> serviceName) {

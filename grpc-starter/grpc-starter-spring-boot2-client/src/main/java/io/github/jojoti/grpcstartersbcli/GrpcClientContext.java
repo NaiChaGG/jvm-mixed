@@ -12,6 +12,7 @@ public interface GrpcClientContext {
 
     /**
      * 获取 channel 来创建
+     *
      * @param serviceName
      * @param <T>
      * @return

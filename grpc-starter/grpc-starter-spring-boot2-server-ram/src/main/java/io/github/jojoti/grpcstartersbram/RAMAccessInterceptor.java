@@ -38,25 +38,6 @@ public interface RAMAccessInterceptor {
         };
     }
 
-    final class RegisterRam {
-        private final RAM ram;
-        private final boolean allowAnonymous;
-
-        RegisterRam(RAM ram, boolean allowAnonymous) {
-            this.ram = ram;
-            this.allowAnonymous = allowAnonymous;
-        }
-
-        public RAM getRam() {
-            return ram;
-        }
-
-        public boolean isAllowAnonymous() {
-            return allowAnonymous;
-        }
-
-    }
-
     // 启动注册 ram 列表权限
     // 这个可能会执行多次
     default void onRegister(GRpcScope gRpcScope, ImmutableMap<MethodDescriptor<?, ?>, RegisterRam> allServices) {
@@ -89,5 +70,24 @@ public interface RAMAccessInterceptor {
                                                         ServerCall<ReqT, RespT> call,
                                                         Metadata headers,
                                                         ServerCallHandler<ReqT, RespT> next);
+
+    final class RegisterRam {
+        private final RAM ram;
+        private final boolean allowAnonymous;
+
+        RegisterRam(RAM ram, boolean allowAnonymous) {
+            this.ram = ram;
+            this.allowAnonymous = allowAnonymous;
+        }
+
+        public RAM getRam() {
+            return ram;
+        }
+
+        public boolean isAllowAnonymous() {
+            return allowAnonymous;
+        }
+
+    }
 
 }

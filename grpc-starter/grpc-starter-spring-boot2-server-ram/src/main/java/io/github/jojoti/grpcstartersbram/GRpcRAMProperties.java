@@ -54,12 +54,12 @@ public class GRpcRAMProperties {
     }
 
     static final class RAMItem {
+        // 访问控制默认打开
+        private RAMConfig ram = new RAMConfig();
+
         public RAMConfig getRam() {
             return ram;
         }
-
-        // 访问控制默认打开
-        private RAMConfig ram = new RAMConfig();
 
 //        public RAMConfig getRam() {
 //            return ram == null ? new RAMConfig() : ram;

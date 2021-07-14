@@ -1,6 +1,5 @@
 package io.github.trapspring.datajdbc;
 
-import io.github.trapspring.datajdbc.AutoLongIDEntity;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.MappedSuperclass;

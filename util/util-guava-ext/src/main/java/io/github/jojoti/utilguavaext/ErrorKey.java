@@ -15,18 +15,6 @@ import java.util.Set;
  */
 public interface ErrorKey<T extends Enum<T>> {
 
-    default boolean isOk() {
-        return getValue() == 0;
-    }
-
-    default boolean isError() {
-        return getValue() != 0;
-    }
-
-    int getValue();
-
-    T getEnumValue();
-
     /**
      * 校验 枚举的值是否是重复的
      *
@@ -44,5 +32,17 @@ public interface ErrorKey<T extends Enum<T>> {
             }
         }
     }
+
+    default boolean isOk() {
+        return getValue() == 0;
+    }
+
+    default boolean isError() {
+        return getValue() != 0;
+    }
+
+    int getValue();
+
+    T getEnumValue();
 
 }
