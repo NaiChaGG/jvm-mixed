@@ -35,7 +35,7 @@ public class GRpcSessionProperties {
     List<String> enableScopeNames() {
         var found = Lists.<String>newArrayList();
         for (Map.Entry<String, SessionItem> entry : servers.entrySet()) {
-            if (entry.getValue().getEnableSession().enabled) {
+            if (entry.getValue().getSession().enabled) {
                 found.add(entry.getKey());
             }
         }
@@ -56,12 +56,12 @@ public class GRpcSessionProperties {
     static final class SessionItem {
         private Session session = new Session();
 
-        public Session getEnableSession() {
+        public Session getSession() {
             return session;
         }
 
-        public void setEnableSession(Session enableSession) {
-            this.session = enableSession;
+        public void setSession(Session session) {
+            this.session = session;
         }
     }
 
