@@ -50,10 +50,10 @@
         <!--            <artifactId>trap-spring-boot-jpa-auto-ddl</artifactId>-->
         <!--        </dependency>-->
 
-        <!--        <dependency>-->
-        <!--            <groupId>io.github.jojoti.trap-spring</groupId>-->
-        <!--            <artifactId>trap-spring-boot-data-jdbc-mysql</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-data-jdbc-mysql</artifactId>
+        </dependency>
 
     </dependencies>
 
@@ -70,15 +70,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <!--      不发布到 maven 仓库      -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
 
         </plugins>

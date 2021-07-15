@@ -38,7 +38,6 @@
         <module>starter-grpc-netty-client</module>
         <module>starter-grpc-testing</module>
         <module>starter-test-junit5</module>
-        <module>../trap-spring</module>
     </modules>
 
     <!--  最基础的包  -->
