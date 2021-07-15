@@ -94,8 +94,26 @@
                 <!--       kotlin 模式下不支持 lombok         -->
                 <module>starter-parent-kotlin</module>
                 <module>starter-parent-kotlin-dagger</module>
+            </modules>
+        </profile>
 
+        <profile>
+            <id>grpc-starter</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
                 <module>grpc-starter</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>trap-spring</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>trap-spring</module>
             </modules>
         </profile>
 
@@ -105,15 +123,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>starter-dependencies</module>
-                <module>starter-parent</module>
-                <module>starter-parent-dagger</module>
-                <module>starter-parent-lombok</module>
-                <module>starter-parent-lombok-dagger</module>
-                <!--       kotlin 模式下不支持 lombok         -->
-                <module>starter-parent-kotlin</module>
-                <module>starter-parent-kotlin-dagger</module>
-
                 <module>util</module>
             </modules>
         </profile>
@@ -124,15 +133,6 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
-                <module>starter-dependencies</module>
-                <module>starter-parent</module>
-                <module>starter-parent-dagger</module>
-                <module>starter-parent-lombok</module>
-                <module>starter-parent-lombok-dagger</module>
-                <!--       kotlin 模式下不支持 lombok         -->
-                <module>starter-parent-kotlin</module>
-                <module>starter-parent-kotlin-dagger</module>
-
                 <module>examples</module>
             </modules>
         </profile>
