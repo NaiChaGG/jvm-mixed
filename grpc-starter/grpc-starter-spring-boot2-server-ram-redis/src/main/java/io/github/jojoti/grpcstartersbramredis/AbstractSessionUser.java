@@ -191,6 +191,7 @@ final class AbstractSessionUser implements SessionUser {
                 AbstractSessionUser.this.entity = newInline;
                 return newToken.getTokenBase64();
             }
+
         };
     }
 

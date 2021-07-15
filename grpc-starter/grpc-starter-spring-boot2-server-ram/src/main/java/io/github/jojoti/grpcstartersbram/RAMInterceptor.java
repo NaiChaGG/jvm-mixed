@@ -114,7 +114,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
                 }
 
                 final var foundRAMConfig = this.gRpcRAMProperties.getServers().get(currentGRpcScope.value());
-                if (foundRAMConfig.getRam().isForceRAMAnnotation()) {
+                if (foundRAMConfig.getRam().isEnabled() && foundRAMConfig.getRam().isForceRAMAnnotation()) {
                     throw new IllegalArgumentException("Annotation: @" + RAM.class.getPackageName() + "." + RAM.class.getSimpleName()
                             + " or @" + RAMAllowAnonymous.class.getPackageName() + "." + RAMAllowAnonymous.class.getSimpleName() +
                             " must be used, method : " + method.getMethodDescriptor());

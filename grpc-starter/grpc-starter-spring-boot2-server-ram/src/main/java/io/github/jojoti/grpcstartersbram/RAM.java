@@ -35,7 +35,7 @@ public @interface RAM {
     int groupId();
 
     /**
-     * 组名
+     * 权限名字
      */
     String name() default "";
 

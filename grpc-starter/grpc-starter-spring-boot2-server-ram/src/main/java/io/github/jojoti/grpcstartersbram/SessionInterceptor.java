@@ -133,7 +133,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
                 if (found != null) {
                     // scope name 不唯一
                     var groups = GuavaCollects.listGroupMultimap(Arrays.asList(found.scopes()), c -> c.scopeName());
-                    Preconditions.checkArgument(groups.size() != found.scopes().length, "Scope name duplicated");
+                    Preconditions.checkArgument(groups.size() == found.scopes().length, "Scope name duplicated");
                     for (SessionGlobalAttach.ScopeAttach scope : found.scopes()) {
                         // 需要和当前的 scope 匹配 不匹配直接忽略
                         if (!currentGRpcScope.value().equals(scope.scopeName())) {
