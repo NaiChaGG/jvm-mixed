@@ -77,25 +77,6 @@ public interface RAMAccessInterceptor {
                                                         Metadata headers,
                                                         ServerCallHandler<ReqT, RespT> next);
 
-    final class RegisterRam {
-        private final RAM ram;
-        private final boolean allowAnonymous;
-
-        RegisterRam(RAM ram, boolean allowAnonymous) {
-            this.ram = ram;
-            this.allowAnonymous = allowAnonymous;
-        }
-
-        public RAM getRam() {
-            return ram;
-        }
-
-        public boolean isAllowAnonymous() {
-            return allowAnonymous;
-        }
-
-    }
-
     final class RegisterRAM {
 
         private final BindableService serviceObject;
