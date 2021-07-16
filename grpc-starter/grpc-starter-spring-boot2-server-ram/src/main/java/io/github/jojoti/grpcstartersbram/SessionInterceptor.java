@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.github.jojoti.utilguavaext.GuavaCollects;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
 
 import java.util.Arrays;
 import java.util.List;
@@ -95,29 +93,29 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     @Override
     public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
-
         this.addGlobalScopeAttach(currentGRpcScope);
 
-        var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, SessionAttach.class, false);
-        var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
-        for (var entry : found.entrySet()) {
-            Preconditions.checkNotNull(entry.getValue().value());
-            Preconditions.checkArgument(entry.getValue().value().length > 0, "@SessionAttach value is not allow empty");
+        final var found = ServiceDescriptorAnnotations.getAnnotationMapsV2(servicesEvent, SessionAttach.class, false);
+        final var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
 
-            // 校验自定义 attach key 和 全局的 key 不能重复
-            // 这里和 全局的 key merge 是 牺牲空间换效率的做法
-            final var attach = Lists.<String>newArrayList();
-            if (globalAttach != null && globalAttach.size() > 0) {
-                attach.addAll(globalAttach);
-            }
-            for (String s : entry.getValue().value()) {
-                if (attach.contains(s)) {
-                    throw new IllegalArgumentException("Session attach duplicated key: " + s);
+        for (var sessionAttachServiceMethods : found) {
+            for (var method : sessionAttachServiceMethods.methods) {
+                Preconditions.checkNotNull(method.foundAnnotation.value());
+                Preconditions.checkArgument(method.foundAnnotation.value().length > 0, "@SessionAttach value is not allow empty");
+                // 校验自定义 attach key 和 全局的 key 不能重复
+                // 这里和 全局的 key merge 是 牺牲空间换效率的做法
+                final var attach = Lists.<String>newArrayList();
+                if (globalAttach != null && globalAttach.size() > 0) {
+                    attach.addAll(globalAttach);
                 }
-                attach.add(s);
+                for (String s : method.foundAnnotation.value()) {
+                    if (attach.contains(s)) {
+                        throw new IllegalArgumentException("Session attach duplicated key: " + s);
+                    }
+                    attach.add(s);
+                }
+                builder.put(method.methodDescriptor, Session.checkAttachKey(ImmutableList.copyOf(attach)));
             }
-
-            builder.put(entry.getKey(), Session.checkAttachKey(ImmutableList.copyOf(attach)));
         }
         this.attaches = builder.build();
         // 全局 引用删除 build 完成之后这个已经没啥用了
@@ -132,7 +130,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
                 var found = AnnotationUtils.findAnnotation(value.getClass(), SessionGlobalAttach.class);
                 if (found != null) {
                     // scope name 不唯一
-                    var groups = GuavaCollects.listGroupMultimap(Arrays.asList(found.scopes()), c -> c.scopeName());
+                    var groups = GuavaCollects.listGroupMultimap(Arrays.asList(found.scopes()), SessionGlobalAttach.ScopeAttach::scopeName);
                     Preconditions.checkArgument(groups.size() == found.scopes().length, "Scope name duplicated");
                     for (SessionGlobalAttach.ScopeAttach scope : found.scopes()) {
                         // 需要和当前的 scope 匹配 不匹配直接忽略

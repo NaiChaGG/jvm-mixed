@@ -16,11 +16,13 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import org.springframework.lang.NonNull;
-
 import java.lang.annotation.*;
 
 /**
+ * 访问控制的声明功能 该 功能针对 需要扫描生成菜单的场景
+ * <p>
+ * 如果 配置 了 ram 则必须标注此注解用于声明 ram 权限控制
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -28,35 +30,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RAM {
-
-    /**
-     * 组ID
-     */
-    int groupId();
-
-    /**
-     * 权限名字
-     */
-    String name() default "";
-
-    /**
-     * 是否禁用
-     */
-    boolean disable() default false;
-
-    /**
-     * 附加属性
-     */
-    Attr[] attrs() default {};
-
-    @Target({ElementType.ANNOTATION_TYPE})
-    @interface Attr {
-
-        @NonNull
-        String key();
-
-        @NonNull
-        String value() default "";
-    }
 
 }

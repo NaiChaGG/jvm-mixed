@@ -28,7 +28,7 @@ import io.grpc.ServerCallHandler;
 class RAMAccessInterceptorDeny implements RAMAccessInterceptor {
 
     @Override
-    public <ReqT, RespT> ServerCall.Listener<ReqT> checkAccess(GRpcScope gRpcScope, RAM ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
+    public <ReqT, RespT> ServerCall.Listener<ReqT> checkAccess(GRpcScope gRpcScope, RegisterRAMItem ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
         return null;
     }
 

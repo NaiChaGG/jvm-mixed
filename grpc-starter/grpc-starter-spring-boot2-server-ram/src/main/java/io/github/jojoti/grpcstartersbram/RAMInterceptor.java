@@ -23,7 +23,6 @@ import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 访问控制和用户会话拦截器
@@ -38,8 +37,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
     private final RAMAccessInterceptor ramAccessInterceptor;
     private final GRpcRAMProperties gRpcRAMProperties;
 
-    private ImmutableList<MethodDescriptor<?, ?>> allowAnonymous;
-    private ImmutableMap<MethodDescriptor<?, ?>, RAM> rams;
+    private ImmutableMap<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRAMItem> rams;
     private GRpcScope currentGRpcScope;
 
     RAMInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
@@ -51,14 +49,13 @@ class RAMInterceptor implements ScopeServerInterceptor {
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call,
                                                                  Metadata headers,
                                                                  ServerCallHandler<ReqT, RespT> next) {
-        // 允许匿名访问的接口不校验 权限
-        if (this.allowAnonymous.contains(call.getMethodDescriptor())) {
-            return next.startCall(call, headers);
-        }
-
         final var foundRam = rams.get(call.getMethodDescriptor());
         if (foundRam != null) {
             try {
+                // 允许匿名直接跳过校验
+                if (foundRam.isAllowAnonymous()) {
+                    return next.startCall(call, headers);
+                }
                 // 判断用户是否登陆
                 var isLogin = this.ramAccessInterceptor.checkSession(this.currentGRpcScope, foundRam, call, headers, next);
                 if (isLogin) {
@@ -93,53 +90,35 @@ class RAMInterceptor implements ScopeServerInterceptor {
     public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
         this.currentGRpcScope = currentGRpcScope;
 
-        this.addAllowAnonymous(servicesEvent);
+        // 启用 ram 必须use @Ram 注解
+        final var services = ServiceDescriptorAnnotations.getAnnotationMapsV2(servicesEvent, RAM.class, true);
+        final var awareBuilder = ImmutableList.<RAMAccessInterceptor.RegisterRAM>builder();
 
-        var found = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAM.class, false);
-        var builder = ImmutableMap.<MethodDescriptor<?, ?>, RAM>builder();
-        for (var entry : found.entrySet()) {
-            builder.put(entry.getKey(), entry.getValue());
+        for (var service : services) {
+            final var methods = ImmutableList.<RAMAccessInterceptor.RegisterRAMItem>builder();
+            for (var method : service.methods) {
+                methods.add(new RAMAccessInterceptor.RegisterRAMItem(method.methodDescriptor, method.method));
+            }
+            awareBuilder.add(new RAMAccessInterceptor.RegisterRAM(service.object, methods.build()));
         }
-        this.rams = builder.build();
 
-        // check not use ram or ram anonymous
-        // @RAM 和 @RAMAllowAnonymous 存在一个即可
-        for (BindableService bindableService : servicesEvent) {
-            for (ServerMethodDefinition<?, ?> method : bindableService.bindService().getMethods()) {
-                if (this.allowAnonymous.contains(method.getMethodDescriptor())) {
-                    continue;
-                }
-                if (this.rams.containsKey(method.getMethodDescriptor())) {
-                    continue;
-                }
+        final var awareServices = awareBuilder.build();
 
-                final var foundRAMConfig = this.gRpcRAMProperties.getServers().get(currentGRpcScope.value());
-                if (foundRAMConfig.getRam().isEnabled() && foundRAMConfig.getRam().isForceRAMAnnotation()) {
-                    throw new IllegalArgumentException("Annotation: @" + RAM.class.getPackageName() + "." + RAM.class.getSimpleName()
-                            + " or @" + RAMAllowAnonymous.class.getPackageName() + "." + RAMAllowAnonymous.class.getSimpleName() +
-                            " must be used, method : " + method.getMethodDescriptor());
+        final var allowAnonymousBuilder = ImmutableList.<MethodDescriptor<?, ?>>builder();
+        final var ramsBuilder = ImmutableMap.<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRAMItem>builder();
+
+        for (RAMAccessInterceptor.RegisterRAM awareService : awareServices) {
+            for (RAMAccessInterceptor.RegisterRAMItem method : awareService.getMethods()) {
+                if (method.isAllowAnonymous()) {
+                    allowAnonymousBuilder.add(method.getMethodDesc());
+                    ramsBuilder.put(method.getMethodDesc(), method);
                 }
             }
         }
 
-        final var register = ImmutableMap.<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRam>builder();
-        for (Map.Entry<MethodDescriptor<?, ?>, RAM> entry : this.rams.entrySet()) {
-            register.put(entry.getKey(), new RAMAccessInterceptor.RegisterRam(entry.getValue(), this.allowAnonymous.contains(entry.getKey())));
-        }
+        this.rams = ramsBuilder.build();
 
-        var registerRams = register.build();
-        if (registerRams.size() > 0) {
-            this.ramAccessInterceptor.onRegister(currentGRpcScope, registerRams);
-        }
-    }
-
-    private void addAllowAnonymous(List<BindableService> servicesEvent) {
-        var foundAllowAnonymous = ServiceDescriptorAnnotations.getAnnotationMaps(servicesEvent, RAMAllowAnonymous.class, false);
-        var builder = ImmutableList.<MethodDescriptor<?, ?>>builder();
-        for (var entry : foundAllowAnonymous.entrySet()) {
-            builder.add(entry.getKey());
-        }
-        this.allowAnonymous = builder.build();
+        this.ramAccessInterceptor.onRegister(currentGRpcScope, awareServices);
     }
 
     @Override

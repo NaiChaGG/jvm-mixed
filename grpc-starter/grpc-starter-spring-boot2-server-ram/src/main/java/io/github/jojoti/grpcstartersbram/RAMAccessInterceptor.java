@@ -16,9 +16,14 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.grpc.*;
+import org.springframework.core.annotation.AnnotationUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * https://stackoverflow.com/questions/68164315/access-message-request-in-first-grpc-interceptor-before-headers-in-second-grpc-i
@@ -40,17 +45,18 @@ public interface RAMAccessInterceptor {
 
     // 启动注册 ram 列表权限
     // 这个可能会执行多次
-    default void onRegister(GRpcScope gRpcScope, ImmutableMap<MethodDescriptor<?, ?>, RegisterRam> allServices) {
+    default void onRegister(GRpcScope gRpcScope, ImmutableList<RegisterRAM> allServices) {
 
     }
 
     /**
      * 没有配置 @RAMAllowAnonymous 都需要校验会话
+     * 校验会话比较特殊 写在这里
      *
      * @param gRpcScope 标注的注解属于哪个模块
      * @param ram       注解标记的属性
      */
-    default <ReqT, RespT> boolean checkSession(GRpcScope gRpcScope, RAM ram,
+    default <ReqT, RespT> boolean checkSession(GRpcScope gRpcScope, RegisterRAMItem ram,
                                                ServerCall<ReqT, RespT> call,
                                                Metadata headers,
                                                ServerCallHandler<ReqT, RespT> next) {
@@ -66,7 +72,7 @@ public interface RAMAccessInterceptor {
      * @param <RespT>
      * @return null 表示走默认失败流程 not null 表示成功
      */
-    <ReqT, RespT> ServerCall.Listener<ReqT> checkAccess(GRpcScope gRpcScope, RAM ram,
+    <ReqT, RespT> ServerCall.Listener<ReqT> checkAccess(GRpcScope gRpcScope, RegisterRAMItem ram,
                                                         ServerCall<ReqT, RespT> call,
                                                         Metadata headers,
                                                         ServerCallHandler<ReqT, RespT> next);
@@ -89,5 +95,87 @@ public interface RAMAccessInterceptor {
         }
 
     }
+
+    final class RegisterRAM {
+
+        private final BindableService serviceObject;
+        private final ImmutableList<RegisterRAMItem> methods;
+
+        RegisterRAM(BindableService serviceObject, ImmutableList<RegisterRAMItem> methods) {
+            this.serviceObject = serviceObject;
+            this.methods = methods;
+        }
+
+        public Object getServiceObject() {
+            return serviceObject;
+        }
+
+        public ImmutableList<RegisterRAMItem> getMethods() {
+            return methods;
+        }
+
+    }
+
+    final class RegisterRAMItem {
+        private final MethodDescriptor<?, ?> methodDesc;
+        private final Method method;
+
+        RegisterRAMItem(MethodDescriptor<?, ?> methodDesc, Method method) {
+            this.methodDesc = methodDesc;
+            this.method = method;
+        }
+
+        /**
+         * 找不到报错
+         *
+         * @param extAnnotationClass
+         * @param <T>
+         * @return
+         */
+        public <T extends Annotation> T getRAMExtension(Class<T> extAnnotationClass) {
+            return containsRAMExtension(extAnnotationClass, true);
+        }
+
+        /**
+         * 找不到 返回 null
+         *
+         * @param extAnnotationClass
+         * @param <T>
+         * @return
+         */
+        public <T extends Annotation> T findRAMExtension(Class<T> extAnnotationClass) {
+            return containsRAMExtension(extAnnotationClass, false);
+        }
+
+        private <T extends Annotation> T containsRAMExtension(Class<T> extAnnotationClass, boolean forced) {
+            final var found = AnnotationUtils.findAnnotation(method, extAnnotationClass);
+            if (found == null) {
+                if (forced) {
+                    throw new IllegalArgumentException("Annotation " + extAnnotationClass + " must be used.");
+                }
+                return null;
+            }
+            final var foundRAM = AnnotationUtils.findAnnotation(found.getClass(), RAM.class);
+            Preconditions.checkNotNull(foundRAM, "Ram extension must be use " + RAM.class + ", ref: " + RAMAllowAnonymous.class);
+            return found;
+        }
+
+        public boolean isAllowAnonymous() {
+            return findRAMExtension(RAMAllowAnonymous.class) != null;
+        }
+
+        public RAMDeclare getRAMDeclare() {
+            return getRAMExtension(RAMDeclare.class);
+        }
+
+        public MethodDescriptor<?, ?> getMethodDesc() {
+            return methodDesc;
+        }
+
+        public Method getMethod() {
+            return method;
+        }
+    }
+
 
 }

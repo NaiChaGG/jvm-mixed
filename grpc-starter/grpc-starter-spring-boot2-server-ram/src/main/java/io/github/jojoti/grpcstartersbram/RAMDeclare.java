@@ -19,7 +19,7 @@ package io.github.jojoti.grpcstartersbram;
 import java.lang.annotation.*;
 
 /**
- * 允许 匿名访问 用得挺多的 特殊处理
+ * 启用 ram 声明
  *
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -28,6 +28,21 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @RAM
-public @interface RAMAllowAnonymous {
+public @interface RAMDeclare {
+
+    /**
+     * 组ID
+     */
+    int groupId();
+
+    /**
+     * 权限名字
+     */
+    String name() default "";
+
+    /**
+     * 是否禁用
+     */
+    boolean disable() default false;
 
 }
