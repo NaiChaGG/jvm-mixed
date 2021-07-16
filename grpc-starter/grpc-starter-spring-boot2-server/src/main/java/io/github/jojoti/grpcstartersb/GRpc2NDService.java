@@ -19,7 +19,7 @@ package io.github.jojoti.grpcstartersb;
 import java.lang.annotation.*;
 
 /**
- * 2rd 设计 参考 阿里巴巴 https://github.com/alibaba/p3c
+ * 2nd 设计 参考 阿里巴巴 https://github.com/alibaba/p3c
  *
  * @author JoJo Wang
  * @link github.com/jojoti
@@ -28,8 +28,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@GRpcScopeService(scope = @GRpcScope(value = GRpc2RDService.scopeName))
-public @interface GRpc2RDService {
-    String scopeName = "2rd";
+@GRpcScopeService(scope = @GRpcScope(value = GRpc2NDService.scopeName))
+public @interface GRpc2NDService {
+    String scopeName = "2nd";
 
 }
