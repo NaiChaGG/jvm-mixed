@@ -50,8 +50,6 @@ grpcs:
       ram:
         # 启用 ram 访问控制
         enabled: true
-        # 默认 true
-        forceRAMAnnotation: false
       <<: *nettyServer
 
     # 内置 private
@@ -66,8 +64,6 @@ grpcs:
       ram:
         # 启用 ram 访问控制
         enabled: true
-        # 默认 true
-        forceRAMAnnotation: false
       <<: *nettyServer
 
     # 自定义地址1
@@ -82,8 +78,6 @@ grpcs:
       ram:
         # 启用 ram 访问控制
         enabled: false
-        # 默认 true
-        forceRAMAnnotation: true
       <<: *nettyServer
 
 grpc:

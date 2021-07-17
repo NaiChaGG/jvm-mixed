@@ -35,6 +35,7 @@ interface ServiceDescriptorAnnotations {
             this.method = method;
             this.foundAnnotation = foundAnnotation;
         }
+
     }
 
     static <T extends Annotation> ImmutableList<ServiceMethods<T>> getAnnotationMapsV2(List<BindableService> serviceObjects, Class<T> t, boolean forced) {
@@ -51,7 +52,7 @@ interface ServiceDescriptorAnnotations {
                             methods.add(new ServiceMethod<>(methodObject.getMethodDescriptor(), method1, foundAnnotations));
                         } else {
                             if (forced) {
-                                throw new IllegalArgumentException("Annotation: @" + t.getPackageName() + "." + t.getSimpleName() + " must be used, method : " + methodObject.getMethodDescriptor());
+                                throw new IllegalArgumentException("Method: " + methodObject.getMethodDescriptor() + "@" + t.getPackageName() + "." + t.getSimpleName() + " must be used");
                             }
                         }
                     }
