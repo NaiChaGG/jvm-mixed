@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.github.jojoti.utilguavaext.GuavaCollects;
@@ -53,7 +54,8 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     private ImmutableMap<MethodDescriptor<?, ?>, ImmutableList<String>> attaches;
 
-    private List<String> globalAttach;
+    // 临时字段
+    private ImmutableList<String> globalAttach;
     private ApplicationContext applicationContext;
 
     @Override
@@ -98,28 +100,48 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         this.addGlobalScopeAttach(currentGRpcScope);
 
         final var found = ServiceDescriptorAnnotations.getAnnotationMapsV2(servicesEvent, SessionAttach.class, false);
-        final var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
+
+        final var newAttaches = Maps.<MethodDescriptor<?, ?>, ImmutableList<String>>newHashMap();
 
         for (var sessionAttachServiceMethods : found) {
             for (var method : sessionAttachServiceMethods.methods) {
                 Preconditions.checkNotNull(method.foundAnnotation.value());
                 Preconditions.checkArgument(method.foundAnnotation.value().length > 0, "@SessionAttach value is not allow empty");
-                // 校验自定义 attach key 和 全局的 key 不能重复
-                // 这里和 全局的 key merge 是 牺牲空间换效率的做法
                 final var attach = Lists.<String>newArrayList();
-                if (globalAttach != null && globalAttach.size() > 0) {
-                    attach.addAll(globalAttach);
-                }
                 for (String s : method.foundAnnotation.value()) {
                     if (attach.contains(s)) {
                         throw new IllegalArgumentException("Session attach duplicated key: " + s);
                     }
                     attach.add(s);
                 }
-                builder.put(method.methodDescriptor, Session.checkAttachKey(ImmutableList.copyOf(attach)));
+                newAttaches.put(method.methodDescriptor, Session.checkAttachKey(ImmutableList.copyOf(attach)));
             }
         }
+
+        // 存在全局拦截器
+        // 追加全局拦截器
+        final var builder = ImmutableMap.<MethodDescriptor<?, ?>, ImmutableList<String>>builder();
+        if (this.globalAttach.size() > 0) {
+            for (BindableService bindableService : servicesEvent) {
+                for (ServerMethodDefinition<?, ?> method : bindableService.bindService().getMethods()) {
+                    final var foundScope = newAttaches.get(method.getMethodDescriptor());
+                    // 校验自定义 attach key 和 全局的 key 不能重复
+                    // 这里和 全局的 key merge 是 牺牲空间换效率的做法
+                    if (foundScope != null) {
+                        builder.put(method.getMethodDescriptor(), ImmutableList.<String>builder().addAll(foundScope).addAll(this.globalAttach).build());
+                    } else {
+                        builder.put(method.getMethodDescriptor(), ImmutableList.<String>builder().addAll(this.globalAttach).build());
+                    }
+                }
+            }
+        } else {
+            for (var entry : newAttaches.entrySet()) {
+                builder.put(entry.getKey(), entry.getValue());
+            }
+        }
+
         this.attaches = builder.build();
+
         // 全局 引用删除 build 完成之后这个已经没啥用了
         this.globalAttach = null;
     }
@@ -149,8 +171,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
                     }
                 }
             }
-            Session.checkAttachKey(ImmutableList.copyOf(foundValues));
-            this.globalAttach = foundValues;
+            this.globalAttach = Session.checkAttachKey(ImmutableList.copyOf(foundValues));
         }
     }
 

@@ -58,7 +58,7 @@ class RAMInterceptor implements ScopeServerInterceptor {
                 }
                 // 判断用户是否登陆
                 var isLogin = this.ramAccessInterceptor.checkSession(this.currentGRpcScope, foundRam, call, headers, next);
-                if (isLogin) {
+                if (!isLogin) {
                     // 权限不足
                     final var error = Status.fromCode(Status.UNAUTHENTICATED.getCode()).withDescription("Auth failed, please check session");
                     call.close(error, new Metadata());
@@ -104,15 +104,11 @@ class RAMInterceptor implements ScopeServerInterceptor {
 
         final var awareServices = awareBuilder.build();
 
-        final var allowAnonymousBuilder = ImmutableList.<MethodDescriptor<?, ?>>builder();
         final var ramsBuilder = ImmutableMap.<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRAMItem>builder();
 
         for (RAMAccessInterceptor.RegisterRAM awareService : awareServices) {
             for (RAMAccessInterceptor.RegisterRAMItem method : awareService.getMethods()) {
-                if (method.isAllowAnonymous()) {
-                    allowAnonymousBuilder.add(method.getMethodDesc());
-                    ramsBuilder.put(method.getMethodDesc(), method);
-                }
+                ramsBuilder.put(method.getMethodDesc(), method);
             }
         }
 

@@ -22,8 +22,8 @@ import java.util.Map;
  */
 final class AbstractSessionUser implements SessionUser {
 
-    private static final String ATTACH_SLAT_KEY = "slat";
-    private static final String ATTACH_TTL_KEY = "ttl";
+    private static final String ATTACH_SLAT_KEY = "_slat";
+    private static final String ATTACH_TTL_KEY = "_ttl";
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionUser.class);
 
     private final TokenDAO tokenDAO;
@@ -97,14 +97,13 @@ final class AbstractSessionUser implements SessionUser {
         }
         Duration ttl;
         try {
-            ttl = Duration.parse(foundTtl);
+            ttl = Duration.ofMillis(Long.parseLong(foundTtl));
         } catch (Exception e) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
             log.error("redis data error 4, check read & write", e);
             return;
         }
-
 
         // 异步延长 token
         this.tokenDAO.expireTokenAsync(uid, scopeId, ttl);
@@ -161,7 +160,7 @@ final class AbstractSessionUser implements SessionUser {
 
             @Override
             public NewTokenBuilder setAttachString(String key, String val) {
-                newInline.attach.put("_" + key, val);
+                newInline.attach.put(key, val);
                 return this;
             }
 
@@ -174,7 +173,7 @@ final class AbstractSessionUser implements SessionUser {
             @Override
             public <T> NewTokenBuilder setAttachJson(String key, T t) {
                 try {
-                    newInline.attach.put("_" + key, objectMapper.writeValueAsString(t));
+                    newInline.attach.put(key, objectMapper.writeValueAsString(t));
                     // 这里 不做字符串缓存，因为写了还要读出来是低概率
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
