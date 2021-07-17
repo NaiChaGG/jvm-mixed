@@ -43,6 +43,8 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     public static final Context.Key<SessionUser> USER_NTS = Context.key("user");
 
+    private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
+
     @Autowired
     Session session;
 
@@ -80,7 +82,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
      * @return
      */
     protected String getHeaderToken(Metadata headers) {
-        return headers.get(Holder.TOKEN_METADATA_KEY);
+        return headers.get(TOKEN_METADATA_KEY);
     }
 
     @Override
@@ -164,11 +166,6 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static final class Holder {
-        // 用户头信息使用这个来获取
-        private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
     }
 
 }
