@@ -23,6 +23,8 @@ import java.lang.annotation.*;
  * <p>
  * 如果 配置 了 ram 则必须标注此注解用于声明 ram 权限控制
  *
+ * Resource Access Management
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */

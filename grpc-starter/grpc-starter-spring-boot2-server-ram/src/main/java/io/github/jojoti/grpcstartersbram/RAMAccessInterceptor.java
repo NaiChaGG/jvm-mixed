@@ -132,7 +132,7 @@ public interface RAMAccessInterceptor {
             final var found = AnnotationUtils.findAnnotation(method, extAnnotationClass);
             if (found == null) {
                 if (forced) {
-                    throw new IllegalArgumentException("Annotation " + extAnnotationClass + " must be used.");
+                    throw new IllegalArgumentException("Method: " + method + "@" + extAnnotationClass + " must be used.");
                 }
                 return null;
             }

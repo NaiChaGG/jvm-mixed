@@ -42,12 +42,15 @@ interface ServiceDescriptorAnnotations {
         final var builder = ImmutableList.<ServiceMethods<T>>builder();
         for (var serviceObject : serviceObjects) {
             final var methods = ImmutableList.<ServiceMethod<T>>builder();
+
+            final var foundClass = AnnotationUtils.getAnnotation(serviceObject.getClass(), t);
+
             for (var methodObject : serviceObject.bindService().getMethods()) {
                 for (Method method1 : serviceObject.getClass().getMethods()) {
                     // 定义到 pb 里面的 代码
                     if (method1.getName().equals(methodObject.getMethodDescriptor().getBareMethodName())) {
                         var foundAnnotations = AnnotationUtils.getAnnotation(method1, t);
-                        if (foundAnnotations != null) {
+                        if (foundAnnotations != null || foundClass != null) {
 //                            builder.put(methodObject.getMethodDescriptor(), foundAnnotations);
                             methods.add(new ServiceMethod<>(methodObject.getMethodDescriptor(), method1, foundAnnotations));
                         } else {
