@@ -72,8 +72,6 @@ public class GRpcRAMProperties {
 
     static final class RAMConfig {
         private boolean enabled = false;
-        // 如果 配置为 true 所在的 scope 如果没有 标注 ram 则会启动报错
-        private boolean forceRAMAnnotation = true;
 
         public boolean isEnabled() {
             return enabled;
@@ -83,13 +81,6 @@ public class GRpcRAMProperties {
             this.enabled = enabled;
         }
 
-        public boolean isForceRAMAnnotation() {
-            return forceRAMAnnotation;
-        }
-
-        public void setForceRAMAnnotation(boolean forceRAMAnnotation) {
-            this.forceRAMAnnotation = forceRAMAnnotation;
-        }
     }
 
 }
