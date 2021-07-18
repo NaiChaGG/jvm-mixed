@@ -114,7 +114,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
                     }
                     attach.add(s);
                 }
-                newAttaches.put(method.methodDescriptor, Session.checkAttachKey(ImmutableList.copyOf(attach)));
+                newAttaches.put(method.methodDescriptor, ImmutableList.copyOf(attach));
             }
         }
 
@@ -171,7 +171,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
                     }
                 }
             }
-            this.globalAttach = Session.checkAttachKey(ImmutableList.copyOf(foundValues));
+            this.globalAttach = ImmutableList.copyOf(foundValues);
         }
     }
 

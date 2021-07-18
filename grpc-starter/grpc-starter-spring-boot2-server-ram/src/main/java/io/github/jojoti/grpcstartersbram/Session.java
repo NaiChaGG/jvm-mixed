@@ -31,20 +31,6 @@ import io.github.jojoti.utilhashidtoken.HashIdToken;
  */
 public interface Session {
 
-    static String checkAttachKey(String key) {
-        Preconditions.checkArgument(!key.startsWith("_"), "Key is not allow prefix _");
-        return key;
-    }
-
-    static ImmutableList<String> checkAttachKey(ImmutableList<String> attachInline) {
-        if (attachInline.size() > 0) {
-            for (String s : attachInline) {
-                checkAttachKey(s);
-            }
-        }
-        return attachInline;
-    }
-
     /**
      * 验证用户会话 直接返回登录 uid >  0 表示已经登录
      *
@@ -53,6 +39,13 @@ public interface Session {
      */
     SessionUser verify(ParseToken tokenVal, ImmutableList<String> attachInline);
 
+    /**
+     * 对于 运行时的 key 不会做校验
+     *
+     * @param tokenVal
+     * @param attachInline
+     * @return
+     */
     default SessionUser verify(String tokenVal, ImmutableList<String> attachInline) {
         return verify(Session.ParseToken.newParseToken(tokenVal), attachInline);
     }

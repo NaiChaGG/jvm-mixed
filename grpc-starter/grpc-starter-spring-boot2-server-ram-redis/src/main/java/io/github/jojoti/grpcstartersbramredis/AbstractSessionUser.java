@@ -2,6 +2,7 @@ package io.github.jojoti.grpcstartersbramredis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -22,8 +23,7 @@ import java.util.Map;
  */
 final class AbstractSessionUser implements SessionUser {
 
-    private static final String ATTACH_SLAT_KEY = "_slat";
-    private static final String ATTACH_TTL_KEY = "_ttl";
+
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionUser.class);
 
     private final TokenDAO tokenDAO;
@@ -227,7 +227,7 @@ final class AbstractSessionUser implements SessionUser {
         final var entityRef = this.entity;
         this.checkSession(entityRef);
         stringValues.forEach((K, V) -> {
-            entityRef.attach.put(Session.checkAttachKey(K), V);
+            entityRef.attach.put(SessionUser.checkSetAttachKey(K), V);
         });
         tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, entityRef.ttl, stringValues);
         return this;
@@ -240,7 +240,7 @@ final class AbstractSessionUser implements SessionUser {
         final var strings = Maps.<String, String>newHashMap();
         for (Map.Entry<String, T> stringTEntry : jsonValues.entrySet()) {
             try {
-                entityRef.cached.put(Session.checkAttachKey(stringTEntry.getKey()), stringTEntry.getValue());
+                entityRef.cached.put(SessionUser.checkSetAttachKey(stringTEntry.getKey()), stringTEntry.getValue());
                 strings.put(stringTEntry.getKey(), this.objectMapper.writeValueAsString(stringTEntry.getValue()));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
@@ -253,7 +253,6 @@ final class AbstractSessionUser implements SessionUser {
     private static final class InlineEntity {
         private final long uid;
         private final long scopeId;
-        // 这里面存的都是
         private final Map<String, String> attach;
         private final Map<String, Object> cached = Maps.newHashMap();
         private Duration ttl = Duration.ofHours(1);
