@@ -322,32 +322,38 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
      */
     private static final class DynamicScopeFilterUtils {
 
-        // 拦截器对应了 多个 scope
-        private final Multimap<ScopeServerInterceptor, GRpcScope> ref = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
-        private final Multimap<GRpcScope, ScopeServerInterceptor> newRef = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
+        // 一个拦截器，在多个 scope 下都被使用了
+        // ScopeServerInterceptor.class -> scope -> instance
+        private final Table<Class<ScopeServerInterceptor>, ScopeServerInterceptor, GRpcScope> ref = Tables.newCustomTable(Maps.newHashMap(), Maps::newHashMap);
 
         // a -> B inter
         // b -> B inter
         // c -> B inter
         // d -> C inter
         // f -> C inter
-
-        // =>
-        //
         public ServerInterceptor addCheck(GRpcScope scope, ServerInterceptor object) {
             if (object instanceof ScopeServerInterceptor) {
-                var serverInterceptor = (ScopeServerInterceptor) object;
+                final var serverInterceptor = (ScopeServerInterceptor) object;
                 // 该 scope 被启用
                 if (serverInterceptor.getScopes().contains(scope.value())) {
-                    // 这个作用域下 同一个 拦截器实例
-                    var founds = ref.get(serverInterceptor);
-                    if (founds == null || founds.size() == 0) {
-                        newRef.put(scope, serverInterceptor);
-                        ref.put(serverInterceptor, scope);
-                    } else if (!founds.contains(scope)) {
+                    final var tableKey = (Class<ScopeServerInterceptor>) serverInterceptor.getClass();
+                    // 取到当前类对应的 scope 和实例
+                    final var row = ref.row(tableKey);
+                    // get 对象等于 空 且 对象 是第一次添加到列表 则直接复用当前对象，否则使用 clone 对象
+                    if (row.size() == 0) {
+                        ref.put(tableKey, serverInterceptor, scope);
+                        return serverInterceptor;
+                    } else {
+                        // 当前类 在这个 scope 下存在值 则直接返回
+                        for (var entry : row.entrySet()) {
+                            if (entry.getValue().equals(scope)) {
+                                return entry.getKey();
+                            }
+                        }
+
+                        // clone 对象，并赋值
                         var newObject = serverInterceptor.cloneThis();
-                        newRef.put(scope, newObject);
-                        ref.put(serverInterceptor, scope);
+                        ref.put(tableKey, newObject, scope);
                         return newObject;
                     }
                 }
@@ -356,6 +362,12 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
         }
 
         public Multimap<GRpcScope, ScopeServerInterceptor> getRef() {
+            final Multimap<GRpcScope, ScopeServerInterceptor> newRef = Multimaps.newSetMultimap(Maps.newHashMap(), Sets::newHashSet);
+            for (Map<ScopeServerInterceptor, GRpcScope> value : ref.rowMap().values()) {
+                value.forEach((k, v) -> {
+                    newRef.put(v, k);
+                });
+            }
             return newRef;
         }
 
