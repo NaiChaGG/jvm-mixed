@@ -172,6 +172,8 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
                 }
             }
             this.globalAttach = ImmutableList.copyOf(foundValues);
+        } else {
+            this.globalAttach = ImmutableList.of();
         }
     }
 
