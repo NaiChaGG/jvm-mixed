@@ -40,13 +40,13 @@ public interface Trailers {
     Metadata.Key<String> X_ERROR_METADATA_KEY = Metadata.Key.of("x-err", Metadata.ASCII_STRING_MARSHALLER);
 
     static StatusException newErrorCode(int error) {
-        var trailers = new Metadata();
+        final var trailers = new Metadata();
         trailers.put(X_ERROR_METADATA_KEY, String.valueOf(error));
         return new StatusException(Status.INTERNAL, trailers);
     }
 
     static StatusException newErrorCode(int error, Metadata mergeTrailers) {
-        var trailers = new Metadata();
+        final var trailers = new Metadata();
         trailers.merge(mergeTrailers);
         trailers.put(X_ERROR_METADATA_KEY, String.valueOf(error));
         return new StatusException(Status.INTERNAL, trailers);

@@ -350,7 +350,6 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                                 return entry.getKey();
                             }
                         }
-
                         // clone 对象，并赋值
                         var newObject = serverInterceptor.cloneThis();
                         ref.put(tableKey, newObject, scope);
