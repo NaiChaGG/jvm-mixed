@@ -29,6 +29,9 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.netty.NettyChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
 
 import java.util.Map;
@@ -38,24 +41,24 @@ import java.util.concurrent.TimeUnit;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class GrpcClients implements SmartLifecycle, GrpcClientContext {
+public class GrpcClients implements SmartLifecycle, GrpcClientContext, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(GrpcClients.class);
 
     private final GRpcClientProperties gRpcClientProperties;
-    private final GrpcClientFilter grpcClientFilter;
 
     private volatile DaemonThreads daemonThreads;
     private ImmutableMap<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel> channels;
 
-    public GrpcClients(GRpcClientProperties gRpcClientProperties, GrpcClientFilter grpcClientFilter) {
+    public GrpcClients(GRpcClientProperties gRpcClientProperties) {
         this.gRpcClientProperties = gRpcClientProperties;
-        this.grpcClientFilter = grpcClientFilter;
     }
 
     @Override
     public void start() {
-        Preconditions.checkArgument(this.gRpcClientProperties.getClients() != null && this.gRpcClientProperties.getClients().size() > 0, "Servers is not allow empty");
+        Preconditions.checkArgument(
+                this.gRpcClientProperties.getClients() != null
+                        && this.gRpcClientProperties.getClients().size() > 0, "Grpc clients is not allow empty");
         log.info("Starting gRPC client ...");
 
         final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
@@ -69,8 +72,9 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
             Preconditions.checkArgument(!Strings.isNullOrEmpty(vipAddress), "ServiceName " + client.getKey() + " vip address not found");
 
             final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(vipAddress));
-            // 通知 自定义 配置
-            this.grpcClientFilter.onFilter(client.getKey(), builder);
+
+            this.applicationContext.publishEvent(new GrpcClientConfigurationEvent(new GrpcClientConfigurationEntity(client.getKey(), builder)));
+
             clients.put(client, builder);
         }
 
@@ -126,4 +130,10 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
         throw new IllegalArgumentException("ServiceName " + serviceName.getServiceName() + " not fund");
     }
 
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

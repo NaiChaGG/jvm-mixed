@@ -16,12 +16,15 @@
 
 package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
-import io.github.jojoti.grpcstartersbcli.GrpcClientFilter;
 import io.github.jojoti.grpcstartersbcli.GrpcClients;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.context.annotation.*;
+import org.springframework.core.type.AnnotatedTypeMetadata;
+
+import java.util.Map;
 
 /**
  * rfs:
@@ -34,19 +37,25 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
 @EnableConfigurationProperties(GRpcClientProperties.class)
+@Conditional(GRpcClientAutoConfiguration.EnableGrpcClient.class)
 public class GRpcClientAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(GrpcClientFilter.class)
-    public GrpcClientFilter noneFilter() {
-        return (serviceName, nettyChannelBuilder) -> {
-            // nothing to do
-        };
+    public GrpcClients grpcClients(GRpcClientProperties gRpcClientProperties) {
+        return new GrpcClients(gRpcClientProperties);
     }
 
-    @Bean
-    public GrpcClients grpcClients(GRpcClientProperties gRpcClientProperties, GrpcClientFilter grpcClientFilter) {
-        return new GrpcClients(gRpcClientProperties, grpcClientFilter);
+    static final class EnableGrpcClient implements Condition {
+
+        private static final Bindable<Map<String, GRpcClientProperties.ClientItem>> STRING_LIST = Bindable.mapOf(String.class, GRpcClientProperties.ClientItem.class);
+
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            var found = Binder.get(context.getEnvironment()).bind("grpcs.clients", STRING_LIST);
+            // clients 需要大于 0 才会开始启动 grpc clients
+            return found.isBound() && found.get().size() > 0;
+        }
+
     }
 
 }

@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  * 访问控制的声明功能 该 功能针对 需要扫描生成菜单的场景
  * <p>
  * 如果 配置 了 ram 则必须标注此注解用于声明 ram 权限控制
- *
+ * <p>
  * Resource Access Management
  *
  * @author JoJo Wang

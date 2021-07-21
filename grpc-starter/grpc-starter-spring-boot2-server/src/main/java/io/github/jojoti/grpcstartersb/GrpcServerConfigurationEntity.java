@@ -16,22 +16,23 @@
 
 package io.github.jojoti.grpcstartersb;
 
-import org.springframework.context.ApplicationEvent;
+import io.grpc.ServerBuilder;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class ScopeServicesEvent extends ApplicationEvent {
+public class GrpcServerConfigurationEntity {
 
-    /**
-     * Create a new {@code ApplicationEvent}.
-     *
-     * @param source the object on which the event initially occurred or with
-     *               which the event is associated (never {@code null})
-     */
-    public ScopeServicesEvent(ScopeServicesEventEntities source) {
-        super(source);
+    private final GRpcScope scopes;
+    private final ServerBuilder<?> serverBuilder;
+
+    GrpcServerConfigurationEntity(GRpcScope scopes, ServerBuilder<?> serverBuilder) {
+        this.scopes = scopes;
+        this.serverBuilder = serverBuilder;
     }
 
+    public GRpcScope getScopes() {
+        return scopes;
+    }
 }

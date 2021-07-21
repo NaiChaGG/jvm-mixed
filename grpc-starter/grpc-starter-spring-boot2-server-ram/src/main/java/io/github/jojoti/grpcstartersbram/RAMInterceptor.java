@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.*;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.CommandLineRunner;
 
 import java.util.List;
 
@@ -33,13 +33,14 @@ import java.util.List;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-class RAMInterceptor implements ScopeServerInterceptor, InitializingBean {
+class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
 
     private final RAMAccessInterceptor ramAccessInterceptor;
     private final GRpcRAMProperties gRpcRAMProperties;
 
     private ImmutableMap<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRAMItem> rams;
     private GRpcScope currentGRpcScope;
+    private ImmutableList<RAMAccessInterceptor.RegisterRAM> allServices;
 
     RAMInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
         this.ramAccessInterceptor = ramAccessInterceptor;
@@ -126,12 +127,10 @@ class RAMInterceptor implements ScopeServerInterceptor, InitializingBean {
         }
     }
 
-    private ImmutableList<RAMAccessInterceptor.RegisterRAM> allServices;
-
     @Override
-    public void afterPropertiesSet() {
+    public void run(String... args) throws Exception {
         // 服务启动后再执行初始化操作
-        this.ramAccessInterceptor.onRegister(currentGRpcScope, allServices);
+        this.ramAccessInterceptor.runAfterRegister(currentGRpcScope, allServices, args);
         this.allServices = null;
     }
 

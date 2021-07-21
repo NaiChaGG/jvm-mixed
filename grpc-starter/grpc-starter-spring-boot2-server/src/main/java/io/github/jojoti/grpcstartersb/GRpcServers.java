@@ -67,7 +67,9 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
 
     @Override
     public void start() {
-        Preconditions.checkArgument(this.gRpcServerProperties.getServers() != null && this.gRpcServerProperties.getServers().size() > 0, "Servers is not allow empty");
+        Preconditions.checkArgument(
+                this.gRpcServerProperties.getServers() != null
+                        && this.gRpcServerProperties.getServers().size() > 0, "Grpc servers is not allow empty");
 
         log.info("Starting gRPC Server ...");
         // 添加到所有 grpc server 的拦截器
@@ -116,11 +118,6 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
             // 根据 scopeName 读取配置
             final var config = getServerConfigByScopeName(entry.getKey().value());
             final var newServerBuilder = getServerBuilder(config);
-
-            // 可以使用 此 api 动态的 扩展 grpc 配置
-            // 参考用法: io/github/jojoti/grpcstartersbram/SessionInterceptor.java:72
-            this.applicationContext.publishEvent(new GrpcServerBuilderCreateEvent(new GrpcServerBuilderCreate(entry.getKey(), newServerBuilder)));
-            // newServerBuilder
 
             final HealthStatusManager health = config.getHealthStatus().isEnabled() ? new HealthStatusManager() : null;
 
@@ -185,6 +182,11 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 // 保存所有的 apis
                 services.put(entry.getKey(), bindableService);
             }
+
+            // 可以使用 此 api 动态的 扩展 grpc 配置
+            // 参考用法: io/github/jojoti/grpcstartersbram/SessionInterceptor.java:72
+            // newServerBuilder
+            this.applicationContext.publishEvent(new GrpcServerConfigurationEvent(new GrpcServerConfigurationEntity(entry.getKey(), newServerBuilder)));
 
             serverBuilders.add(new ServerBuilders(newServerBuilder, health, entry.getKey().value(), config));
             log.info("GRPC scopeName {} add new builder", entry.getKey().value());

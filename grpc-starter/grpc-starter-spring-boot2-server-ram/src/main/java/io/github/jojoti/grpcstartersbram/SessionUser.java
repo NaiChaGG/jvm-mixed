@@ -16,7 +16,6 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.time.Duration;
@@ -29,6 +28,16 @@ public interface SessionUser {
 
     String ATTACH_SLAT_KEY = "_slat";
     String ATTACH_TTL_KEY = "_ttl";
+
+    static String checkSetAttachKey(String key) {
+        if (ATTACH_SLAT_KEY.equals(key)) {
+            throw new IllegalArgumentException("Custom attach key not allow " + ATTACH_SLAT_KEY);
+        }
+        if (ATTACH_TTL_KEY.equals(key)) {
+            throw new IllegalArgumentException("Custom attach key not allow " + ATTACH_TTL_KEY);
+        }
+        return key;
+    }
 
     /**
      * 获取当前会话的 scopeId
@@ -168,16 +177,6 @@ public interface SessionUser {
 
         String build();
 
-    }
-
-    static String checkSetAttachKey(String key) {
-        if (ATTACH_SLAT_KEY.equals(key)) {
-            throw new IllegalArgumentException("Custom attach key not allow " + ATTACH_SLAT_KEY);
-        }
-        if (ATTACH_TTL_KEY.equals(key)) {
-            throw new IllegalArgumentException("Custom attach key not allow " + ATTACH_TTL_KEY);
-        }
-        return key;
     }
 
 }

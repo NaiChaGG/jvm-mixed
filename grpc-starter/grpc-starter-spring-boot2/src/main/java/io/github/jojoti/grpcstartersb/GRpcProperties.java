@@ -1,7 +1,8 @@
 package io.github.jojoti.grpcstartersb;
 
 /**
- * @author Wan Steve
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 public class GRpcProperties {
 

@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package io.github.jojoti.grpcstartersbcli;
+package io.github.jojoti.grpcstartersb;
 
-import io.grpc.ServerInterceptor;
-
-import java.lang.annotation.*;
+import org.springframework.context.ApplicationEvent;
 
 /**
- * 带作用域的 grpc starter
- *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface GRpcServiceInterceptors {
+public class GrpcServerConfigurationEvent extends ApplicationEvent {
 
-    Class<? extends ServerInterceptor>[] interceptors();
+    private final GrpcServerConfigurationEntity entity;
 
-    // 启用或者关闭全局拦截器
-    boolean applyGlobalInterceptors() default true;
+    GrpcServerConfigurationEvent(GrpcServerConfigurationEntity source) {
+        super(source);
+        this.entity = source;
+    }
 
-    // 启用或者关闭 scope 全局拦截器
-    boolean applyScopeGlobalInterceptors() default true;
+    public GrpcServerConfigurationEntity getEntity() {
+        return entity;
+    }
 
 }
