@@ -60,7 +60,7 @@ public interface Trailers {
         return newErrorCode(error.getValue(), mergeTrailers);
     }
 
-    static StatusException newErrorTraces(Exception exception) {
+    static StatusException newErrorTraces(Throwable exception) {
         return Status.fromCode(Status.INTERNAL.getCode())
                 .withDescription(exception.getMessage())
                 .withCause(exception)

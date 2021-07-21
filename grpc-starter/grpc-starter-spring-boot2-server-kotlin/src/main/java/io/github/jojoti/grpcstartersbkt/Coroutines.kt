@@ -26,7 +26,7 @@ object Coroutines {
                 throw e
             } catch (e: StatusRuntimeException) {
                 throw e
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 log.error("trace error", e)
                 throw Trailers.newErrorTraces(e)
             }
