@@ -1,13 +1,17 @@
 package io.github.jojoti.grpcstartersb;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
 public class DiscoveryConfig {
-    private String vip = null;
+    /**
+     * vip 网络配置 service-name -> vip address
+     */
+    private Map<String, String> vip = null;
     private Dns dns = null;
     private Etcd etcd = null;
     private Consul consul = null;
@@ -28,11 +32,11 @@ public class DiscoveryConfig {
         this.etcd = etcd;
     }
 
-    public String getVip() {
+    public Map<String, String> getVip() {
         return vip;
     }
 
-    public void setVip(String vip) {
+    public void setVip(Map<String, String> vip) {
         this.vip = vip;
     }
 

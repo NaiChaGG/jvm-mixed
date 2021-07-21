@@ -16,17 +16,17 @@
 
 package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
-import io.github.jojoti.grpcstartersb.DiscoveryConfig;
+import io.github.jojoti.grpcstartersb.GRpcProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Map;
 
 /**
  * @author JoJo Wang
- * @link github.com/jojoti
+ * @link github.som/jojoti
  */
-@ConfigurationProperties(prefix = "grpc")
-public class GRpcClientProperties {
+@ConfigurationProperties(prefix = "grpcs")
+public class GRpcClientProperties extends GRpcProperties {
 
     private Map<String, ClientItem> clients;
 
@@ -43,7 +43,6 @@ public class GRpcClientProperties {
         private int shutdownGracefullyMills = 5000;
         private NettyConfig nettyConfig = null;
         private NettySharedConfig nettySharedConfig = null;
-        private DiscoveryConfig discovery;
 
         public NettyConfig getNettyConfig() {
             return nettyConfig;
@@ -59,14 +58,6 @@ public class GRpcClientProperties {
 
         public void setNettySharedConfig(NettySharedConfig nettySharedConfig) {
             this.nettySharedConfig = nettySharedConfig;
-        }
-
-        public DiscoveryConfig getDiscovery() {
-            return discovery;
-        }
-
-        public void setDiscovery(DiscoveryConfig discovery) {
-            this.discovery = discovery;
         }
 
         public NettyConfig checkOrGetNettyConfig() {

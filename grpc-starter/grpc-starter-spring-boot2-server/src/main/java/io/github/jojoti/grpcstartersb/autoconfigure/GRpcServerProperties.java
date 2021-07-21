@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersb.autoconfigure;
 
 import com.google.common.base.Preconditions;
+import io.github.jojoti.grpcstartersb.GRpcProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ import java.util.Map;
  * @link github.com/jojoti
  */
 @ConfigurationProperties(prefix = "grpcs")
-public class GRpcServerProperties {
+public class GRpcServerProperties extends GRpcProperties {
 
     private Map<String, ServerItem> servers;
 

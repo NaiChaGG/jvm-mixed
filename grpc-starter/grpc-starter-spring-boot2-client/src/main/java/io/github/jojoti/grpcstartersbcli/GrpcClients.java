@@ -61,15 +61,17 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
         final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
 
         for (var client : this.gRpcClientProperties.getClients().entrySet()) {
-            if (!Strings.isNullOrEmpty(client.getValue().getDiscovery().getVip())) {
-                final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(client.getValue().getDiscovery().getVip()));
-                // 通知 自定义 配置
-                this.grpcClientFilter.onFilter(client.getKey(), builder);
-                clients.put(client, builder);
-            } else {
-                // 目前只支持 vip 网络这种模式发现
-                throw new UnsupportedOperationException("Discovery unsupported");
-            }
+            // fixme 目前只支持 vip 网络这种模式发现
+            // 所有直接写死
+            final var vip = this.gRpcClientProperties.getDiscovery().getVip();
+            Preconditions.checkNotNull(vip);
+            final var vipAddress = vip.get(client.getKey());
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(vipAddress), "ServiceName " + client.getKey() + " vip address not found");
+
+            final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(vipAddress));
+            // 通知 自定义 配置
+            this.grpcClientFilter.onFilter(client.getKey(), builder);
+            clients.put(client, builder);
         }
 
         final var daemon = DaemonThreads.newDaemonThreads(this.gRpcClientProperties.getClients().size(),
@@ -89,6 +91,7 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext {
                 throw new RuntimeException(e);
             }
         }
+
         this.channels = clientChannels.build();
         this.daemonThreads = daemon;
     }

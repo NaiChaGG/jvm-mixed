@@ -12,26 +12,29 @@ spring.profiles:
 #    - dev
 #    - release
 
-# 服务发现配置
-discovery: &discovery
-  # provider: local/dns/etcd/consul/zookeeper
-  # provider 会自动识别
-  # fixme 该模式无法复用配置，因为每次都是变更的，这里只是作为 examples 写在这里
-  vip: 127.0.0.1:3001
-  dns:
-    - 127.0.0.1:5001
-    - 127.0.0.1:5003
-  etcd:
-    endpoints:
-      - 127.0.0.1:6000
-      - 127.0.0.1:6001
-  consul:
-    agent: 127.0.0.1:7001
-  zookeeper:
-    - 127.0.0.1:7100
-
 # grpc server 配置
 grpcs:
+
+  # 服务发现配置
+  discovery:
+    # provider: local/dns/etcd/consul/zookeeper
+    # provider 会自动识别
+    # fixme 该模式无法复用配置，因为每次都是变更的，这里只是作为 examples 写在这里
+    vip:
+      examplesServiceRpc: 127.0.0.1:3001
+      examplesService1Rpc: 127.0.0.1:3002
+    dns:
+      - 127.0.0.1:5001
+      - 127.0.0.1:5003
+    etcd:
+      endpoints:
+        - 127.0.0.1:6000
+        - 127.0.0.1:6001
+    consul:
+      agent: 127.0.0.1:7001
+    zookeeper:
+      - 127.0.0.1:7100
+
   # server 配置
   serverConfig: &nettyServer
     nettyConfig:
@@ -49,7 +52,7 @@ grpcs:
         enabled: true
       ram:
         # 启用 ram 访问控制
-        enabled: true
+        enabled: false
       <<: *nettyServer
 
     # 内置 private
@@ -63,7 +66,7 @@ grpcs:
         enabled: true
       ram:
         # 启用 ram 访问控制
-        enabled: true
+        enabled: false
       <<: *nettyServer
 
     # 自定义地址1
@@ -80,19 +83,11 @@ grpcs:
         enabled: false
       <<: *nettyServer
 
-grpc:
-
   # grpc client 配置
   clientConfig: &nettyClient
     nettyConfig:
       maxInboundSize: 1024
     nettySharedConfig:
-
-  client: &client
-    <<: *nettyClient
-    # 从远程 注册发现中心 发现配置
-    discovery:
-      <<: *discovery
 
   clients:
     # 以下配置写法会从远程 service 读取到 远程注册到 注册发现 组件的 service address
@@ -100,13 +95,10 @@ grpc:
     # scopeName 保持唯一
     examplesServiceRpc:
       <<: *nettyClient
-      # 从远程 注册发现中心 发现配置
-      discovery:
-        vip: 127.0.0.1:3001
 
     # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
     examplesService1Rpc:
-      <<: *client
+      <<: *nettyClient
 
 spring:
   datasource:
