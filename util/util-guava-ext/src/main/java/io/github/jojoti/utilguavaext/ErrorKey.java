@@ -8,7 +8,7 @@ package io.github.jojoti.utilguavaext;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public interface ErrorKey<T extends Enum<T>> extends EnumDuplicatedKey<T> {
+public interface ErrorKey<T extends Enum<T>> extends EnumDuplicatedKey<Integer, T> {
 
     default boolean isOk() {
         return getValue() == 0;

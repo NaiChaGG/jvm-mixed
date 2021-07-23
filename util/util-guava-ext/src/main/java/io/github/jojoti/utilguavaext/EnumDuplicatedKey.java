@@ -11,7 +11,7 @@ import java.util.Set;
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public interface EnumDuplicatedKey<T extends Enum<T>> {
+public interface EnumDuplicatedKey<V, T extends Enum<T>> {
 
     /**
      * 校验 枚举的值是否是重复的
@@ -31,7 +31,7 @@ public interface EnumDuplicatedKey<T extends Enum<T>> {
         }
     }
 
-    int getValue();
+    V getValue();
 
     T getEnumValue();
 

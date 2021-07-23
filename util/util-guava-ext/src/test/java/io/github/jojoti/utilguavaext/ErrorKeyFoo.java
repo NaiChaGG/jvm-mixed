@@ -12,7 +12,7 @@ public enum ErrorKeyFoo implements ErrorKey<ErrorKeyFoo> {
     }
 
     @Override
-    public int getValue() {
+    public Integer getValue() {
         return this.ordinal();
     }
 

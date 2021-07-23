@@ -12,7 +12,7 @@ public enum ErrorKeyFooFailure implements ErrorKey<ErrorKeyFooFailure> {
     }
 
     @Override
-    public int getValue() {
+    public Integer getValue() {
         return 0;
     }
 
