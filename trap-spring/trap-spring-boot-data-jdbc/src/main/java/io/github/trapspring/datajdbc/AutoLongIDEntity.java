@@ -32,19 +32,4 @@ import javax.persistence.MappedSuperclass;
 @Deprecated(since = "create update delete time")
 public abstract class AutoLongIDEntity extends AutoIdCreateUpdateTimeEntity {
 
-    @Id
-    @javax.persistence.Id
-    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Override
-    @NonNull
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
 }
