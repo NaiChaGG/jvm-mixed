@@ -29,7 +29,8 @@ interface ServiceDescriptorAnnotations {
                     //
                     final var pbMethod = methodObject.getMethodDescriptor().getBareMethodName();
                     // copy com/google/common/base/CaseFormat.java:209
-                    if ((Ascii.toUpperCase(pbMethod.charAt(0)) + Ascii.toLowerCase(pbMethod.substring(1))).equals(pbMethod)) {
+                    // 首字母不能大写
+                    if (Ascii.toUpperCase(pbMethod.charAt(0)) == pbMethod.charAt(0)) {
                         throw new IllegalArgumentException("Method: " + pbMethod + " ,first char is not allow upper word");
                     }
                     if (method1.getName().equals(pbMethod)) {

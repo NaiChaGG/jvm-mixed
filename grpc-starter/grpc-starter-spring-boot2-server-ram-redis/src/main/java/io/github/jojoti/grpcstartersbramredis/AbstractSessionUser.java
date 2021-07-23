@@ -22,7 +22,6 @@ import java.util.Map;
  */
 final class AbstractSessionUser implements SessionUser {
 
-
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionUser.class);
 
     private final TokenDAO tokenDAO;
