@@ -8,7 +8,7 @@ public enum ErrorKeyFoo implements ErrorKey<ErrorKeyFoo> {
     FIRST, SECONDS;
 
     static {
-        ErrorKey.duplicatedKeys(ErrorKeyFoo.values());
+        EnumDuplicatedKey.duplicatedKeys(ErrorKeyFoo.values());
     }
 
     @Override
