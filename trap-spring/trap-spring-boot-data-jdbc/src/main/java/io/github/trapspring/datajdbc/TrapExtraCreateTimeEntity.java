@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 @Table
-public abstract class TrapExtraEntity extends AutoLongIDEntity {
+public abstract class TrapExtraCreateTimeEntity extends AutoIdCreateTimeEntity {
 
     // 用户扩展信息
     private String extraKey;

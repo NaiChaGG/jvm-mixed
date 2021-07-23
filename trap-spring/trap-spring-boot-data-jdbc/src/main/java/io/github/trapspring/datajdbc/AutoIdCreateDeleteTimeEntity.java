@@ -16,25 +16,34 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.data.relational.core.conversion.MutableAggregateChange;
-import org.springframework.data.relational.core.mapping.event.BeforeSaveCallback;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.lang.NonNull;
+
+import javax.persistence.GenerationType;
+import javax.persistence.MappedSuperclass;
 
 /**
  * @author JoJo Wang
  * @link github.com/jojoti
  */
-public class AutoTimeEvent implements BeforeSaveCallback<TrapBaseCreateTimeEntity> {
+@MappedSuperclass
+@Table
+public abstract class AutoIdCreateDeleteTimeEntity extends TrapBaseCreateDeleteTimeEntity {
+
+    @Id
+    @javax.persistence.Id
+    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @Override
-    public TrapBaseCreateTimeEntity onBeforeSave(TrapBaseCreateTimeEntity aggregate, MutableAggregateChange<TrapBaseCreateTimeEntity> aggregateChange) {
-        if (aggregate.isNew()) {
-            aggregate.setCreateAt(System.currentTimeMillis());
-        } else {
-            if (aggregate instanceof TrapBaseCreateUpdateTimeEntity) {
-                ((TrapBaseCreateUpdateTimeEntity) aggregate).setUpdateAt(System.currentTimeMillis());
-            }
-        }
-        return aggregate;
+    @NonNull
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
 }

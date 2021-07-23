@@ -29,23 +29,11 @@ import javax.persistence.MappedSuperclass;
 // @Table 必须注解， 否则 Spring Data JDBC - Could not safely identify store assignment for repository candidate interface io.github.jojoti.grpcstartersbexamples.AccountGuestRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
 // 会导致无法加载 bean
 @Table
-public abstract class TrapBaseTimeEntity extends TrapBaseEntity {
-
-    @Column
-    @javax.persistence.Column
-    private long createAt;
+public abstract class TrapBaseCreateUpdateTimeEntity extends TrapBaseCreateTimeEntity {
 
     @Column
     @javax.persistence.Column
     private long updateAt;
-
-    public long getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(long createAt) {
-        this.createAt = createAt;
-    }
 
     public long getUpdateAt() {
         return updateAt;

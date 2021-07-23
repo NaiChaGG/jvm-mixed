@@ -16,11 +16,9 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.lang.NonNull;
 
-import javax.persistence.GenerationType;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -28,23 +26,21 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
+// @Table 必须注解， 否则 Spring Data JDBC - Could not safely identify store assignment for repository candidate interface io.github.jojoti.grpcstartersbexamples.AccountGuestRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+// 会导致无法加载 bean
 @Table
-@Deprecated(since = "create update delete time")
-public abstract class AutoLongIDEntity extends AutoIdCreateUpdateTimeEntity {
+public abstract class TrapBaseCreateDeleteTimeEntity extends TrapBaseCreateTimeEntity {
 
-    @Id
-    @javax.persistence.Id
-    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column
+    @javax.persistence.Column
+    private long deleteAt;
 
-    @Override
-    @NonNull
-    public Long getId() {
-        return id;
+    public long getDeleteAt() {
+        return deleteAt;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setDeleteAt(long deleteAt) {
+        this.deleteAt = deleteAt;
     }
 
 }
