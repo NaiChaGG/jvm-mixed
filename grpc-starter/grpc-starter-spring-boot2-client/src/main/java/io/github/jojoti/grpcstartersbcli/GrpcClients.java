@@ -20,10 +20,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.net.InetAddresses;
 import io.github.jojoti.grpcstartersbcli.autoconfigure.GRpcClientProperties;
 import io.github.jojoti.utildaemonthreads.DaemonThreads;
-import io.github.jojoti.utilguavaext.GetAddress;
 import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -39,6 +37,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * https://github.com/grpc/grpc-java/blob/master/core/src/test/java/io/grpc/internal/DnsNameResolverProviderTest.java#L61
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
  */
@@ -63,6 +63,40 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
         log.info("Starting gRPC client ...");
 
         final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
+
+//        if (this.gRpcClientProperties.getNr() != null) {
+//            DnsNameResolverProvider dns = null;
+//            SynchronizationContext syncContext = null;
+//            // https://github.com/grpc/grpc-java/blob/master/core/src/test/java/io/grpc/internal/DnsNameResolverProviderTest.java#L61
+//            for (String s : this.gRpcClientProperties.getNr()) {
+//                Preconditions.checkArgument(Strings.isNullOrEmpty(s));
+//                if (s.startsWith("dns://")) {
+//                    if (dns == null) {
+//                        dns = new DnsNameResolverProvider();
+//                        syncContext = new SynchronizationContext(
+//                                new Thread.UncaughtExceptionHandler() {
+//                                    @Override
+//                                    public void uncaughtException(Thread t, Throwable e) {
+//                                        throw new AssertionError(e);
+//                                    }
+//                                });
+//                    }
+//                    NameResolver.Args args = NameResolver.Args.newBuilder()
+//                            .setDefaultPort(8080)
+//                            .setProxyDetector(GrpcUtil.DEFAULT_PROXY_DETECTOR)
+//                            .setSynchronizationContext(syncContext)
+//                            .setServiceConfigParser(NameResolver.ServiceConfigParser.class)
+//                            .setChannelLogger(ChannelLogger.class)
+//                            .build();
+//
+//                    dns.newNameResolver(URI.create(s));
+//                } else {
+//                    throw new IllegalArgumentException("NameResolver " + s + " not impl");
+//                }
+//            }
+//
+//
+//        }
 
         for (var client : this.gRpcClientProperties.getClients().entrySet()) {
             // fixme 目前只支持 vip 网络这种模式发现

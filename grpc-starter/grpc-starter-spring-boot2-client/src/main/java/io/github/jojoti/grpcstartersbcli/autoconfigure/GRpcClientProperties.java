@@ -20,8 +20,11 @@ import io.github.jojoti.grpcstartersb.GRpcProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
+ * https://github.com/grpc/grpc-java/blob/master/api/src/main/java/io/grpc/ManagedChannelBuilder.java#L52
+ *
  * @author JoJo Wang
  * @link github.som/jojoti
  */
@@ -29,6 +32,7 @@ import java.util.Map;
 public class GRpcClientProperties extends GRpcProperties {
 
     private Map<String, ClientItem> clients;
+    private Set<String> nr;
 
     public Map<String, ClientItem> getClients() {
         return clients;
@@ -103,6 +107,14 @@ public class GRpcClientProperties extends GRpcProperties {
         public void setMaxInboundSize(int maxInboundSize) {
             this.maxInboundSize = maxInboundSize;
         }
+    }
+
+    public Set<String> getNr() {
+        return nr;
+    }
+
+    public void setNr(Set<String> nr) {
+        this.nr = nr;
     }
 
 }
