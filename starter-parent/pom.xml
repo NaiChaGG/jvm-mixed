@@ -262,6 +262,22 @@
                 </plugin>
                 <!--      打包工具      -->
                 <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>${main.class}</mainClass>
+                        <addResources>true</addResources>
+                    </configuration>
+                </plugin>
+                <!--      打包工具      -->
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <executions>
