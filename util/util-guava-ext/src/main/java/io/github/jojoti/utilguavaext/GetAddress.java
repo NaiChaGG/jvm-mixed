@@ -21,8 +21,13 @@ public interface GetAddress {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        // 使用 guava api 可以监听 127.0.0.1 0.0.0.0 等端口
-        return new InetSocketAddress(InetAddresses.forString(url.getHost()), url.getPort());
+        // ip地址
+        if (InetAddresses.isInetAddress(url.getHost())) {
+            // 使用 guava api 可以监听 127.0.0.1 0.0.0.0 等端口
+            return new InetSocketAddress(InetAddresses.forString(url.getHost()), url.getPort());
+        }
+        // 正常的 domain 地址
+        return new InetSocketAddress(url.getHost(), url.getPort());
     }
 
 }
