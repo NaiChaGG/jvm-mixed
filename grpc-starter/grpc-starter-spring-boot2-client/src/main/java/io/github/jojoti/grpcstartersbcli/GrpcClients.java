@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.net.InetAddresses;
 import io.github.jojoti.grpcstartersbcli.autoconfigure.GRpcClientProperties;
 import io.github.jojoti.utildaemonthreads.DaemonThreads;
 import io.github.jojoti.utilguavaext.GetAddress;
@@ -71,7 +72,8 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
             final var vipAddress = vip.get(client.getKey());
             Preconditions.checkArgument(!Strings.isNullOrEmpty(vipAddress), "ServiceName " + client.getKey() + " vip address not found");
 
-            final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(vipAddress));
+//            final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(vipAddress));
+            final var builder = NettyChannelBuilder.forTarget(vipAddress);
 
             this.applicationContext.publishEvent(new GrpcClientConfigurationEvent(new GrpcClientConfigurationEntity(client.getKey(), builder)));
 

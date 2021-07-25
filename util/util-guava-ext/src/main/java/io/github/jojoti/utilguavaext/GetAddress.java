@@ -27,7 +27,7 @@ public interface GetAddress {
             return new InetSocketAddress(InetAddresses.forString(url.getHost()), url.getPort());
         }
         // 正常的 domain 地址
-        return new InetSocketAddress(url.getHost(), url.getPort());
+        throw new IllegalArgumentException("ip " + url.getHost() + " address valid error");
     }
 
 }

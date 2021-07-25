@@ -64,6 +64,12 @@
             <artifactId>util-daemon-threads</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.jojoti</groupId>
+            <artifactId>starter-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
