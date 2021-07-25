@@ -50,6 +50,7 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
 
     private volatile DaemonThreads daemonThreads;
     private ImmutableMap<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannel> channels;
+    private ApplicationContext applicationContext;
 
     public GrpcClients(GRpcClientProperties gRpcClientProperties) {
         this.gRpcClientProperties = gRpcClientProperties;
@@ -62,9 +63,7 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
                         && this.gRpcClientProperties.getClients().size() > 0, "Grpc clients is not allow empty");
         log.info("Starting gRPC client ...");
 
-        final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
-
-//        if (this.gRpcClientProperties.getNr() != null) {
+        //        if (this.gRpcClientProperties.getNr() != null) {
 //            DnsNameResolverProvider dns = null;
 //            SynchronizationContext syncContext = null;
 //            // https://github.com/grpc/grpc-java/blob/master/core/src/test/java/io/grpc/internal/DnsNameResolverProviderTest.java#L61
@@ -98,16 +97,20 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
 //
 //        }
 
-        for (var client : this.gRpcClientProperties.getClients().entrySet()) {
-            // fixme 目前只支持 vip 网络这种模式发现
-            // 所有直接写死
-            final var vip = this.gRpcClientProperties.getDiscovery().getVip();
-            Preconditions.checkNotNull(vip);
-            final var vipAddress = vip.get(client.getKey());
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(vipAddress), "ServiceName " + client.getKey() + " vip address not found");
+        final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
 
-//            final var builder = NettyChannelBuilder.forAddress(GetAddress.getSocketAddress(vipAddress));
-            final var builder = NettyChannelBuilder.forTarget(vipAddress);
+        for (var client : this.gRpcClientProperties.getClients().entrySet()) {
+            // fixme 目前只支持 dns 网络这种模式发现
+            // 所有直接写死
+            Preconditions.checkNotNull(this.gRpcClientProperties.getDiscovery().getDns());
+            final var targets = this.gRpcClientProperties.getDiscovery().getDns().getTargets();
+            Preconditions.checkNotNull(targets);
+            final var target = targets.get(client.getKey());
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(target), "ServiceName " + client.getKey() + " target address not found");
+            // https://github.com/grpc/grpc-java/blob/master/core/src/test/java/io/grpc/internal/DnsNameResolverProviderTest.java#L61
+            // https://github.com/grpc/grpc-java/blob/master/api/src/main/java/io/grpc/ManagedChannelBuilder.java#L52
+            // 默认 target 支持 dns 发现
+            final var builder = NettyChannelBuilder.forTarget(target);
 
             this.applicationContext.publishEvent(new GrpcClientConfigurationEvent(new GrpcClientConfigurationEntity(client.getKey(), builder)));
 
@@ -165,8 +168,6 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
         }
         throw new IllegalArgumentException("ServiceName " + serviceName.getServiceName() + " not fund");
     }
-
-    private ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

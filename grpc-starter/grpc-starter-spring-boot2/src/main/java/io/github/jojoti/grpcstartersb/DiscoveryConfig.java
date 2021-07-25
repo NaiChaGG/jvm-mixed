@@ -8,10 +8,7 @@ import java.util.Map;
  * @link github.com/jojoti
  */
 public class DiscoveryConfig {
-    /**
-     * vip 网络配置 service-name -> vip address
-     */
-    private Map<String, String> vip = null;
+
     private Dns dns = null;
     private Etcd etcd = null;
     private Consul consul = null;
@@ -32,14 +29,6 @@ public class DiscoveryConfig {
         this.etcd = etcd;
     }
 
-    public Map<String, String> getVip() {
-        return vip;
-    }
-
-    public void setVip(Map<String, String> vip) {
-        this.vip = vip;
-    }
-
     public Dns getDns() {
         return dns;
     }
@@ -50,15 +39,19 @@ public class DiscoveryConfig {
 
     public static final class Dns {
         // 后续还可以配置 dns 查询 ttl 等
-        private List<String> ns = null;
+        /**
+         * vip 网络配置 service-name -> vip address
+         */
+        private Map<String, String> targets = null;
 
-        public List<String> getNs() {
-            return ns;
+        public Map<String, String> getTargets() {
+            return targets;
         }
 
-        public void setNs(List<String> ns) {
-            this.ns = ns;
+        public void setTargets(Map<String, String> targets) {
+            this.targets = targets;
         }
+
     }
 
     public static final class Etcd {

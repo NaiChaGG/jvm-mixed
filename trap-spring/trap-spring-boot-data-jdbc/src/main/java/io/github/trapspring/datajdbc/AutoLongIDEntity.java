@@ -16,11 +16,8 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.lang.NonNull;
 
-import javax.persistence.GenerationType;
 import javax.persistence.MappedSuperclass;
 
 /**

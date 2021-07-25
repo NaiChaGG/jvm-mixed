@@ -17,7 +17,6 @@
 package io.github.jojoti.grpcstartersbcli.autoconfigure;
 
 import io.github.jojoti.grpcstartersbcli.GrpcClients;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;

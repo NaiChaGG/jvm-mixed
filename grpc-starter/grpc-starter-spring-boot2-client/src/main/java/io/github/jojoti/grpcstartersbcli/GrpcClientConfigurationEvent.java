@@ -10,7 +10,7 @@ public class GrpcClientConfigurationEvent extends ApplicationEvent {
 
     private final GrpcClientConfigurationEntity entity;
 
-     GrpcClientConfigurationEvent(GrpcClientConfigurationEntity source) {
+    GrpcClientConfigurationEvent(GrpcClientConfigurationEntity source) {
         super(source);
         this.entity = source;
     }

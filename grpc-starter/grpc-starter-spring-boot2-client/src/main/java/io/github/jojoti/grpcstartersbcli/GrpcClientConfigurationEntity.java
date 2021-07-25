@@ -11,7 +11,7 @@ public final class GrpcClientConfigurationEntity {
     private final String serviceName;
     private final NettyChannelBuilder nettyChannelBuilder;
 
-     GrpcClientConfigurationEntity(String serviceName, NettyChannelBuilder nettyChannelBuilder) {
+    GrpcClientConfigurationEntity(String serviceName, NettyChannelBuilder nettyChannelBuilder) {
         this.serviceName = serviceName;
         this.nettyChannelBuilder = nettyChannelBuilder;
     }

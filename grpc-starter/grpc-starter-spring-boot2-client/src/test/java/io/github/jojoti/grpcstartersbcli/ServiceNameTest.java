@@ -1,12 +1,6 @@
 package io.github.jojoti.grpcstartersbcli;
 
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NettyChannelBuilder;
-
-import java.net.InetSocketAddress;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Wan Steve

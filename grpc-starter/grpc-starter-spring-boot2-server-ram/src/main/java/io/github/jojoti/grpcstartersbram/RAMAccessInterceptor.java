@@ -45,7 +45,7 @@ public interface RAMAccessInterceptor {
 
     // 启动注册 ram 列表权限
     // 这个可能会执行多次
-    default void runAfterRegister(GRpcScope gRpcScope, ImmutableList<RegisterRAM> allServices, String ...args) throws Exception {
+    default void runAfterRegister(GRpcScope gRpcScope, ImmutableList<RegisterRAM> allServices, String... args) throws Exception {
 
     }
 
