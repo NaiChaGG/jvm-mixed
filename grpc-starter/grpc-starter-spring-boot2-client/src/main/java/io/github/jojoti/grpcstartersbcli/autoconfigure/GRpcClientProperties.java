@@ -41,10 +41,19 @@ public class GRpcClientProperties extends GRpcProperties {
     }
 
     public static final class ClientItem {
+        private String target;
         // 默认 5s
         private int shutdownGracefullyMills = 5000;
         private NettyConfig nettyConfig = null;
         private NettySharedConfig nettySharedConfig = null;
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
 
         public NettyConfig getNettyConfig() {
             return nettyConfig;

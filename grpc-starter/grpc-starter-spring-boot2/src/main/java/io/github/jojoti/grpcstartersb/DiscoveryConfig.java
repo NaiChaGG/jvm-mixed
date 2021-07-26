@@ -42,14 +42,14 @@ public class DiscoveryConfig {
         /**
          * vip 网络配置 service-name -> vip address
          */
-        private Map<String, String> targets = null;
+        private Map<String, String> dnssrv = null;
 
-        public Map<String, String> getTargets() {
-            return targets;
+        public Map<String, String> getDnssrv() {
+            return dnssrv;
         }
 
-        public void setTargets(Map<String, String> targets) {
-            this.targets = targets;
+        public void setDnssrv(Map<String, String> dnssrv) {
+            this.dnssrv = dnssrv;
         }
 
     }

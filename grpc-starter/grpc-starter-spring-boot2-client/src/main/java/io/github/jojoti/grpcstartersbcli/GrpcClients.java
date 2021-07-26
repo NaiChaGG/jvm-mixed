@@ -100,17 +100,24 @@ public class GrpcClients implements SmartLifecycle, GrpcClientContext, Applicati
         final var clients = Maps.<Map.Entry<String, GRpcClientProperties.ClientItem>, ManagedChannelBuilder<?>>newHashMap();
 
         for (var client : this.gRpcClientProperties.getClients().entrySet()) {
-            // fixme 目前只支持 dns 网络这种模式发现
-            // 所有直接写死
-            Preconditions.checkNotNull(this.gRpcClientProperties.getDiscovery().getDns());
-            final var targets = this.gRpcClientProperties.getDiscovery().getDns().getTargets();
-            Preconditions.checkNotNull(targets);
-            final var target = targets.get(client.getKey());
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(target), "ServiceName " + client.getKey() + " target address not found");
+            // 目标地址不能为空
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(client.getValue().getTarget()));
+
+            if (client.getValue().getTarget().startsWith("dns://")) {
+                // 默认 dns
+            } else if (client.getValue().getTarget().startsWith("dvip://")) {
+                // docker vip
+            } else if (client.getValue().getTarget().startsWith("ddnsrr://")) {
+                // docker swarm dnsrr
+                throw new UnsupportedOperationException();
+            } else {
+                throw new IllegalArgumentException("UnSupport type " + client.getValue().getTarget());
+            }
+
             // https://github.com/grpc/grpc-java/blob/master/core/src/test/java/io/grpc/internal/DnsNameResolverProviderTest.java#L61
             // https://github.com/grpc/grpc-java/blob/master/api/src/main/java/io/grpc/ManagedChannelBuilder.java#L52
             // 默认 target 支持 dns 发现
-            final var builder = NettyChannelBuilder.forTarget(target);
+            final var builder = NettyChannelBuilder.forTarget(client.getValue().getTarget());
 
             this.applicationContext.publishEvent(new GrpcClientConfigurationEvent(new GrpcClientConfigurationEntity(client.getKey(), builder)));
 

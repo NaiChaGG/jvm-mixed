@@ -17,12 +17,6 @@ grpcs:
 
   # 服务发现配置
   discovery:
-    # provider: local/dns/etcd/consul/zookeeper
-    # provider 会自动识别
-    # fixme 该模式无法复用配置，因为每次都是变更的，这里只是作为 examples 写在这里
-    vip:
-      examplesServiceRpc: 127.0.0.1:3001
-      examplesService1Rpc: 127.0.0.1:3002
     dns:
       - 127.0.0.1:5001
       - 127.0.0.1:5003
@@ -94,10 +88,12 @@ grpcs:
     # 该 scopeName 则是使用本地的 scopeName 对应的 拦截器等等
     # scopeName 保持唯一
     examplesServiceRpc:
+      tartget: dns:///127.0.0.1:3001
       <<: *nettyClient
 
     # 该 配置会使用 本地定义的 mixed1 的拦截器 等等配置
     examplesService1Rpc:
+      tartget: dns:///127.0.0.1:3002
       <<: *nettyClient
 
 spring:
