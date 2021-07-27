@@ -44,7 +44,7 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
     public static final Context.Key<SessionUser> USER_NTS = Context.key("user");
 
-    private static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
+    public static final Metadata.Key<String> TOKEN_METADATA_KEY = Metadata.Key.of("x-token", Metadata.ASCII_STRING_MARSHALLER);
 
     @Autowired
     Session session;
