@@ -19,9 +19,9 @@ public interface EnumDuplicatedKey<V, T extends Enum<T>> {
      * @param val
      * @param <T>
      */
-    static <T extends Enum<T>> void duplicatedKeys(ErrorKey<T>[] val) {
-        Set<Integer> unique = Sets.newHashSet();
-        for (ErrorKey<T> tUniqueKey : val) {
+    static <V, T extends Enum<T>> void duplicatedKeys(EnumDuplicatedKey<V, T>[] val) {
+        Set<V> unique = Sets.newHashSet();
+        for (EnumDuplicatedKey<V, T> tUniqueKey : val) {
             // 必须 return this
             Preconditions.checkNotNull(tUniqueKey.getEnumValue());
             Preconditions.checkArgument(tUniqueKey.getEnumValue().equals(tUniqueKey));
