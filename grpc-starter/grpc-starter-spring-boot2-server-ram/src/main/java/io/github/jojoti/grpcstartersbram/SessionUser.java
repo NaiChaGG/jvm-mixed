@@ -16,9 +16,12 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 /**
  * @author JoJo Wang
@@ -92,7 +95,7 @@ public interface SessionUser {
      * @return
      * @throws SessionNotCreatedException
      */
-    String getAttach(String key);
+    String getAttachString(String key);
 
     /**
      * @param key
@@ -100,7 +103,11 @@ public interface SessionUser {
      * @throws SessionNotCreatedException
      */
     default int getAttachAsInt(String key) {
-        return Integer.parseInt(getAttach(key));
+        final var val = getAttachString(key);
+        if (Strings.isNullOrEmpty(val)) {
+            return 0;
+        }
+        return Integer.parseInt(val);
     }
 
     /**
@@ -109,7 +116,19 @@ public interface SessionUser {
      * @throws SessionNotCreatedException
      */
     default long getAttachAsLong(String key) {
-        return Long.parseLong(getAttach(key));
+        final var val = getAttachString(key);
+        if (Strings.isNullOrEmpty(val)) {
+            return 0L;
+        }
+        return Long.parseLong(val);
+    }
+
+    default boolean getAttachAsBoolean(String key) {
+        final var val = getAttachString(key);
+        if (Strings.isNullOrEmpty(val)) {
+            return false;
+        }
+        return Boolean.parseBoolean(val);
     }
 
     /**
@@ -123,6 +142,34 @@ public interface SessionUser {
      */
     <T> T getAttachJson(String key, Class<T> t);
 
+    default SessionUser setAttach(String key, long val) {
+        if (val == 0L) {
+            return this;
+        }
+        return setAttach(ImmutableMap.of(key, String.valueOf(val)));
+    }
+
+    default SessionUser setAttach(String key, int val) {
+        if (val == 0) {
+            return this;
+        }
+        return setAttach(ImmutableMap.of(key, String.valueOf(val)));
+    }
+
+    /**
+     * 附件里面写 bool 值 如果值 为 false 会被忽略
+     *
+     * @param key
+     * @param val
+     * @return
+     */
+    default SessionUser setAttach(String key, boolean val) {
+        if (!val) {
+            return this;
+        }
+        return setAttach(ImmutableMap.of(key, String.valueOf(true)));
+    }
+
     /**
      * 会写库 谨慎操作
      *
@@ -131,8 +178,8 @@ public interface SessionUser {
      * @return
      * @throws SessionNotCreatedException
      */
-    default SessionUser setAttachString(String key, String val) {
-        return setAttachString(ImmutableMap.of(key, val));
+    default SessionUser setAttach(String key, String val) {
+        return setAttach(ImmutableMap.of(key, val));
     }
 
     /**
@@ -142,7 +189,7 @@ public interface SessionUser {
      * @return
      * @throws SessionNotCreatedException
      */
-    SessionUser setAttachString(ImmutableMap<String, String> stringValues);
+    SessionUser setAttach(ImmutableMap<String, String> stringValues);
 
     /**
      * 会写库 谨慎操作
@@ -166,6 +213,17 @@ public interface SessionUser {
      * @throws SessionNotCreatedException
      */
     <T> SessionUser setAttachJson(ImmutableMap<String, T> jsonValues);
+
+    default SessionUser removeKey(String key) {
+        return removeKey(ImmutableSet.of(key));
+    }
+
+    default SessionUser removeKey(String key, String... keys) {
+        final var newKeys = ImmutableSet.<String>builder().add(key).addAll(Arrays.asList(keys)).build();
+        return removeKey(newKeys);
+    }
+
+    SessionUser removeKey(ImmutableSet<String> key);
 
     interface NewTokenBuilder {
 

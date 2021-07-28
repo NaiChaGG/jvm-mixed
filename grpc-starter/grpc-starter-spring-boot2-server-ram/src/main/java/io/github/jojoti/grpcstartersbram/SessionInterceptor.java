@@ -105,10 +105,10 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
 
         for (var sessionAttachServiceMethods : found) {
             for (var method : sessionAttachServiceMethods.methods) {
-                Preconditions.checkNotNull(method.foundAnnotation.value());
-                Preconditions.checkArgument(method.foundAnnotation.value().length > 0, "@SessionAttach value is not allow empty");
+                Preconditions.checkNotNull(method.foundAnnotation.keys());
+                Preconditions.checkArgument(method.foundAnnotation.keys().length > 0, "@SessionAttach value is not allow empty");
                 final var attach = Lists.<String>newArrayList();
-                for (String s : method.foundAnnotation.value()) {
+                for (String s : method.foundAnnotation.keys()) {
                     if (attach.contains(s)) {
                         throw new IllegalArgumentException("Session attach duplicated key: " + s);
                     }

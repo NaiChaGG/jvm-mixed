@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersbramredis;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,12 @@ class TokenDAO {
     @Async
     public void addAttachAsync(long uid, long scopeId, Duration ttl, Map<String, String> attach) {
         this.addAttachSync(uid, scopeId, ttl, attach);
+    }
+
+    @Async
+    public void removeKeyAsync(long uid, long scopeId, ImmutableSet<String> keys) {
+        final var key = makeKey(uid, scopeId);
+        stringRedisTemplate.opsForHash().delete(key, keys.toArray());
     }
 
     public void addAttachSync(long uid, long scopeId, Duration ttl, Map<String, String> attach) {

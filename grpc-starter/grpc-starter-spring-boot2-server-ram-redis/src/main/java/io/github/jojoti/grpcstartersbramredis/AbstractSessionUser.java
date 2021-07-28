@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import io.github.jojoti.grpcstartersbram.Session;
 import io.github.jojoti.grpcstartersbram.SessionNotCreatedException;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author JoJo Wang
@@ -193,7 +195,7 @@ final class AbstractSessionUser implements SessionUser {
     }
 
     @Override
-    public String getAttach(String key) {
+    public String getAttachString(String key) {
         final var entityRef = this.entity;
         return entityRef.attach.get(key);
     }
@@ -221,7 +223,7 @@ final class AbstractSessionUser implements SessionUser {
     }
 
     @Override
-    public SessionUser setAttachString(ImmutableMap<String, String> stringValues) {
+    public SessionUser setAttach(ImmutableMap<String, String> stringValues) {
         final var entityRef = this.entity;
         this.checkSession(entityRef);
         stringValues.forEach((K, V) -> {
@@ -245,6 +247,14 @@ final class AbstractSessionUser implements SessionUser {
             }
         }
         tokenDAO.addAttachAsync(entityRef.uid, entityRef.scopeId, entityRef.ttl, strings);
+        return this;
+    }
+
+    @Override
+    public SessionUser removeKey(ImmutableSet<String> key) {
+        final var entityRef = this.entity;
+        this.checkSession(entityRef);
+        tokenDAO.removeKeyAsync(entityRef.uid, entity.scopeId, key);
         return this;
     }
 

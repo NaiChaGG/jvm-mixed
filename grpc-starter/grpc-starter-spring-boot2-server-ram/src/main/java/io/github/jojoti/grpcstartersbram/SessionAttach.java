@@ -17,6 +17,6 @@ public @interface SessionAttach {
      * <p>
      * key 不能 以 下划线 _ 开头
      */
-    String[] value() default {};
+    String[] keys();
 
 }
