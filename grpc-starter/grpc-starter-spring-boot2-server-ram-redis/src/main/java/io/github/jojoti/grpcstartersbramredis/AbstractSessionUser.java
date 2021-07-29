@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author JoJo Wang
@@ -132,6 +131,12 @@ final class AbstractSessionUser implements SessionUser {
     public long getUid() {
         final var entityRef = this.entity;
         this.checkSession(entityRef);
+        return entityRef.uid;
+    }
+
+    @Override
+    public long getUidAsDefault() {
+        final var entityRef = this.entity;
         return entityRef.uid;
     }
 

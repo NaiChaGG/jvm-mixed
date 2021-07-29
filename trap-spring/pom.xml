@@ -42,11 +42,17 @@
         <module>trap-spring-boot-data-redis-lettuce</module>
         <module>trap-spring-boot-jpa-auto-ddl</module>
         <module>trap-spring-boot-json</module>
+        <module>trap-spring-boot</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <!--    grpc starter 模块之间有依赖，使用这里来确保两个分支的模块可以互相依赖       -->
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-boot</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
                 <artifactId>trap-spring-boot-data-jdbc</artifactId>

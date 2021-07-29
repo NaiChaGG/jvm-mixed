@@ -37,6 +37,11 @@
 
         <dependency>
             <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.jojoti.trap-spring</groupId>
             <artifactId>trap-spring-boot-data-jdbc</artifactId>
         </dependency>
 

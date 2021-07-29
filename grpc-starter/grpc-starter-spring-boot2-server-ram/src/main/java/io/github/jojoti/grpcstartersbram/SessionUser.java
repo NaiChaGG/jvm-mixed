@@ -59,6 +59,13 @@ public interface SessionUser {
     long getUid();
 
     /**
+     * 获取用户 id 未登陆会返回0
+     *
+     * @return
+     */
+    long getUidAsDefault();
+
+    /**
      * 判断匿名会话
      *
      * @return
