@@ -16,6 +16,7 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -186,6 +187,9 @@ public interface SessionUser {
      * @throws SessionNotCreatedException
      */
     default SessionUser setAttach(String key, String val) {
+        if (Strings.isNullOrEmpty(val)) {
+            return this;
+        }
         return setAttach(ImmutableMap.of(key, val));
     }
 
@@ -208,6 +212,7 @@ public interface SessionUser {
      * @throws SessionNotCreatedException
      */
     default <T> SessionUser setAttachJson(String key, T t) {
+        Preconditions.checkNotNull(t);
         return setAttachJson(ImmutableMap.of(key, t));
     }
 
