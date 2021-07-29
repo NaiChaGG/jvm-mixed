@@ -41,13 +41,18 @@ class SessionRedis implements Session {
     }
 
     @Override
-    public SessionUser verify(long uid, int scopeId, ImmutableList<String> attachInline) {
+    public SessionUser verify(long uid, long scopeId, ImmutableList<String> attachInline) {
         return new AbstractSessionUser(tokenDAO, objectMapper, uid, scopeId, attachInline);
     }
 
     @Override
-    public void logout(long uid, int scopeId) {
+    public void logoutSync(long uid, long scopeId) {
         this.tokenDAO.logoutSync(uid, scopeId);
+    }
+
+    @Override
+    public void logoutAsync(long uid, long scopeId) {
+        this.tokenDAO.logoutAsync(uid, scopeId);
     }
 
 }

@@ -57,9 +57,9 @@ public interface Session {
         return verify(tokenVal, ImmutableList.of());
     }
 
-    SessionUser verify(long uid, int scopeId, ImmutableList<String> attachInline);
+    SessionUser verify(long uid, long scopeId, ImmutableList<String> attachInline);
 
-    default SessionUser verify(long uid, int scopeId) {
+    default SessionUser verify(long uid, long scopeId) {
         return verify(uid, scopeId, ImmutableList.of());
     }
 
@@ -69,7 +69,9 @@ public interface Session {
      * @param uid
      * @param scopeId
      */
-    void logout(long uid, int scopeId);
+    void logoutSync(long uid, long scopeId);
+
+    void logoutAsync(long uid, long scopeId);
 
     final class ParseToken {
 

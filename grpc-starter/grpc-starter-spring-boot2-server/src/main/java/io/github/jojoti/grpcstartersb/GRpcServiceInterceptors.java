@@ -22,6 +22,8 @@ import java.lang.annotation.*;
 
 /**
  * 带作用域的 grpc starter
+ * <p>
+ * 可以标记某个 类的 特殊的注解 特定注解
  *
  * @author JoJo Wang
  * @link github.com/jojoti

@@ -127,22 +127,20 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 newServerBuilder.addService(health.getHealthService());
             }
 
+            final var scopeInlineInterceptors = Lists.<ServerInterceptor>newArrayList();
+
             // 遍历添加每个 service
             for (BindableService bindableService : entry.getValue()) {
-                final var foundGRpcServiceInterceptors = bindableService.getClass().getAnnotation(GRpcServiceInterceptors.class);
-
+                final var foundGRpcServiceInterceptors = AnnotationUtils.findAnnotation(bindableService.getClass(), GRpcServiceInterceptors.class);
                 // 拦截器先添加，后执行的
-
                 // 添加每个 service 特有的拦截器
                 if (foundGRpcServiceInterceptors != null && foundGRpcServiceInterceptors.interceptors().length > 0) {
-                    final var foundInterceptors = Lists.<ServerInterceptor>newArrayList();
                     for (var interceptor : foundGRpcServiceInterceptors.interceptors()) {
                         final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
                         // 拦截器定义的 bean 没有找到
                         Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found");
-                        foundInterceptors.add(scopeInterceptorUtils.addCheck(entry.getKey(), findDefinedInterceptorBean));
+                        scopeInlineInterceptors.add(scopeInterceptorUtils.addCheck(entry.getKey(), findDefinedInterceptorBean));
                     }
-                    ServerInterceptors.intercept(bindableService, foundInterceptors);
                 }
 
                 if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyScopeGlobalInterceptors()) {
@@ -175,7 +173,13 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                         }
                     }
                 }
-                newServerBuilder.addService(bindableService);
+
+                // 允许用户添加属于自己的 拦截器 在全局拦截器之后执行
+                if (scopeInlineInterceptors.size() > 0) {
+                    newServerBuilder.addService(ServerInterceptors.intercept(bindableService, scopeInlineInterceptors));
+                } else {
+                    newServerBuilder.addService(bindableService);
+                }
                 if (health != null) {
                     health.setStatus(bindableService.bindService().getServiceDescriptor().getName(), HealthCheckResponse.ServingStatus.SERVING);
                 }

@@ -36,7 +36,7 @@ final class AbstractSessionUser implements SessionUser {
         this.validToken(token, attachInline);
     }
 
-    protected AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, long uid, int scopeId, ImmutableList<String> attachInline) {
+    protected AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, long uid, long scopeId, ImmutableList<String> attachInline) {
         this.tokenDAO = tokenDAO;
         this.objectMapper = objectMapper;
         final var session = tokenDAO.getSession(uid, scopeId, attachInline);

@@ -51,12 +51,12 @@ class TokenDAO {
     }
 
     @Async
-    public void expireTokenAsync(long uid, int scopeId, Duration ttl) {
+    public void expireTokenAsync(long uid, long scopeId, Duration ttl) {
         // 异步延长 token 过期时间
         this.stringRedisTemplate.expire(TokenDAO.makeKey(uid, scopeId), ttl.getSeconds(), TimeUnit.SECONDS);
     }
 
-    public Map<String, String> getSession(long uid, int scopeId, ImmutableList<String> hashKeys) {
+    public Map<String, String> getSession(long uid, long scopeId, ImmutableList<String> hashKeys) {
         final var makeKey = TokenDAO.makeKey(uid, scopeId);
         final var hashValues = this.stringRedisTemplate.<String, String>opsForHash().multiGet(makeKey, hashKeys);
 
@@ -81,7 +81,7 @@ class TokenDAO {
     }
 
     @Async
-    public void logoutAsync(long uid, int scopeId) {
+    public void logoutAsync(long uid, long scopeId) {
         this.logoutSync(uid, scopeId);
     }
 
