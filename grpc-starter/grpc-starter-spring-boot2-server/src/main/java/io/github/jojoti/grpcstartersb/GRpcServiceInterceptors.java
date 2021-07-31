@@ -35,10 +35,4 @@ public @interface GRpcServiceInterceptors {
 
     Class<? extends ServerInterceptor>[] interceptors();
 
-    // 启用或者关闭全局拦截器
-    boolean applyGlobalInterceptors() default true;
-
-    // 启用或者关闭 scope 全局拦截器
-    boolean applyScopeGlobalInterceptors() default true;
-
 }

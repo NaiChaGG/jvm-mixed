@@ -21,6 +21,8 @@ import com.google.common.collect.ImmutableMap;
 import io.github.jojoti.grpcstartersb.GRpcScope;
 import io.github.jojoti.grpcstartersb.ScopeServerInterceptor;
 import io.grpc.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 
 import java.util.List;
@@ -34,6 +36,8 @@ import java.util.List;
  * @link github.com/jojoti
  */
 class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(RAMInterceptor.class);
 
     private final RAMAccessInterceptor ramAccessInterceptor;
     private final GRpcRAMProperties gRpcRAMProperties;
@@ -52,6 +56,9 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
                                                                  Metadata headers,
                                                                  ServerCallHandler<ReqT, RespT> next) {
         final var foundRam = rams.get(call.getMethodDescriptor());
+        if (log.isDebugEnabled()) {
+            log.debug("ram , fullmethodname {}", call.getMethodDescriptor().getFullMethodName());
+        }
         if (foundRam != null) {
             try {
                 // 允许匿名直接跳过校验

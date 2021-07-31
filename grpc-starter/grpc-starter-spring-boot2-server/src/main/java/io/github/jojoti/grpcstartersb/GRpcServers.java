@@ -127,10 +127,38 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 newServerBuilder.addService(health.getHealthService());
             }
 
-            final var scopeInlineInterceptors = Lists.<ServerInterceptor>newArrayList();
+            // 添加局部拦截器
+            final var foundScopeInterceptors = scopeInterceptors.get(entry.getKey());
+            if (foundScopeInterceptors != null && foundScopeInterceptors.size() > 0) {
+                for (ServerInterceptor foundScopeInterceptor : foundScopeInterceptors) {
+                    // grpc 拦截器是先添加的后执行
+                    newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), foundScopeInterceptor));
+                }
+            }
+
+            // 添加全局拦截器
+            for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
+                if (allGlobalInterceptor instanceof ScopeServerInterceptor) {
+                    // 比较两个注解的 scope 是否是同一个里面
+                    // 只有超全局拦截器才会用到 动态 tag
+                    Preconditions.checkNotNull(((ScopeServerInterceptor) allGlobalInterceptor).getScopes());
+                    for (String scope : ((ScopeServerInterceptor) allGlobalInterceptor).getScopes()) {
+                        if (entry.getKey().value().equals(scope)) {
+                            newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor));
+                            break;
+                        }
+                    }
+                } else {
+                    // 先添加全局拦截器
+                    // grpc 拦截器是先添加的后执行
+                    newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor));
+                }
+            }
 
             // 遍历添加每个 service
             for (BindableService bindableService : entry.getValue()) {
+                final var scopeInlineInterceptors = Lists.<ServerInterceptor>newArrayList();
+                // 局部拦截器，是添加在每一个 service 上的
                 final var foundGRpcServiceInterceptors = AnnotationUtils.findAnnotation(bindableService.getClass(), GRpcServiceInterceptors.class);
                 // 拦截器先添加，后执行的
                 // 添加每个 service 特有的拦截器
@@ -139,38 +167,7 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                         final var findDefinedInterceptorBean = applicationContext.getBean(interceptor);
                         // 拦截器定义的 bean 没有找到
                         Preconditions.checkNotNull(findDefinedInterceptorBean, "Class " + interceptor + " ioc bean not found");
-                        scopeInlineInterceptors.add(scopeInterceptorUtils.addCheck(entry.getKey(), findDefinedInterceptorBean));
-                    }
-                }
-
-                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyScopeGlobalInterceptors()) {
-                    // 添加局部拦截器
-                    final var foundScopeInterceptors = scopeInterceptors.get(entry.getKey());
-                    if (foundScopeInterceptors != null && foundScopeInterceptors.size() > 0) {
-                        for (ServerInterceptor foundScopeInterceptor : foundScopeInterceptors) {
-                            // grpc 拦截器是先添加的后执行
-                            newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), foundScopeInterceptor));
-                        }
-                    }
-                }
-
-                if (foundGRpcServiceInterceptors == null || foundGRpcServiceInterceptors.applyGlobalInterceptors()) {
-                    for (ServerInterceptor allGlobalInterceptor : allGlobalInterceptors) {
-                        if (allGlobalInterceptor instanceof ScopeServerInterceptor) {
-                            // 比较两个注解的 scope 是否是同一个里面
-                            // 只有超全局拦截器才会用到 动态 tag
-                            Preconditions.checkNotNull(((ScopeServerInterceptor) allGlobalInterceptor).getScopes());
-                            for (String scope : ((ScopeServerInterceptor) allGlobalInterceptor).getScopes()) {
-                                if (entry.getKey().value().equals(scope)) {
-                                    newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor));
-                                    break;
-                                }
-                            }
-                        } else {
-                            // 先添加全局拦截器
-                            // grpc 拦截器是先添加的后执行
-                            newServerBuilder.intercept(scopeInterceptorUtils.addCheck(entry.getKey(), allGlobalInterceptor));
-                        }
+                        scopeInlineInterceptors.add(findDefinedInterceptorBean);
                     }
                 }
 
@@ -180,9 +177,11 @@ public class GRpcServers implements SmartLifecycle, ApplicationContextAware {
                 } else {
                     newServerBuilder.addService(bindableService);
                 }
+
                 if (health != null) {
                     health.setStatus(bindableService.bindService().getServiceDescriptor().getName(), HealthCheckResponse.ServingStatus.SERVING);
                 }
+
                 // 保存所有的 apis
                 services.put(entry.getKey(), bindableService);
             }
