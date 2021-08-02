@@ -74,7 +74,7 @@ final class AbstractSessionUser implements SessionUser {
         if (hashValues.size() < 2) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
-            log.error("redis data error 1, check read & write");
+            log.error("redis data error 1, uid {}, scopeId {} check read & write", uid, scopeId);
             return;
         }
 
@@ -83,7 +83,7 @@ final class AbstractSessionUser implements SessionUser {
         if (Strings.isNullOrEmpty(foundSlat) || !foundSlat.equals(tokenParse.salt)) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
-            log.error("redis data error 2, check read & write");
+            log.error("redis data error 2, uid {}, scopeId {} check read & write", uid, scopeId);
             return;
         }
 
@@ -91,7 +91,7 @@ final class AbstractSessionUser implements SessionUser {
         if (Strings.isNullOrEmpty(foundTtl)) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
-            log.error("redis data error 3, check read & write");
+            log.error("redis data error 3, uid {}, scopeId {} check read & write", uid, scopeId);
             return;
         }
         Duration ttl;
@@ -100,7 +100,7 @@ final class AbstractSessionUser implements SessionUser {
         } catch (Exception e) {
             this.newAnonymous();
             this.tokenDAO.logoutAsync(uid, scopeId);
-            log.error("redis data error 4, check read & write", e);
+            log.error("redis data error 4, uid {}, scopeId {} check read & write", uid, scopeId, e);
             return;
         }
 
