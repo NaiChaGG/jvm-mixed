@@ -26,4 +26,12 @@ public class AutoMybatisPlusConfiguration {
     public PaginationInterceptor paginationInterceptor() {
         return new PaginationInterceptor();
     }
+
+    /**
+     * 字段填充
+     */
+    @Bean
+    public MetaObjectHandlerConfig mybatisObjectHandler(){
+        return new MetaObjectHandlerConfig();
+    }
 }

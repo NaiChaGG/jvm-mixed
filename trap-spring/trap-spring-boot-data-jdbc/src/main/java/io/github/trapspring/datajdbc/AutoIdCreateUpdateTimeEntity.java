@@ -16,6 +16,8 @@
 
 package io.github.trapspring.datajdbc;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.lang.NonNull;
@@ -34,6 +36,7 @@ public abstract class AutoIdCreateUpdateTimeEntity extends TrapBaseCreateUpdateT
     @Id
     @javax.persistence.Id
     @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(value = "id", type = IdType.AUTO)
     private long id;
 
     @Override
