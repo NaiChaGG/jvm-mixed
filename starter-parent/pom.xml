@@ -126,6 +126,12 @@
 
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
+                <artifactId>trap-spring-boot-data-redis-config</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.jojoti.trap-spring</groupId>
                 <artifactId>trap-spring-boot-jpa-auto-ddl</artifactId>
                 <version>${revision}</version>
             </dependency>
