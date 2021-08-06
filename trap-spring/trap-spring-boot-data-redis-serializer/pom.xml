@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>trap-spring-boot-data-redis-config</artifactId>
+    <artifactId>trap-spring-boot-data-redis-serializer</artifactId>
     <packaging>jar</packaging>
 
     <properties>

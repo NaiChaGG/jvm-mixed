@@ -43,7 +43,7 @@
         <module>trap-spring-boot-jpa-auto-ddl</module>
         <module>trap-spring-boot-json</module>
         <module>trap-spring-boot</module>
-        <module>trap-spring-boot-data-redis-config</module>
+        <module>trap-spring-boot-data-redis-serializer</module>
     </modules>
 
     <dependencyManagement>
