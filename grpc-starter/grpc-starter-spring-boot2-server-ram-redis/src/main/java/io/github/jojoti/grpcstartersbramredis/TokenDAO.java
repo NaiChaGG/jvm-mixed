@@ -54,7 +54,7 @@ class TokenDAO {
      * @return
      */
     private static String makeKey(long uid, long sid) {
-        return "session:users/-/scopes/-/:" + uid + ":" + sid;
+        return "jmsession:users/-/scopes/-/:" + uid + ":" + sid;
     }
 
     @Async
