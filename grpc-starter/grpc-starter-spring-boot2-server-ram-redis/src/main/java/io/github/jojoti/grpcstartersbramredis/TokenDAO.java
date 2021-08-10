@@ -46,8 +46,15 @@ class TokenDAO {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
+    /**
+     * 按照资源写一个 redis key
+     *
+     * @param uid
+     * @param sid
+     * @return
+     */
     private static String makeKey(long uid, long sid) {
-        return "dt:" + uid + ":" + sid;
+        return "session:users/-/scopes/-/:" + uid + ":" + sid;
     }
 
     @Async

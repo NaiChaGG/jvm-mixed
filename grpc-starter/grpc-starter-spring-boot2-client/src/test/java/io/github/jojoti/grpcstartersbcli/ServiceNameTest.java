@@ -3,7 +3,8 @@ package io.github.jojoti.grpcstartersbcli;
 import io.grpc.netty.NettyChannelBuilder;
 
 /**
- * @author Wan Steve
+ * @author JoJo Wang
+ * @link github.com/jojoti
  */
 class ServiceNameTest {
 

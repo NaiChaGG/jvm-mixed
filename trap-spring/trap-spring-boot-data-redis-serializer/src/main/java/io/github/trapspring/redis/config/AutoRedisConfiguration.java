@@ -21,6 +21,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class AutoRedisConfiguration {
+
     @Bean
     public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
         RedisTemplate<String,Object> template = new RedisTemplate<>();
@@ -50,4 +51,5 @@ public class AutoRedisConfiguration {
 
         return template;
     }
+
 }
