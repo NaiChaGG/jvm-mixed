@@ -63,6 +63,11 @@ public interface Session {
         return verify(uid, scopeId, ImmutableList.of());
     }
 
+    default SessionUser verify(long uid) {
+        return verify(uid, 0L);
+    }
+
+
     /**
      * 根据传入的参数退出
      *
@@ -71,7 +76,15 @@ public interface Session {
      */
     void logoutSync(long uid, long scopeId);
 
+    default void logoutSync(long uid) {
+        logoutSync(uid, 0L);
+    }
+
     void logoutAsync(long uid, long scopeId);
+
+    default void logoutAsync(long uid) {
+        logoutAsync(uid, 0L);
+    }
 
     final class ParseToken {
 

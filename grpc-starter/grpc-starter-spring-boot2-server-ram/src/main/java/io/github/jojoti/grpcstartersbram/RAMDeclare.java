@@ -41,8 +41,14 @@ public @interface RAMDeclare {
     String name() default "";
 
     /**
+     * 权限详细描述
+     */
+    String desc() default "";
+
+    /**
      * 是否禁用
      */
     boolean disable() default false;
+
 
 }
