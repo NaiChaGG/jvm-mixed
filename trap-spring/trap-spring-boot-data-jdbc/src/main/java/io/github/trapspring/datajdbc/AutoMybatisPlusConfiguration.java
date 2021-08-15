@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 配置分页插件
- *
  */
 @Configuration
 public class AutoMybatisPlusConfiguration {
@@ -31,7 +30,7 @@ public class AutoMybatisPlusConfiguration {
      * 字段填充
      */
     @Bean
-    public MetaObjectHandlerConfig mybatisObjectHandler(){
+    public MetaObjectHandlerConfig mybatisObjectHandler() {
         return new MetaObjectHandlerConfig();
     }
 }

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/jvm-mixed.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
         Jvm starters
     </description>
 
-    <url>https://github.com/jojoti/experiment-jvm</url>
+    <url>https://github.com/jojoti/jvm-mixed</url>
 
     <licenses>
         <license>
@@ -45,12 +45,12 @@
     <scm>
         <connection>scm:git@github.com:jojoti/experiment-jvm.git</connection>
         <developerConnection>scm:git@github.com:jojoti/experiment-jvm.git</developerConnection>
-        <url>https://github.com/jojoti/experiment-jvm</url>
+        <url>https://github.com/jojoti/jvm-mixed</url>
     </scm>
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/jojoti/experiment-jvm/issues</url>
+        <url>https://github.com/jojoti/jvm-mixed/issues</url>
     </issueManagement>
 
     <developers>

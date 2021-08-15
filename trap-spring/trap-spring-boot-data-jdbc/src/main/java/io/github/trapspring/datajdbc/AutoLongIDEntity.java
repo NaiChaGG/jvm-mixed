@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+ * Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/jvm-mixed.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package io.github.trapspring.datajdbc;
 
-import org.springframework.data.relational.core.mapping.Table;
-
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -25,7 +23,6 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
-@Table
 @Deprecated(since = "create update delete time")
 public abstract class AutoLongIDEntity extends AutoIdCreateUpdateTimeEntity {
 

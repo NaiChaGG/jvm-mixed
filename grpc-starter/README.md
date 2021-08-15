@@ -22,7 +22,7 @@
 
 + 基于多端口构建 grpc server，终端流量与 service 之间的流量彻底分开，走不同的 `interceptor` 校验权限
 + etcd/consul/zk/eureka/nacos 等注册发现的支持,
-  需要更多注册发现支持，请提 [`issue`](https://github.com/jojoti/experiment-jvm/issues/new)或 `pr`
+  需要更多注册发现支持，请提 [`issue`](https://github.com/jojoti/jvm-mixed/issues/new)或 `pr`
 
 ## 基础代码模块
 

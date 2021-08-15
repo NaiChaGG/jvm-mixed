@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/jvm-mixed.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.jojoti.trap-spring</groupId>
-        <artifactId>trap-spring-parent</artifactId>
+        <groupId>io.github.jojoti</groupId>
+        <artifactId>starter-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>trap-spring-boot-json</artifactId>
+    <artifactId>starter-jackson</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -34,22 +34,22 @@
     </properties>
 
     <dependencies>
-
         <dependency>
-            <groupId>io.github.jojoti.trap-spring</groupId>
-            <artifactId>trap-spring-boot</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-json</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-parameter-names</artifactId>
+        </dependency>
     </dependencies>
+
 </project>

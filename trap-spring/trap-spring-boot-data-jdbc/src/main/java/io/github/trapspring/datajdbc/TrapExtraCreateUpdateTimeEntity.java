@@ -1,7 +1,5 @@
 package io.github.trapspring.datajdbc;
 
-import org.springframework.data.relational.core.mapping.Table;
-
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -12,7 +10,6 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
-@Table
 public abstract class TrapExtraCreateUpdateTimeEntity extends AutoIdCreateUpdateTimeEntity {
 
     // 用户扩展信息

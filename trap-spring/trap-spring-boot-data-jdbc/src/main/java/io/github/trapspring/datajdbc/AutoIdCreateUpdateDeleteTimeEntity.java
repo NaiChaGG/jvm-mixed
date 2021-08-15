@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+ * Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/jvm-mixed.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package io.github.trapspring.datajdbc;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.GenerationType;
@@ -30,7 +29,6 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
-@Table
 public abstract class AutoIdCreateUpdateDeleteTimeEntity extends TrapBaseCreateUpdateDeleteTimeEntity {
 
     @Id

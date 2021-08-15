@@ -1,4 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.github.trapspring.datajdbc.AutoTimeConfiguration,\
-io.github.trapspring.datajdbc.DisableFeaturesJdbcRepositoryConfigExtension,\
 io.github.trapspring.datajdbc.AutoMybatisPlusConfiguration

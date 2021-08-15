@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+  ~ Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/jvm-mixed.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@
         <module>trap-spring-boot-data-jdbc-mysql</module>
         <module>trap-spring-boot-data-redis-lettuce</module>
         <module>trap-spring-boot-jpa-auto-ddl</module>
-        <module>trap-spring-boot-json</module>
         <module>trap-spring-boot</module>
         <module>trap-spring-boot-data-redis-serializer</module>
     </modules>
@@ -57,11 +56,6 @@
             <dependency>
                 <groupId>io.github.jojoti.trap-spring</groupId>
                 <artifactId>trap-spring-boot-data-jdbc</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.jojoti.trap-spring</groupId>
-                <artifactId>trap-spring-boot-json</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

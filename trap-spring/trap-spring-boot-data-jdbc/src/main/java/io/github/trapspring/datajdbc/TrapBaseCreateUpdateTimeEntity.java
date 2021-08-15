@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/experiment-jvm.
+ * Copyright 2021 JoJo Wang , homepage: https://github.com/jojoti/jvm-mixed.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package io.github.trapspring.datajdbc;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
 import javax.persistence.MappedSuperclass;
 
@@ -30,7 +29,6 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 // @Table 必须注解， 否则 Spring Data JDBC - Could not safely identify store assignment for repository candidate interface io.github.jojoti.grpcstartersbexamples.AccountGuestRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
 // 会导致无法加载 bean
-@Table
 public abstract class TrapBaseCreateUpdateTimeEntity extends TrapBaseCreateTimeEntity {
 
     @Column

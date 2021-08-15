@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
 /**
  * @ClassNAME MetaObjectHandlerConfig
  * @Description TODO
@@ -19,11 +16,11 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        setFieldValByName("createAt", new Date().getTime(), metaObject);
+        setFieldValByName("createAt", System.currentTimeMillis(), metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.setFieldValByName("updateAt", new Date().getTime(), metaObject);
+        this.setFieldValByName("updateAt", System.currentTimeMillis(), metaObject);
     }
 }
