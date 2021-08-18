@@ -60,13 +60,9 @@ public final class Wheres implements IWheres {
 
     public static Wheres where(String filed, Arithmetic expression, Object value, Object[] values) {
         if (values.length > 0) {
-            StringBuffer placeholder = new StringBuffer();
-            for (int i = 0; i < values.length; i++) {
-                placeholder.append("?, ");
-            }
-            placeholder.append("?");
+            String placeholder = "?, ".repeat(values.length) + "?";
             // for = (?)
-            return query(filed, expression, placeholder.toString(), Lists.newArrayList(value, values).toArray());
+            return query(filed, expression, placeholder, Lists.newArrayList(value, values).toArray());
         }
         return where(filed, expression, value);
     }

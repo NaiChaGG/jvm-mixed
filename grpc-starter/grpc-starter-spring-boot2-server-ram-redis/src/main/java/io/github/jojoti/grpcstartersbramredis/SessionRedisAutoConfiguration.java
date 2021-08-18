@@ -16,7 +16,6 @@
 
 package io.github.jojoti.grpcstartersbramredis;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

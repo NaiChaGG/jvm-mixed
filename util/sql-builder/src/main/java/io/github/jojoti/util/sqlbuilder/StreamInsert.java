@@ -28,8 +28,8 @@ import java.util.List;
  * @author JoJo Wang
  */
 public final class StreamInsert implements IQueryInsert {
-    protected final List<String> valuesExp = Lists.newArrayList();
-    protected final List<Object> values = Lists.newArrayList();
+    private final List<String> valuesExp = Lists.newArrayList();
+    private final List<Object> values = Lists.newArrayList();
     private final StringBuffer sql = new StringBuffer();
 
     // 限制new对象

@@ -30,16 +30,27 @@ final class AbstractSessionUser implements SessionUser {
     // 更新时使用 影子实例来更新属性，避开多线程锁的问题
     private volatile InlineEntity entity;
 
-    protected AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, Session.ParseToken token, ImmutableList<String> attachInline) {
+    // 后续需要再优化
+    private static final ImmutableList<String> sessionKeys = ImmutableList.<String>builder()
+            .add(ATTACH_SLAT_KEY)
+            .add(ATTACH_TTL_KEY)
+            .build();
+
+    AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, Session.ParseToken token, ImmutableList<String> attachInline) {
         this.tokenDAO = tokenDAO;
         this.objectMapper = objectMapper;
         this.validToken(token, attachInline);
     }
 
-    protected AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, long uid, long scopeId, ImmutableList<String> attachInline) {
+    AbstractSessionUser(TokenDAO tokenDAO, ObjectMapper objectMapper, long uid, long scopeId, ImmutableList<String> attachInline) {
         this.tokenDAO = tokenDAO;
         this.objectMapper = objectMapper;
-        final var session = tokenDAO.getSession(uid, scopeId, attachInline);
+
+        final var hashKeys = ImmutableList.<String>builder()
+                .addAll(sessionKeys)
+                .addAll(attachInline);
+
+        final var session = tokenDAO.getSession(uid, scopeId, hashKeys.build());
         if (session.size() == 0) {
             this.newAnonymous();
         } else {
@@ -63,8 +74,7 @@ final class AbstractSessionUser implements SessionUser {
         // fixme 可以针对 scopeId 对 ATTACH_TTL_KEY 做缓存，减少 redis 查询出来的数据
         // 后续需要再优化
         final var hashKeys = ImmutableList.<String>builder()
-                .add(ATTACH_SLAT_KEY)
-                .add(ATTACH_TTL_KEY)
+                .addAll(sessionKeys)
                 .addAll(attachInline);
 
         // 只获取这次需要一次查询的，否则使用延迟查询

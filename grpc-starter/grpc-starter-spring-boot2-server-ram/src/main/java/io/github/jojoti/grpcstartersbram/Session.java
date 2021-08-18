@@ -32,18 +32,11 @@ public interface Session {
 
     /**
      * 验证用户会话 直接返回登录 uid >  0 表示已经登录
-     *
-     * @param tokenVal
-     * @return
      */
     SessionUser verify(ParseToken tokenVal, ImmutableList<String> attachInline);
 
     /**
      * 对于 运行时的 key 不会做校验
-     *
-     * @param tokenVal
-     * @param attachInline
-     * @return
      */
     default SessionUser verify(String tokenVal, ImmutableList<String> attachInline) {
         return verify(Session.ParseToken.newParseToken(tokenVal), attachInline);
@@ -57,22 +50,27 @@ public interface Session {
         return verify(tokenVal, ImmutableList.of());
     }
 
+    /**
+     * 全局 key 这里不支持 需要自行 设置 因为 动态 scope 无法知道
+     */
     SessionUser verify(long uid, long scopeId, ImmutableList<String> attachInline);
 
+    /**
+     * 全局 key 这里不支持 需要自行 设置 因为 动态 scope 无法知道
+     */
     default SessionUser verify(long uid, long scopeId) {
         return verify(uid, scopeId, ImmutableList.of());
     }
 
+    /**
+     * 全局 key 这里不支持 需要自行 设置 因为 动态 scope 无法知道
+     */
     default SessionUser verify(long uid) {
         return verify(uid, 0L);
     }
 
-
     /**
      * 根据传入的参数退出
-     *
-     * @param uid
-     * @param scopeId
      */
     void logoutSync(long uid, long scopeId);
 
