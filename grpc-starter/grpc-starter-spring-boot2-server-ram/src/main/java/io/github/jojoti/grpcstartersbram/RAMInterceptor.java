@@ -66,7 +66,7 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
                     return next.startCall(call, headers);
                 }
                 // 可以从 metadata 获取 ip 啥的
-                var rs = this.ramAccessInterceptor.check(foundRam, call, headers, next);
+                var rs = this.ramAccessInterceptor.checkNext(foundRam, call, headers, next);
                 if (rs != null) {
                     return rs;
                 }

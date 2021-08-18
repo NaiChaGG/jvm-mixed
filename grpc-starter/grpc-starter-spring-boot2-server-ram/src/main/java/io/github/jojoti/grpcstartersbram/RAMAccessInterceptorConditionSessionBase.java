@@ -17,13 +17,9 @@ public abstract class RAMAccessInterceptorConditionSessionBase implements RAMAcc
     public RAMAccessInterceptor newRAMAccessInterceptor() {
         return new RAMAccessInterceptor() {
             @Override
-            public <ReqT, RespT> ServerCall.Listener<ReqT> check(RegisterRAMItem ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-                // 允许匿名访问
-                if (ram.isAllowAnonymous()) {
-                    return next.startCall(call, headers);
-                }
+            public <ReqT, RespT> ServerCall.Listener<ReqT> checkNext(RegisterRAMItem ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
                 // 判断用户是否登陆
-                if (!SessionInterceptor.USER_NTS.get().isAnonymous()) {
+                if (!checkSessionPass(ram)) {
                     // 权限不足
                     final var error = Status.fromCode(Status.UNAUTHENTICATED.getCode()).withDescription("Auth failed, please check session");
                     call.close(error, new Metadata());
@@ -33,6 +29,10 @@ public abstract class RAMAccessInterceptorConditionSessionBase implements RAMAcc
                 return next.startCall(call, headers);
             }
         };
+    }
+
+    protected boolean checkSessionPass(RAMAccessInterceptor.RegisterRAMItem ram) {
+        return ram.isAllowAnonymous() || SessionInterceptor.USER_NTS.get().isLogin();
     }
 
 }

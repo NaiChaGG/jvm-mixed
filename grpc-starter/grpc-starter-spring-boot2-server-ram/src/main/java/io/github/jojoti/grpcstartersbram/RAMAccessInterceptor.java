@@ -24,10 +24,10 @@ public interface RAMAccessInterceptor {
     /**
      * @return null 表示走默认失败流程 not null 表示成功
      */
-    <ReqT, RespT> ServerCall.Listener<ReqT> check(RegisterRAMItem ram,
-                                                  ServerCall<ReqT, RespT> call,
-                                                  Metadata headers,
-                                                  ServerCallHandler<ReqT, RespT> next);
+    <ReqT, RespT> ServerCall.Listener<ReqT> checkNext(RegisterRAMItem ram,
+                                                      ServerCall<ReqT, RespT> call,
+                                                      Metadata headers,
+                                                      ServerCallHandler<ReqT, RespT> next);
 
     final class RegisterRAM {
 
