@@ -16,6 +16,8 @@
 
 package io.github.jojoti.grpcstartersbram;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.jojoti.grpcstartersb.GRpcScope;
@@ -39,25 +41,24 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(RAMInterceptor.class);
 
-    private final RAMAccessInterceptor ramAccessInterceptor;
+    private List<RAMAccessInterceptorCondition> ramAccessInterceptorCondition;
     private final GRpcRAMProperties gRpcRAMProperties;
 
     private ImmutableMap<MethodDescriptor<?, ?>, RAMAccessInterceptor.RegisterRAMItem> rams;
-    private GRpcScope currentGRpcScope;
     private ImmutableList<RAMAccessInterceptor.RegisterRAM> allServices;
+    private RAMAccessInterceptor ramAccessInterceptor;
 
-    RAMInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
-        this.ramAccessInterceptor = ramAccessInterceptor;
+    RAMInterceptor(List<RAMAccessInterceptorCondition> ramAccessInterceptorCondition, GRpcRAMProperties gRpcRAMProperties) {
+        this.ramAccessInterceptorCondition = ramAccessInterceptorCondition;
         this.gRpcRAMProperties = gRpcRAMProperties;
     }
 
     @Override
-    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call,
-                                                                 Metadata headers,
+    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers,
                                                                  ServerCallHandler<ReqT, RespT> next) {
         final var foundRam = rams.get(call.getMethodDescriptor());
         if (log.isDebugEnabled()) {
-            log.debug("ram , fullmethodname {}", call.getMethodDescriptor().getFullMethodName());
+            log.debug("ram , fullMethodName {}", call.getMethodDescriptor().getFullMethodName());
         }
         if (foundRam != null) {
             try {
@@ -65,17 +66,8 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
                 if (foundRam.isAllowAnonymous()) {
                     return next.startCall(call, headers);
                 }
-                // 判断用户是否登陆
-                var isLogin = this.ramAccessInterceptor.checkSession(this.currentGRpcScope, foundRam, call, headers, next);
-                if (!isLogin) {
-                    // 权限不足
-                    final var error = Status.fromCode(Status.UNAUTHENTICATED.getCode()).withDescription("Auth failed, please check session");
-                    call.close(error, new Metadata());
-                    return new ServerCall.Listener<>() {
-                    };
-                }
                 // 可以从 metadata 获取 ip 啥的
-                var rs = this.ramAccessInterceptor.checkAccess(this.currentGRpcScope, foundRam, call, headers, next);
+                var rs = this.ramAccessInterceptor.check(foundRam, call, headers, next);
                 if (rs != null) {
                     return rs;
                 }
@@ -87,7 +79,10 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
             }
         }
 
-        return RAMAccessInterceptor.newDefaultPermissionDenied(call);
+        final var error = Status.fromCode(Status.PERMISSION_DENIED.getCode()).withDescription("Auth failed, please check access");
+        call.close(error, new Metadata());
+        return new ServerCall.Listener<>() {
+        };
     }
 
     @Override
@@ -97,7 +92,18 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
 
     @Override
     public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
-        this.currentGRpcScope = currentGRpcScope;
+        for (RAMAccessInterceptorCondition accessInterceptorCondition : this.ramAccessInterceptorCondition) {
+            if (accessInterceptorCondition.matches(currentGRpcScope)) {
+                this.ramAccessInterceptor = accessInterceptorCondition.newRAMAccessInterceptor();
+                break;
+            }
+        }
+
+        // 必须要找到 对应的
+        Preconditions.checkNotNull(this.ramAccessInterceptor, Strings.lenientFormat("Scope name %s ram access interceptor not found", currentGRpcScope));
+
+        // 释放引用
+        this.ramAccessInterceptorCondition = null;
 
         // 启用 ram 必须use @Ram 注解
         final var services = ServiceDescriptorAnnotations.getAnnotationMapsV2(servicesEvent, RAM.class, true);
@@ -137,7 +143,7 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // 服务启动后再执行初始化操作
-        this.ramAccessInterceptor.runAfterRegister(currentGRpcScope, allServices, args);
+        this.ramAccessInterceptor.runAfterRegister(allServices, args);
         this.allServices = null;
     }
 

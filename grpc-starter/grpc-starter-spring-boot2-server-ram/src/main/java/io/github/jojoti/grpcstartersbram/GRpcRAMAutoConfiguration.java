@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
+import io.github.jojoti.grpcstartersb.GRpcScope;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,18 +50,25 @@ import java.util.Map;
 @Conditional(GRpcRAMAutoConfiguration.EnableRam.class)
 public class GRpcRAMAutoConfiguration {
 
-    // 默认注入拒绝访问
     @Bean
-    @ConditionalOnMissingBean(RAMAccessInterceptor.class)
-    public RAMAccessInterceptor ramAccess() {
-        return new RAMAccessInterceptorDeny();
+    @ConditionalOnMissingBean(RAMAccessInterceptorConditionSessionBase.class)
+    public RAMAccessInterceptorConditionSessionBase ramAccessInterceptorSession() {
+        // 默认给所有作用域添加 ram 访问权限
+        return new RAMAccessInterceptorConditionSessionBase() {
+
+            @Override
+            public boolean matches(GRpcScope gRpcScope) {
+                return true;
+            }
+
+        };
     }
 
     @Bean
     @GRpcGlobalInterceptor
     @Order(44)
-    public RAMInterceptor ramInterceptor(RAMAccessInterceptor ramAccessInterceptor, GRpcRAMProperties gRpcRAMProperties) {
-        return new RAMInterceptor(ramAccessInterceptor, gRpcRAMProperties);
+    public RAMInterceptor ramInterceptor(List<RAMAccessInterceptorCondition> ramAccessInterceptorCondition, GRpcRAMProperties gRpcRAMProperties) {
+        return new RAMInterceptor(ramAccessInterceptorCondition, gRpcRAMProperties);
     }
 
     static final class EnableRam implements Condition {

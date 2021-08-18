@@ -17,19 +17,30 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcScope;
-import io.grpc.Metadata;
-import io.grpc.ServerCall;
-import io.grpc.ServerCallHandler;
 
 /**
+ * https://stackoverflow.com/questions/68164315/access-message-request-in-first-grpc-interceptor-before-headers-in-second-grpc-i
+ * <p>
+ * 此接口是对拦截器行为的扩展
+ *
  * @author JoJo Wang
  * @link github.com/jojoti
+ * @see io.grpc.ServerInterceptor
  */
-class RAMAccessInterceptorDeny implements RAMAccessInterceptor {
+public interface RAMAccessInterceptorCondition {
 
-    @Override
-    public <ReqT, RespT> ServerCall.Listener<ReqT> checkAccess(GRpcScope gRpcScope, RegisterRAMItem ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
-        return null;
+    /**
+     * 作用域匹配上了
+     */
+    boolean matches(GRpcScope gRpcScope);
+
+    default int ordered() {
+        return 0;
     }
+
+    /**
+     * 获取 scope 拦截器的 实例
+     */
+    RAMAccessInterceptor newRAMAccessInterceptor();
 
 }
