@@ -14,10 +14,12 @@ import java.lang.reflect.Method;
  * @see io.grpc.ServerInterceptor
  */
 public interface RAMAccessInterceptor {
-    
+
     // 启动注册 ram 列表权限
     // 这个可能会执行多次
-    default void runAfterRegister(ImmutableList<RegisterRAM> allServices, String... args) throws Exception {
+    // 该接口会在 bean 注入之后启动 如果 此时要去调用一些远程的数据库,
+    // 需要自行去 CommandLine 里面 延迟运行
+    default void onStartRegister(ImmutableList<RegisterRAM> allServices) {
 
     }
 

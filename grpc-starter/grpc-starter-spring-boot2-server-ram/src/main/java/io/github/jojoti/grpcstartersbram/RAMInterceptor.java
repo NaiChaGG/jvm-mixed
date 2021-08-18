@@ -151,7 +151,7 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // 服务启动后再执行初始化操作
-        this.ramAccessInterceptor.runAfterRegister(allServices, args);
+        this.ramAccessInterceptor.onStartRegister(allServices);
         this.allServices = null;
     }
 
