@@ -18,6 +18,10 @@ public abstract class RAMAccessInterceptorConditionSessionBase implements RAMAcc
         return new RAMAccessInterceptor() {
             @Override
             public <ReqT, RespT> ServerCall.Listener<ReqT> check(RegisterRAMItem ram, ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
+                // 允许匿名访问
+                if (ram.isAllowAnonymous()) {
+                    return next.startCall(call, headers);
+                }
                 // 判断用户是否登陆
                 if (!SessionInterceptor.USER_NTS.get().isAnonymous()) {
                     // 权限不足

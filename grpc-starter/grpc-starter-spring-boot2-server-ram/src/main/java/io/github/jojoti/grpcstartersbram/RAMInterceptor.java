@@ -16,7 +16,6 @@
 
 package io.github.jojoti.grpcstartersbram;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -92,15 +91,24 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
 
     @Override
     public void aware(GRpcScope currentGRpcScope, ImmutableList<BindableService> servicesEvent) {
+        final var found = (int) this.ramAccessInterceptorCondition.stream().filter(c -> c.matches(currentGRpcScope)).count();
+        switch (found) {
+            case 0:
+                throw new IllegalArgumentException(Strings.lenientFormat("Scope name %s ram access interceptor not found", currentGRpcScope));
+            case 1:
+                break;
+            default:
+                // > 1
+                throw new IllegalArgumentException("Ram Condition can only inject one bean");
+        }
+
+        // 必须要找到 对应的
         for (RAMAccessInterceptorCondition accessInterceptorCondition : this.ramAccessInterceptorCondition) {
             if (accessInterceptorCondition.matches(currentGRpcScope)) {
                 this.ramAccessInterceptor = accessInterceptorCondition.newRAMAccessInterceptor();
                 break;
             }
         }
-
-        // 必须要找到 对应的
-        Preconditions.checkNotNull(this.ramAccessInterceptor, Strings.lenientFormat("Scope name %s ram access interceptor not found", currentGRpcScope));
 
         // 释放引用
         this.ramAccessInterceptorCondition = null;
