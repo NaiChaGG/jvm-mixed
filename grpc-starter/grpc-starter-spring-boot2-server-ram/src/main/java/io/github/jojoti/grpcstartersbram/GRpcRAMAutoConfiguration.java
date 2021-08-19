@@ -17,7 +17,6 @@
 package io.github.jojoti.grpcstartersbram;
 
 import io.github.jojoti.grpcstartersb.GRpcGlobalInterceptor;
-import io.github.jojoti.grpcstartersb.GRpcScope;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -50,18 +49,14 @@ import java.util.Map;
 @Conditional(GRpcRAMAutoConfiguration.EnableRam.class)
 public class GRpcRAMAutoConfiguration {
 
+    /**
+     * 可以重新 默认的 session 校验
+     */
     @Bean
-    @ConditionalOnMissingBean(RAMAccessInterceptorConditionSessionBase.class)
-    public RAMAccessInterceptorConditionSessionBase ramAccessInterceptorSession() {
+    @ConditionalOnMissingBean(RAMAccessInterceptorConditionSession.class)
+    public RAMAccessInterceptorConditionSession ramAccessInterceptorSession() {
         // 默认给所有作用域添加 ram 访问权限
-        return new RAMAccessInterceptorConditionSessionBase() {
-
-            @Override
-            public boolean matches(GRpcScope gRpcScope) {
-                return true;
-            }
-
-        };
+        return new RAMAccessInterceptorConditionSession();
     }
 
     @Bean

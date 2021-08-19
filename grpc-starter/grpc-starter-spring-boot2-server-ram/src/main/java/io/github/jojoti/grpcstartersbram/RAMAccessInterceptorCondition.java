@@ -34,6 +34,9 @@ public interface RAMAccessInterceptorCondition {
      */
     boolean matches(GRpcScope gRpcScope);
 
+    /**
+     * 排序值小的在前面执行 按照 约定进行排序
+     */
     default int ordered() {
         return 0;
     }

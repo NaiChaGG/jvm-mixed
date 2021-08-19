@@ -18,8 +18,16 @@ public class DTOBool<T> {
         return new DTOBool<>(true, t);
     }
 
+    public static <T> DTOBool<T> ok() {
+        return ok(null);
+    }
+
     public static <T> DTOBool<T> failed(T t) {
         return new DTOBool<>(false, t);
+    }
+
+    public static <T> DTOBool<T> failed() {
+        return failed(null);
     }
 
     public boolean isSuccess() {

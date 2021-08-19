@@ -2,6 +2,7 @@ package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import io.github.jojoti.utilguavaext.DTOBool;
 import io.grpc.*;
 import org.springframework.core.annotation.AnnotationUtils;
 
@@ -24,12 +25,14 @@ public interface RAMAccessInterceptor {
     }
 
     /**
+     * 返回 false 则认为是 条件失败则直接调用 listner
+     *
      * @return null 表示走默认失败流程 not null 表示成功
      */
-    <ReqT, RespT> ServerCall.Listener<ReqT> checkNext(RegisterRAMItem ram,
-                                                      ServerCall<ReqT, RespT> call,
-                                                      Metadata headers,
-                                                      ServerCallHandler<ReqT, RespT> next);
+    <ReqT, RespT> DTOBool<ServerCall.Listener<ReqT>> checkNext(RegisterRAMItem ram,
+                                                               ServerCall<ReqT, RespT> call,
+                                                               Metadata headers,
+                                                               ServerCallHandler<ReqT, RespT> next);
 
     final class RegisterRAM {
 
