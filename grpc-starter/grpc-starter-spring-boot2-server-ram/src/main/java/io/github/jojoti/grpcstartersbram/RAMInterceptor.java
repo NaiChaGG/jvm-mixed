@@ -119,7 +119,6 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
         for (RAMAccessInterceptorCondition accessInterceptorCondition : this.ramAccessInterceptorCondition) {
             if (accessInterceptorCondition.matches(currentGRpcScope)) {
                 accesses.add(accessInterceptorCondition.newRAMAccessInterceptor());
-                break;
             }
         }
 
