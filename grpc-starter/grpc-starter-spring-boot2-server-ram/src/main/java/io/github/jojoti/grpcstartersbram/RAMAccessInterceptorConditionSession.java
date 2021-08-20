@@ -6,6 +6,7 @@ import io.grpc.Metadata;
 import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import io.grpc.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 默认为 所有 session 打开 会话控制
@@ -15,12 +16,16 @@ import io.grpc.Status;
  */
 public class RAMAccessInterceptorConditionSession implements RAMAccessInterceptorCondition {
 
+    @Autowired
+    GRpcSessionProperties gRpcSessionProperties;
+
     /**
      * 强制加在 所有 开启了 ram 的访问控制上
      */
     @Override
     public final boolean matches(GRpcScope gRpcScope) {
-        return true;
+        // 启用了 session 的 ram 才会添加 session 权限
+        return gRpcSessionProperties.enableScopeNames().contains(gRpcScope.value());
     }
 
     @Override
