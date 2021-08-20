@@ -17,6 +17,7 @@
 package io.github.jojoti.grpcstartersbram;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -63,11 +64,16 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         // 验证登录会话
         final SessionUser user;
         try {
-            user = this.session.verify(
-                    this.getHeaderToken(headers),
-                    this.attaches.getOrDefault(call.getMethodDescriptor(), ImmutableList.of()));
+            final var headerValue = this.getHeaderToken(headers);
+            if (Strings.isNullOrEmpty(headerValue)) {
+                final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("session valid header is empty");
+                call.close(error, new Metadata());
+                return new ServerCall.Listener<>() {
+                };
+            }
+            user = this.session.verify(headerValue, this.attaches.getOrDefault(call.getMethodDescriptor(), ImmutableList.of()));
         } catch (Exception e) {
-            final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
+            final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("session valid error info:" + e.getMessage());
             call.close(error, new Metadata());
             return new ServerCall.Listener<>() {
             };
