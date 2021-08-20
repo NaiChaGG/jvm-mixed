@@ -56,7 +56,7 @@ public class GRpcRAMAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(RAMAccessInterceptorConditionSession.class)
     // 开启了 session 配置 才会自动添加 session
-    @ConditionalOnBean(SessionInterceptor.class)
+    @Conditional(GRpcSessionAutoConfiguration.EnableSession.class)
     public RAMAccessInterceptorConditionSession ramAccessInterceptorSession() {
         // 默认给所有作用域添加 ram 访问权限
         return new RAMAccessInterceptorConditionSession();
