@@ -65,12 +65,6 @@ public class SessionInterceptor implements ScopeServerInterceptor, ApplicationCo
         final SessionUser user;
         try {
             final var headerValue = this.getHeaderToken(headers);
-            if (Strings.isNullOrEmpty(headerValue)) {
-                final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("session valid header is empty");
-                call.close(error, new Metadata());
-                return new ServerCall.Listener<>() {
-                };
-            }
             user = this.session.verify(headerValue, this.attaches.getOrDefault(call.getMethodDescriptor(), ImmutableList.of()));
         } catch (Exception e) {
             final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("session valid error info:" + e.getMessage());

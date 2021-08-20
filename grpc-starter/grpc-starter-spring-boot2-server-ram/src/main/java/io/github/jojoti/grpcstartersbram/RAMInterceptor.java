@@ -76,7 +76,9 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
                     // 可以从 metadata 获取 ip 啥的
                     var rs = accessInterceptor.checkNext(foundRam, call, headers, next);
                     if (rs.isFailed()) {
-                        Preconditions.checkNotNull(rs.getData());
+                        if (rs.getData() == null) {
+                            throw new IllegalArgumentException("Ram failed is not allow null object");
+                        }
                         return rs.getData();
                     }
                     // 成功的 listener 暂时只支持返回一个
@@ -90,7 +92,7 @@ class RAMInterceptor implements ScopeServerInterceptor, CommandLineRunner {
                 }
                 return next.startCall(call, headers);
             } catch (Exception e) {
-                final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("info:" + e.getMessage());
+                final var error = Status.fromCode(Status.INTERNAL.getCode()).withDescription("Ram info:" + e.getMessage());
                 call.close(error, new Metadata());
                 return new ServerCall.Listener<>() {
                 };

@@ -57,7 +57,7 @@ public final class GlobalExceptionInterceptor implements ServerInterceptor {
                     super.onHalfClose();
                 } catch (Exception e) {
                     // 异常处理项目抛出异常才会走到这里
-                    call.close(Status.INTERNAL.withDescription("info: " + e.getMessage()), new Metadata());
+                    call.close(Status.INTERNAL.withDescription("global info: " + e.getMessage()), new Metadata());
                     log.error("grpc close: ", e);
                 }
             }
