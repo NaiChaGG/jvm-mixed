@@ -34,11 +34,11 @@ public interface GuavaCollects {
     }
 
     static <K, V> Multimap<K, V> newHashArrayMultimap() {
-        return Multimaps.<K, V>newMultimap(Maps.newHashMap(), Lists::newArrayList);
+        return Multimaps.newMultimap(Maps.newHashMap(), Lists::newArrayList);
     }
 
     static <K, V> Multimap<K, V> newHashSetsMultimap() {
-        return Multimaps.<K, V>newMultimap(Maps.newHashMap(), Sets::newHashSet);
+        return Multimaps.newMultimap(Maps.newHashMap(), Sets::newHashSet);
     }
 
     static <R, C, V> Table<R, C, V> newConcurrentTable() {

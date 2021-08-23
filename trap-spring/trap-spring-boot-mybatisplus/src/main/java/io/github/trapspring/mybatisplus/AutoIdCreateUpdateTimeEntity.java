@@ -32,7 +32,7 @@ public abstract class AutoIdCreateUpdateTimeEntity extends TrapBaseCreateUpdateT
 
     @javax.persistence.Id
     @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
-    @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null default 0")
+    @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null")
     @TableId(value = "id", type = IdType.AUTO)
     private long id;
 
