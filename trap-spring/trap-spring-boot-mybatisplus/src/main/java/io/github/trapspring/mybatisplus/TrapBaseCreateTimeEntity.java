@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.trapspring.datajdbc;
+package io.github.trapspring.mybatisplus;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.lang.NonNull;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 
-import javax.persistence.GenerationType;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -27,22 +26,20 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
-public abstract class AutoIdCreateUpdateTimeEntity extends TrapBaseCreateUpdateTimeEntity {
+// @Table 必须注解， 否则 Spring Data JDBC - Could not safely identify store assignment for repository candidate interface io.github.jojoti.grpcstartersbexamples.AccountGuestRepository. If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+// 会导致无法加载 bean
+public abstract class TrapBaseCreateTimeEntity {
 
-    @Id
-    @javax.persistence.Id
-    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
     @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null default 0")
-    private long id;
+    @TableField(fill = FieldFill.INSERT)
+    private Long createAt;
 
-    @Override
-    @NonNull
-    public Long getId() {
-        return id;
+    public Long getCreateAt() {
+        return createAt;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setCreateAt(Long createAt) {
+        this.createAt = createAt;
     }
 
 }

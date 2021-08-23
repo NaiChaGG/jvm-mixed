@@ -26,7 +26,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>trap-spring-boot-data-jdbc</artifactId>
+    <artifactId>trap-spring-boot-mybatisplus-mysql</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -40,11 +40,6 @@
             <artifactId>trap-spring-boot</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
-        </dependency>
-
         <!--    https://blog.csdn.net/weixin_43328357/article/details/106993172    -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -52,8 +47,13 @@
         </dependency>
 
         <dependency>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <groupId>jakarta.persistence</groupId>
+            <groupId>io.github.jojoti.trap-spring</groupId>
+            <artifactId>trap-spring-boot-mybatisplus</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
     </dependencies>

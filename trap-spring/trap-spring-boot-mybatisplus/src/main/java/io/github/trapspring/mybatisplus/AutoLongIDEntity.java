@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package io.github.trapspring.datajdbc;
+package io.github.trapspring.mybatisplus;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.lang.NonNull;
-
-import javax.persistence.GenerationType;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -27,22 +23,7 @@ import javax.persistence.MappedSuperclass;
  * @link github.com/jojoti
  */
 @MappedSuperclass
-public abstract class AutoIdCreateUpdateTimeEntity extends TrapBaseCreateUpdateTimeEntity {
-
-    @Id
-    @javax.persistence.Id
-    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
-    @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null default 0")
-    private long id;
-
-    @Override
-    @NonNull
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+@Deprecated(since = "create update delete time")
+public abstract class AutoLongIDEntity extends AutoIdCreateUpdateTimeEntity {
 
 }

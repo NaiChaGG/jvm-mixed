@@ -16,8 +16,6 @@
 
 package io.github.trapspring.datajdbc;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 
@@ -34,7 +32,7 @@ public abstract class AutoIdCreateTimeEntity extends TrapBaseCreateTimeEntity {
     @Id
     @javax.persistence.Id
     @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
-    @TableId(value = "id", type = IdType.AUTO)
+    @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null default 0")
     private long id;
 
     @Override

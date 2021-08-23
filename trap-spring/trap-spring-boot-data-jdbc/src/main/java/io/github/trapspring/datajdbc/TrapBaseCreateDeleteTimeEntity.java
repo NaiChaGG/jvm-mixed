@@ -30,7 +30,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class TrapBaseCreateDeleteTimeEntity extends TrapBaseCreateTimeEntity {
 
     @Column
-    @javax.persistence.Column
+    @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null default 0")
     private long deleteAt;
 
     public long getDeleteAt() {

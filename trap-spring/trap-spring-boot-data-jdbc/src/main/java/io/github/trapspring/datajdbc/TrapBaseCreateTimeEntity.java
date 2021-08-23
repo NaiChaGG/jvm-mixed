@@ -16,8 +16,6 @@
 
 package io.github.trapspring.datajdbc;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import org.springframework.data.relational.core.mapping.Column;
 
 import javax.persistence.MappedSuperclass;
@@ -32,8 +30,7 @@ import javax.persistence.MappedSuperclass;
 public abstract class TrapBaseCreateTimeEntity extends TrapBaseEntity {
 
     @Column
-    @javax.persistence.Column(columnDefinition = "bigint(20) default 0")
-    @TableField(fill = FieldFill.INSERT)
+    @javax.persistence.Column(columnDefinition = "bigint(20) unsigned not null default 0")
     private Long createAt;
 
     public Long getCreateAt() {
