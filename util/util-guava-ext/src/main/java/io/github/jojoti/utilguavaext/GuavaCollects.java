@@ -46,7 +46,7 @@ public interface GuavaCollects {
     }
 
     static <R, C, V> Table<R, C, V> newTable() {
-        return Tables.newCustomTable(Maps.newHashMap(), Maps::newConcurrentMap);
+        return Tables.newCustomTable(Maps.newHashMap(), Maps::newHashMap);
     }
 
     interface KeyCreator<K, V> {
