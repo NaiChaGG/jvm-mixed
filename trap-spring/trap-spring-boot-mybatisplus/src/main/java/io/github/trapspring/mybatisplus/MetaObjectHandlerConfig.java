@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @Date 2021/8/3 4:41 下午
  * @Version 1.0
  */
-@Component
 public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
