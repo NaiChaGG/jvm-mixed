@@ -189,15 +189,16 @@
             </resource>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
-                <excludes>
+                <includes>
                     <!--                    <exclude>**/application*.yml</exclude>-->
                     <!--                    <exclude>**/application*.yaml</exclude>-->
                     <!--                    <exclude>**/application*.properties</exclude>-->
                     <!--                    <exclude>**/application*.conf</exclude>-->
                     <!--                    <exclude>**/reference*.conf</exclude>-->
                     <!--                    <exclude>**/*.xml</exclude>-->
-                    <exclude>**/*.*</exclude>
-                </excludes>
+                    <include>**/*.*</include>
+                </includes>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <plugins>
